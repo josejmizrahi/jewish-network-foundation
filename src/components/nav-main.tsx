@@ -14,7 +14,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 
 interface NavMainProps {
   items: {
@@ -30,6 +30,8 @@ interface NavMainProps {
 }
 
 export function NavMain({ items }: NavMainProps) {
+  const location = useLocation();
+  
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Navigation</SidebarGroupLabel>
@@ -38,7 +40,7 @@ export function NavMain({ items }: NavMainProps) {
           <Collapsible
             key={item.title}
             asChild
-            defaultOpen={item.isActive}
+            defaultOpen={item.isActive || location.pathname.startsWith(item.url)}
             className="group/collapsible"
           >
             <SidebarMenuItem>
@@ -55,7 +57,10 @@ export function NavMain({ items }: NavMainProps) {
                     <SidebarMenuSub>
                       {item.items.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.title}>
-                          <SidebarMenuSubButton asChild>
+                          <SidebarMenuSubButton 
+                            asChild
+                            isActive={location.pathname === subItem.url}
+                          >
                             <Link to={subItem.url}>{subItem.title}</Link>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
@@ -64,7 +69,11 @@ export function NavMain({ items }: NavMainProps) {
                   </CollapsibleContent>
                 </>
               ) : (
-                <SidebarMenuButton asChild tooltip={item.title} isActive={item.isActive}>
+                <SidebarMenuButton 
+                  asChild 
+                  tooltip={item.title} 
+                  isActive={location.pathname === item.url}
+                >
                   <Link to={item.url}>
                     <item.icon />
                     <span>{item.title}</span>

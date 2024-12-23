@@ -4,15 +4,23 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { ExternalLink, BookOpen, Users, Globe, Building2 } from "lucide-react";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/layout/AppSidebar";
+import { PageBreadcrumb } from "@/components/nav/Breadcrumb";
 
 export default function About() {
   return (
-    <div className="min-h-screen flex flex-col">
-      <MainNav />
-      
-      <main className="flex-1">
-        {/* Hero Section */}
-        <section className="py-16 md:py-24 bg-gradient-to-b from-primary/10 to-background">
+    <SidebarProvider defaultOpen>
+      <div className="min-h-screen flex w-full">
+        <AppSidebar />
+        <div className="flex-1">
+          <MainNav />
+          <SidebarInset>
+            <div className="container py-4">
+              <PageBreadcrumb />
+              
+              {/* Hero Section */}
+              <section className="py-16 md:py-24 bg-gradient-to-b from-primary/10 to-background">
           <div className="container">
             <h1 className="text-4xl md:text-6xl font-bold text-center mb-6">
               Building the Digital Jewish Nation
@@ -21,10 +29,10 @@ export default function About() {
               A decentralized network state uniting the Jewish people through shared values, culture, and innovation in the digital age.
             </p>
           </div>
-        </section>
+              </section>
 
-        {/* Core Concepts */}
-        <section className="py-16 container">
+              {/* Core Concepts */}
+              <section className="py-16">
           <h2 className="text-3xl font-bold mb-12 text-center">Core Concepts</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card className="p-6">
@@ -67,10 +75,10 @@ export default function About() {
               </CardContent>
             </Card>
           </div>
-        </section>
+              </section>
 
-        {/* Vision */}
-        <section className="py-16 bg-muted/50">
+              {/* Vision */}
+              <section className="py-16 bg-muted/50">
           <div className="container">
             <div className="max-w-3xl mx-auto">
               <h2 className="text-3xl font-bold mb-8">Our Vision</h2>
@@ -92,10 +100,10 @@ export default function About() {
               </div>
             </div>
           </div>
-        </section>
+              </section>
 
-        {/* Resources Section */}
-        <section className="py-16 container">
+              {/* Resources Section */}
+              <section className="py-16">
           <h2 className="text-3xl font-bold mb-12">Essential Resources</h2>
           <div className="grid md:grid-cols-2 gap-8">
             <Card className="p-6">
@@ -134,10 +142,12 @@ export default function About() {
               </CardContent>
             </Card>
           </div>
-        </section>
-      </main>
-
-      <Footer />
-    </div>
+              </section>
+            </div>
+          </SidebarInset>
+          <Footer />
+        </div>
+      </div>
+    </SidebarProvider>
   );
 }
