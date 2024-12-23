@@ -103,3 +103,69 @@ export const Sidebar = React.forwardRef<
   }
 )
 Sidebar.displayName = "Sidebar"
+
+export const SidebarContent = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<"div">
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("flex-1 overflow-auto", className)}
+    {...props}
+  />
+))
+SidebarContent.displayName = "SidebarContent"
+
+export const SidebarHeader = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<"div">
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("flex h-14 items-center px-4", className)}
+    {...props}
+  />
+))
+SidebarHeader.displayName = "SidebarHeader"
+
+export const SidebarFooter = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<"div">
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("flex items-center p-4", className)}
+    {...props}
+  />
+))
+SidebarFooter.displayName = "SidebarFooter"
+
+export const SidebarInset = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<"div">
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "absolute inset-y-0 right-0 w-[calc(100%_-_var(--sidebar-width))] transition-[width,left,right] duration-200 ease-linear peer-[[data-collapsible=icon]]:w-[calc(100%_-_var(--sidebar-width-icon))] peer-[[data-collapsible=offcanvas]]:w-full",
+      className
+    )}
+    {...props}
+  />
+))
+SidebarInset.displayName = "SidebarInset"
+
+export const SidebarRail = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<"div">
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "absolute inset-y-0 right-0 w-1 cursor-ew-resize bg-border opacity-0 transition-opacity duration-200 ease-linear hover:opacity-100",
+      className
+    )}
+    {...props}
+  />
+))
+SidebarRail.displayName = "SidebarRail"
