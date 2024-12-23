@@ -57,7 +57,7 @@ export function EventsList() {
     return <LoadingSkeleton />;
   }
 
-  const currentEvents = activeTab === "all" ? events || [] : invitations || [];
+  const currentEvents = activeTab === "all" ? (events || []) : (invitations || []);
   const filteredEvents = filterEvents(currentEvents, search, category, timeFilter);
   const groupedEvents = groupEventsByDate(filteredEvents);
 

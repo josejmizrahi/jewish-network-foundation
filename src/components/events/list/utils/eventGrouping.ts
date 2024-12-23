@@ -7,7 +7,11 @@ export const filterEvents = (
   category: string,
   timeFilter: "upcoming" | "past" | "all"
 ) => {
+  if (!events) return [];
+  
   return events.filter(event => {
+    if (!event || !event.start_time) return false;
+
     const matchesSearch = search === "" || 
       event.title.toLowerCase().includes(search.toLowerCase()) ||
       (event.description?.toLowerCase().includes(search.toLowerCase()) ?? false);
@@ -25,8 +29,12 @@ export const filterEvents = (
 };
 
 export const groupEventsByDate = (events: Event[]) => {
+  if (!events) return {};
+  
   const groups: { [key: string]: Event[] } = {};
   events.forEach(event => {
+    if (!event || !event.start_time) return;
+    
     const date = format(new Date(event.start_time), 'MMM dd');
     if (!groups[date]) {
       groups[date] = [];
