@@ -1,10 +1,9 @@
 import { MainNav } from "@/components/layout/MainNav";
-import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "react-router-dom";
-import { Separator } from "@/components/ui/separator";
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -20,30 +19,12 @@ export default function Index() {
 
   if (user) {
     return (
-      <SidebarProvider>
+      <SidebarProvider defaultOpen>
         <div className="min-h-screen flex w-full">
           <AppSidebar />
           <div className="flex-1">
             <MainNav />
             <SidebarInset>
-              <header className="flex h-16 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear">
-                <div className="flex items-center gap-2 px-4">
-                  <SidebarTrigger className="-ml-1" />
-                  <Separator orientation="vertical" className="mr-2 h-4" />
-                  <Breadcrumb>
-                    <BreadcrumbList>
-                      <BreadcrumbItem>
-                        <BreadcrumbLink href="/">Dashboard</BreadcrumbLink>
-                      </BreadcrumbItem>
-                      <BreadcrumbSeparator />
-                      <BreadcrumbItem>
-                        <BreadcrumbPage>Overview</BreadcrumbPage>
-                      </BreadcrumbItem>
-                    </BreadcrumbList>
-                  </Breadcrumb>
-                </div>
-              </header>
-
               <div className="flex-1 space-y-4 p-8 pt-6">
                 <div className="flex items-center justify-between space-y-2">
                   <h2 className="text-3xl font-bold tracking-tight">Welcome back, {user.user_metadata.full_name || 'User'}</h2>

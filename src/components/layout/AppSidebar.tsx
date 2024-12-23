@@ -20,16 +20,18 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { useAuth } from "@/hooks/useAuth"
+import { useLocation } from "react-router-dom"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth();
+  const location = useLocation();
 
   const navItems = [
     {
       title: "Home",
       url: "/",
       icon: SquareTerminal,
-      isActive: true,
+      isActive: location.pathname === "/",
     },
     {
       title: "About",
@@ -45,6 +47,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           url: "/resources",
         },
       ],
+      isActive: location.pathname.startsWith("/about"),
     },
     {
       title: "Profile",
@@ -56,6 +59,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           url: "/settings",
         },
       ],
+      isActive: location.pathname === "/profile" || location.pathname === "/settings",
     },
   ];
 
