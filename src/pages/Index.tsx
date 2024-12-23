@@ -2,31 +2,20 @@ import { MainNav } from "@/components/layout/MainNav";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { Button } from "@/components/ui/button";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Separator } from "@/components/ui/separator";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
-import { DashboardStats } from "@/components/dashboard/DashboardStats";
-import { DashboardChart } from "@/components/dashboard/DashboardChart";
-import { DashboardActivity } from "@/components/dashboard/DashboardActivity";
+import { Link } from "react-router-dom";
 
 export default function Index() {
   const { user } = useAuth();
 
-  return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <AppSidebar />
-        <div className="flex-1">
-          <MainNav />
-          <SidebarInset>
+  if (user) {
+    return (
+      <SidebarProvider>
+        <div className="min-h-screen flex w-full">
+          <AppSidebar />
+          <div className="flex-1">
+            <MainNav />
+            <SidebarInset>
             <header className="flex h-16 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear">
               <div className="flex items-center gap-2 px-4">
                 <SidebarTrigger className="-ml-1" />
@@ -102,9 +91,53 @@ export default function Index() {
                 </CardContent>
               </Card>
             </div>
-          </SidebarInset>
+            </SidebarInset>
+          </div>
+        </div>
+      </SidebarProvider>
+    );
+  }
+
+  return (
+    <div className="min-h-screen">
+      <MainNav />
+      
+      {/* Hero Section */}
+      <div className="relative isolate px-6 pt-14 lg:px-8">
+        <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
+              Building the Digital Jewish Nation
+            </h1>
+            <p className="mt-6 text-lg leading-8 text-muted-foreground">
+              Join a global community dedicated to preserving and advancing Jewish culture, 
+              values, and innovation in the digital age.
+            </p>
+            <div className="mt-10 flex items-center justify-center gap-x-6">
+              <Button asChild size="lg">
+                <Link to="/login">Join Now</Link>
+              </Button>
+              <Button variant="outline" size="lg">
+                <Link to="/about">Learn More</Link>
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
-    </SidebarProvider>
+
+      {/* Features Section */}
+      <div className="mx-auto max-w-7xl px-6 lg:px-8 py-24 sm:py-32">
+        <div className="mx-auto max-w-2xl lg:text-center">
+          <h2 className="text-base font-semibold leading-7 text-primary">Our Community</h2>
+          <p className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
+            Everything you need to connect and grow
+          </p>
+          <p className="mt-6 text-lg leading-8 text-muted-foreground">
+            Access resources, join study groups, participate in events, and connect with 
+            like-minded individuals from around the world.
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }

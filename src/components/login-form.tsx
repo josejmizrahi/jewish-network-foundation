@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client"
 import { Loader2 } from "lucide-react"
 import { useState } from "react"
 import { useToast } from "@/components/ui/use-toast"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export function LoginForm({
   className,
@@ -21,11 +22,10 @@ export function LoginForm({
   const [loading, setLoading] = useState(false)
   const { toast } = useToast()
 
-  // Handle auth state changes
   supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_IN') {
       toast({
-        title: "Welcome back!",
+        title: "Welcome!",
         description: "You have successfully signed in.",
       })
     } else if (event === 'SIGNED_OUT') {
@@ -50,88 +50,98 @@ export function LoginForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
+          <CardTitle className="text-2xl font-bold">Welcome</CardTitle>
           <CardDescription>
-            Sign in to your account to continue
+            Join our community or sign in to your account
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Auth
-            supabaseClient={supabase}
-            appearance={{
-              theme: ThemeSupa,
-              style: {
-                container: {
-                  width: '100%',
-                },
-                button: {
-                  width: '100%',
-                  borderRadius: 'var(--radius)',
-                  height: '2.5rem',
-                  fontSize: '0.875rem',
-                  backgroundColor: 'var(--primary)',
-                  color: 'var(--primary-foreground)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.5rem',
-                },
-                input: {
-                  borderRadius: 'var(--radius)',
-                  height: '2.5rem',
-                  fontSize: '0.875rem',
-                  borderColor: 'var(--input)',
-                },
-                anchor: {
-                  color: 'var(--primary)',
-                  fontSize: '0.875rem',
-                },
-                divider: {
-                  backgroundColor: 'var(--border)',
-                },
-                message: {
-                  fontSize: '0.875rem',
-                  color: 'var(--muted-foreground)',
-                  padding: '0.5rem',
-                  borderRadius: 'var(--radius)',
-                  backgroundColor: 'var(--accent)',
-                  marginBottom: '1rem',
-                },
-                label: {
-                  fontSize: '0.875rem',
-                  color: 'var(--foreground)',
-                },
-                loader: {
-                  color: 'var(--primary)',
-                },
-              },
-              variables: {
-                default: {
-                  colors: {
-                    brand: 'var(--primary)',
-                    brandAccent: 'var(--primary)',
+          <Tabs defaultValue="signin" className="space-y-4">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="signin">Sign In</TabsTrigger>
+              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            </TabsList>
+            <TabsContent value="signin">
+              <Auth
+                supabaseClient={supabase}
+                view="sign_in"
+                appearance={{
+                  theme: ThemeSupa,
+                  style: {
+                    container: { width: '100%' },
+                    button: {
+                      width: '100%',
+                      borderRadius: 'var(--radius)',
+                      height: '2.5rem',
+                      fontSize: '0.875rem',
+                      backgroundColor: 'var(--primary)',
+                      color: 'var(--primary-foreground)',
+                    },
+                    input: {
+                      borderRadius: 'var(--radius)',
+                      height: '2.5rem',
+                      fontSize: '0.875rem',
+                      borderColor: 'var(--input)',
+                    },
                   },
-                },
-              },
-            }}
-            theme="light"
-            providers={["google", "apple", "github"]}
-            redirectTo={window.location.origin}
-            onlyThirdPartyProviders={false}
-            localization={{
-              variables: {
-                sign_in: {
-                  social_provider_text: "Continue with {{provider}}",
-                  email_label: "Email address",
-                  password_label: "Password",
-                  email_input_placeholder: "Your email address",
-                  password_input_placeholder: "Your password",
-                  button_label: "Sign in",
-                  loading_button_label: "Signing in...",
-                },
-              },
-            }}
-          />
+                }}
+                providers={["google", "apple", "github"]}
+                localization={{
+                  variables: {
+                    sign_in: {
+                      email_label: "Email address",
+                      password_label: "Password",
+                      email_input_placeholder: "Your email address",
+                      password_input_placeholder: "Your password",
+                      button_label: "Sign in",
+                      loading_button_label: "Signing in...",
+                      social_provider_text: "Continue with {{provider}}",
+                    },
+                  },
+                }}
+              />
+            </TabsContent>
+            <TabsContent value="signup">
+              <Auth
+                supabaseClient={supabase}
+                view="sign_up"
+                appearance={{
+                  theme: ThemeSupa,
+                  style: {
+                    container: { width: '100%' },
+                    button: {
+                      width: '100%',
+                      borderRadius: 'var(--radius)',
+                      height: '2.5rem',
+                      fontSize: '0.875rem',
+                      backgroundColor: 'var(--primary)',
+                      color: 'var(--primary-foreground)',
+                    },
+                    input: {
+                      borderRadius: 'var(--radius)',
+                      height: '2.5rem',
+                      fontSize: '0.875rem',
+                      borderColor: 'var(--input)',
+                    },
+                  },
+                }}
+                providers={["google", "apple", "github"]}
+                localization={{
+                  variables: {
+                    sign_up: {
+                      email_label: "Email address",
+                      password_label: "Password",
+                      email_input_placeholder: "Your email address",
+                      password_input_placeholder: "Create a password",
+                      button_label: "Sign up",
+                      loading_button_label: "Signing up...",
+                      social_provider_text: "Continue with {{provider}}",
+                    },
+                  },
+                }}
+              />
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
       <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary">
