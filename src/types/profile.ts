@@ -14,4 +14,5 @@ export interface Profile {
   verification_status: VerificationStatus;
   role: UserRole;
   points: number | null;
+  is_admin: boolean | null;
 }

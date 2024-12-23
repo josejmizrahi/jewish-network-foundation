@@ -17,6 +17,15 @@ import { format } from "date-fns";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
 import type { VerificationRequest } from "@/types/verification";
 
+interface ProfileData {
+  full_name: string | null;
+  email: string | null;
+}
+
+interface VerificationRequestWithProfile extends VerificationRequest {
+  profiles: ProfileData;
+}
+
 export function VerificationManagement() {
   const { toast } = useToast();
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
@@ -30,7 +39,7 @@ export function VerificationManagement() {
         .from('verification_requests')
         .select(`
           *,
-          profiles:user_id (
+          profiles (
             full_name,
             email
           )
@@ -38,9 +47,7 @@ export function VerificationManagement() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data as (VerificationRequest & {
-        profiles: { full_name: string | null; email: string | null; }
-      })[];
+      return data as VerificationRequestWithProfile[];
     },
   });
 
