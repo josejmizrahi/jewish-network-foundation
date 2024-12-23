@@ -15,7 +15,7 @@ export function EventsList() {
   const [timeFilter, setTimeFilter] = useState<"upcoming" | "past" | "all">("upcoming");
   const [activeTab, setActiveTab] = useState<"all" | "invitations">("all");
 
-  const { data: events, isLoading: eventsLoading, error: eventsError } = useQuery({
+  const { data: events = [], isLoading: eventsLoading, error: eventsError } = useQuery({
     queryKey: ['events'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -31,7 +31,7 @@ export function EventsList() {
     },
   });
 
-  const { data: invitations, isLoading: invitationsLoading, error: invitationsError } = useQuery({
+  const { data: invitations = [], isLoading: invitationsLoading, error: invitationsError } = useQuery({
     queryKey: ['event-invitations'],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -65,11 +65,11 @@ export function EventsList() {
     );
   }
 
-  const currentEvents = activeTab === "all" ? (events || []) : (invitations || []);
+  const currentEvents = activeTab === "all" ? events : invitations;
   const filteredEvents = filterEvents(currentEvents, search, category, timeFilter);
   const groupedEvents = groupEventsByDate(filteredEvents);
 
-  if (!events?.length && !invitations?.length) {
+  if (!events.length && !invitations.length) {
     return <EmptyState hasFilters={false} />;
   }
 
