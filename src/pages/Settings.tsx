@@ -3,7 +3,7 @@ import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ProfileForm } from "@/components/profile/ProfileForm";
+import { SettingsForm } from "@/components/settings/SettingsForm";
 import { VerificationManagement } from "@/components/verification/admin/VerificationManagement";
 import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
@@ -11,8 +11,6 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import type { Profile } from "@/types/profile";
-import type { VerificationStatus } from "@/types/verification";
-import type { UserRole } from "@/types/verification";
 
 export default function Settings() {
   const { user } = useAuth();
@@ -29,28 +27,24 @@ export default function Settings() {
         .single();
 
       if (error) throw error;
-
-      const typedData: Profile = {
-        ...data,
-        verification_status: (data.verification_status || 'pending') as VerificationStatus,
-        role: (data.role || 'basic_member') as UserRole,
-      };
-      
-      setProfile(typedData);
-      return typedData;
+      setProfile(data);
+      return data as Profile;
     },
     enabled: !!user?.id,
   });
 
-  const { mutate: updateProfile, isPending: isUpdating } = useMutation({
-    mutationFn: async (updatedProfile: Profile) => {
+  const { mutate: updateSettings, isPending: isUpdating } = useMutation({
+    mutationFn: async (values: any) => {
       const { error } = await supabase
         .from('profiles')
-        .update(updatedProfile)
+        .update({
+          username: values.display_name,
+          bio: values.bio,
+        })
         .eq('id', user?.id);
 
       if (error) throw error;
-      return updatedProfile;
+      return values;
     },
     onSuccess: () => {
       toast({
@@ -64,21 +58,11 @@ export default function Settings() {
         description: "Failed to update settings. Please try again.",
         variant: "destructive",
       });
-      console.error('Error updating profile:', error);
+      console.error('Error updating settings:', error);
     },
   });
 
-  const handleProfileChange = (newProfile: Profile) => {
-    setProfile(newProfile);
-  };
-
-  const handleUpdateProfile = () => {
-    if (profile) {
-      updateProfile(profile);
-    }
-  };
-
-  if (isLoading) {
+  if (isLoading || !profileData) {
     return (
       <SidebarProvider defaultOpen>
         <div className="min-h-screen flex w-full">
@@ -87,7 +71,9 @@ export default function Settings() {
             <MainNav />
             <SidebarInset>
               <div className="container mx-auto px-4 py-8">
-                Loading...
+                <div className="flex items-center justify-center h-full">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                </div>
               </div>
             </SidebarInset>
           </div>
@@ -105,44 +91,30 @@ export default function Settings() {
           <SidebarInset>
             <div className="container mx-auto px-4 py-8">
               <div className="space-y-6">
-                <h1 className="text-3xl font-bold">Settings</h1>
-                <Tabs defaultValue="profile" className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h1 className="text-3xl font-bold">Settings</h1>
+                </div>
+                <Tabs defaultValue="general" className="space-y-4">
                   <TabsList>
-                    <TabsTrigger value="profile">Profile</TabsTrigger>
-                    <TabsTrigger value="account">Account</TabsTrigger>
+                    <TabsTrigger value="general">General</TabsTrigger>
                     <TabsTrigger value="notifications">Notifications</TabsTrigger>
-                    {profileData?.is_admin && (
+                    <TabsTrigger value="security">Security</TabsTrigger>
+                    {profileData.is_admin && (
                       <TabsTrigger value="admin">Admin</TabsTrigger>
                     )}
                   </TabsList>
 
-                  <TabsContent value="profile" className="space-y-4">
+                  <TabsContent value="general" className="space-y-4">
                     <Card>
                       <CardHeader>
-                        <CardTitle>Profile Information</CardTitle>
+                        <CardTitle>General Settings</CardTitle>
                       </CardHeader>
                       <CardContent>
-                        {profile && (
-                          <ProfileForm
-                            profile={profile}
-                            updating={isUpdating}
-                            onUpdateProfile={handleUpdateProfile}
-                            onProfileChange={handleProfileChange}
-                          />
-                        )}
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-
-                  <TabsContent value="account" className="space-y-4">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Account Settings</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-muted-foreground">
-                          Account settings will be available soon.
-                        </p>
+                        <SettingsForm
+                          profile={profileData}
+                          onSubmit={updateSettings}
+                          isLoading={isUpdating}
+                        />
                       </CardContent>
                     </Card>
                   </TabsContent>
@@ -154,13 +126,26 @@ export default function Settings() {
                       </CardHeader>
                       <CardContent>
                         <p className="text-muted-foreground">
-                          Notification settings will be available soon.
+                          Manage how you receive notifications.
                         </p>
                       </CardContent>
                     </Card>
                   </TabsContent>
 
-                  {profileData?.is_admin && (
+                  <TabsContent value="security" className="space-y-4">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Security Settings</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-muted-foreground">
+                          Manage your account security settings.
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+
+                  {profileData.is_admin && (
                     <TabsContent value="admin" className="space-y-4">
                       <VerificationManagement />
                     </TabsContent>
