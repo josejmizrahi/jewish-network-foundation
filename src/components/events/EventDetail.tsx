@@ -1,13 +1,15 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { format } from "date-fns";
-import { Calendar, Clock, MapPin, Users, Video } from "lucide-react";
+import { Calendar, Clock, MapPin, Users, Video, Edit2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { EditEventDialog } from "./EditEventDialog";
 
 interface Event {
   id: string;
@@ -23,6 +25,8 @@ interface Event {
   cover_image: string | null;
   status: string;
   is_private: boolean;
+  timezone: string;
+  organizer_id: string;
   organizer: {
     full_name: string;
     avatar_url: string;
@@ -33,6 +37,7 @@ export function EventDetail() {
   const { id } = useParams();
   const { user } = useAuth();
   const { toast } = useToast();
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const { data: event, isLoading } = useQuery({
     queryKey: ['events', id],
@@ -118,15 +123,29 @@ export function EventDetail() {
     );
   }
 
+  const isOrganizer = user?.id === event.organizer_id;
+
   return (
     <Card className="p-6">
       <div className="space-y-6">
         <div>
           <div className="flex items-center justify-between mb-2">
             <h1 className="text-2xl font-bold">{event.title}</h1>
-            {event.is_private && (
-              <Badge variant="secondary">Private</Badge>
-            )}
+            <div className="flex items-center gap-2">
+              {event.is_private && (
+                <Badge variant="secondary">Private</Badge>
+              )}
+              {isOrganizer && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsEditDialogOpen(true)}
+                >
+                  <Edit2 className="h-4 w-4 mr-2" />
+                  Edit Event
+                </Button>
+              )}
+            </div>
           </div>
           {event.description && (
             <p className="text-muted-foreground">{event.description}</p>
@@ -195,6 +214,14 @@ export function EventDetail() {
           </Button>
         </div>
       </div>
+
+      {isOrganizer && (
+        <EditEventDialog
+          open={isEditDialogOpen}
+          onOpenChange={setIsEditDialogOpen}
+          event={event}
+        />
+      )}
     </Card>
   );
 }
