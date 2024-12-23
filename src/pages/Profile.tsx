@@ -16,6 +16,7 @@ import { MembershipCard } from "@/components/profile/MembershipCard";
 import { ProfileProgress } from "@/components/profile/ProfileProgress";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ProfileStats } from "@/components/profile/ProfileStats";
+import { VerificationRequestForm } from "@/components/verification/VerificationRequestForm";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -26,6 +27,7 @@ export default function Profile() {
   const { toast } = useToast();
   const [profileData, setProfileData] = useState<Profile | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [showVerificationForm, setShowVerificationForm] = useState(false);
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ['profile', user?.id],
@@ -111,22 +113,40 @@ export default function Profile() {
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <h1 className="text-3xl font-bold">Profile</h1>
-                  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button>Edit Profile</Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                      <DialogHeader>
-                        <DialogTitle>Edit Profile</DialogTitle>
-                      </DialogHeader>
-                      <ProfileForm
-                        profile={profileData || profile}
-                        updating={isUpdating}
-                        onUpdateProfile={handleUpdateProfile}
-                        onProfileChange={handleProfileChange}
-                      />
-                    </DialogContent>
-                  </Dialog>
+                  <div className="flex gap-2">
+                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button>Edit Profile</Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle>Edit Profile</DialogTitle>
+                        </DialogHeader>
+                        <ProfileForm
+                          profile={profileData || profile}
+                          updating={isUpdating}
+                          onUpdateProfile={handleUpdateProfile}
+                          onProfileChange={handleProfileChange}
+                        />
+                      </DialogContent>
+                    </Dialog>
+                    {profile.verification_status !== 'verified' && (
+                      <Dialog open={showVerificationForm} onOpenChange={setShowVerificationForm}>
+                        <DialogTrigger asChild>
+                          <Button variant="outline">Request Verification</Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[600px]">
+                          <DialogHeader>
+                            <DialogTitle>Verification Request</DialogTitle>
+                          </DialogHeader>
+                          <VerificationRequestForm
+                            userId={profile.id}
+                            onRequestSubmitted={() => setShowVerificationForm(false)}
+                          />
+                        </DialogContent>
+                      </Dialog>
+                    )}
+                  </div>
                 </div>
                 <div className="space-y-6">
                   <ProfileHeader profile={profile} email={user?.email} />
