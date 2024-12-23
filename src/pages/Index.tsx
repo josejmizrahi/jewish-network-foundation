@@ -2,10 +2,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MainNav } from "@/components/layout/MainNav";
 import { Footer } from "@/components/layout/Footer";
-import { Link } from "react-router-dom";
-import { ArrowRight, Globe, Shield, Users } from "lucide-react";
+import { PostsList } from "@/components/posts/PostsList";
+import { CreatePostForm } from "@/components/posts/CreatePostForm";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Index() {
+  const { user } = useAuth();
+
   return (
     <div className="flex flex-col min-h-screen">
       <MainNav />
@@ -30,6 +33,16 @@ export default function Index() {
               <Button asChild size="lg" variant="outline" className="text-lg">
                 <Link to="/about">Learn More</Link>
               </Button>
+            </div>
+          </div>
+        </section>
+
+        {/* Posts Section */}
+        <section className="py-20 px-4">
+          <div className="container mx-auto max-w-4xl">
+            <div className="space-y-8">
+              {user && <CreatePostForm />}
+              <PostsList />
             </div>
           </div>
         </section>
