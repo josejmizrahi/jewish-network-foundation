@@ -60,13 +60,18 @@ export function CreateEventDialog({ open, onOpenChange }: CreateEventDialogProps
     
     setIsSubmitting(true);
     try {
+      // Convert Date objects to ISO strings for Supabase
+      const formattedData = {
+        ...data,
+        start_time: data.start_time.toISOString(),
+        end_time: data.end_time.toISOString(),
+        organizer_id: user.id,
+        status: 'published',
+      };
+
       const { error } = await supabase
         .from('events')
-        .insert({
-          ...data,
-          organizer_id: user.id,
-          status: 'published',
-        });
+        .insert(formattedData);
 
       if (error) throw error;
 
