@@ -31,8 +31,8 @@ export default function Login() {
       setLoading(false)
     }
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === "SIGNED_IN") {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session) => {
+      if (event === AuthChangeEvent.SIGNED_IN) {
         // Check if profile is completed
         if (session) {
           const { data: profile } = await supabase
@@ -47,9 +47,6 @@ export default function Login() {
             setShowOnboarding(true)
           }
         }
-      }
-      if (event === "SIGNED_IN" || event === "SIGNED_UP") {
-        setShowOnboarding(true)
       }
     })
 
