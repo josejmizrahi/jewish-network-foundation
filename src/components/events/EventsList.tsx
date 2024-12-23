@@ -35,10 +35,6 @@ export function EventsList() {
     );
   }
 
-  if (!events.length && !invitations.length) {
-    return <EmptyState hasFilters={false} />;
-  }
-
   const currentEvents = activeTab === "all" ? events : invitations;
 
   return (
@@ -56,6 +52,7 @@ export function EventsList() {
           onCategoryChange={setCategory}
           timeFilter={timeFilter}
           onTimeFilterChange={setTimeFilter}
+          showFilters={true}
         />
       </EventTabs>
     </div>
