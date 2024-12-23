@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -7,19 +6,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Auth } from "@supabase/auth-ui-react"
 import { ThemeSupa } from "@supabase/auth-ui-shared"
 import { supabase } from "@/integrations/supabase/client"
-import { Loader2 } from "lucide-react"
 import { useState } from "react"
 import { useToast } from "@/components/ui/use-toast"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { SignInForm } from "./auth/SignInForm"
+import { SignUpForm } from "./auth/SignUpForm"
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const [loading, setLoading] = useState(false)
   const [activeTab, setActiveTab] = useState("signin")
   const { toast } = useToast()
 
@@ -47,7 +45,6 @@ export function LoginForm({
     }
   })
 
-  // Handle auth state messages
   const handleAuthMessage = (message: string) => {
     if (message.includes("user_already_exists")) {
       toast({
@@ -87,7 +84,6 @@ export function LoginForm({
         },
       },
     },
-    // Remove the providers array since it's not needed for the default OAuth providers
   }
 
   return (
@@ -106,42 +102,10 @@ export function LoginForm({
               <TabsTrigger value="signup">Sign Up</TabsTrigger>
             </TabsList>
             <TabsContent value="signin">
-              <Auth
-                {...sharedAuthProps}
-                view="sign_in"
-                localization={{
-                  variables: {
-                    sign_in: {
-                      email_label: "Email address",
-                      password_label: "Password",
-                      email_input_placeholder: "Your email address",
-                      password_input_placeholder: "Your password",
-                      button_label: "Sign in",
-                      loading_button_label: "Signing in...",
-                      social_provider_text: "Continue with {{provider}}",
-                    }
-                  }
-                }}
-              />
+              <SignInForm sharedAuthProps={sharedAuthProps} />
             </TabsContent>
             <TabsContent value="signup">
-              <Auth
-                {...sharedAuthProps}
-                view="sign_up"
-                localization={{
-                  variables: {
-                    sign_up: {
-                      email_label: "Email address",
-                      password_label: "Password",
-                      email_input_placeholder: "Your email address",
-                      password_input_placeholder: "Create a password",
-                      button_label: "Sign up",
-                      loading_button_label: "Signing up...",
-                      social_provider_text: "Continue with {{provider}}",
-                    }
-                  }
-                }}
-              />
+              <SignUpForm sharedAuthProps={sharedAuthProps} />
             </TabsContent>
           </Tabs>
         </CardContent>
