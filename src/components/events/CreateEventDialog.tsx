@@ -67,6 +67,8 @@ export function CreateEventDialog({ open, onOpenChange }: CreateEventDialogProps
         end_time: data.end_time.toISOString(),
         organizer_id: user.id,
         status: 'published',
+        // Ensure timezone is included and not undefined
+        timezone: data.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
       };
 
       const { error } = await supabase
