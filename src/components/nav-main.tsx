@@ -52,15 +52,15 @@ export function NavMain({ items }: NavMainProps) {
                         tooltip={item.title}
                         isActive={location.pathname === item.url || 
                                 item.items?.some(subItem => location.pathname === subItem.url)}
-                        className="transition-colors duration-200"
+                        className="transition-colors duration-200 hover:bg-accent/80"
                       >
-                        <item.icon className="h-4 w-4" />
+                        <item.icon className="h-4 w-4 transition-transform duration-200" />
                         <span>{item.title}</span>
                         <ChevronRight className="ml-auto h-4 w-4 shrink-0 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                       </SidebarMenuButton>
                     </Link>
                   </CollapsibleTrigger>
-                  <CollapsibleContent>
+                  <CollapsibleContent className="animate-accordion-down">
                     <SidebarMenuSub>
                       {item.items.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.title}>
@@ -70,7 +70,7 @@ export function NavMain({ items }: NavMainProps) {
                           >
                             <SidebarMenuSubButton 
                               isActive={location.pathname === subItem.url}
-                              className="transition-colors duration-200"
+                              className="transition-colors duration-200 hover:bg-accent/80"
                             >
                               {subItem.title}
                             </SidebarMenuSubButton>
@@ -88,9 +88,9 @@ export function NavMain({ items }: NavMainProps) {
                   <SidebarMenuButton 
                     tooltip={item.title} 
                     isActive={location.pathname === item.url}
-                    className="transition-colors duration-200"
+                    className="transition-colors duration-200 hover:bg-accent/80"
                   >
-                    <item.icon className="h-4 w-4" />
+                    <item.icon className="h-4 w-4 transition-transform duration-200" />
                     <span>{item.title}</span>
                   </SidebarMenuButton>
                 </Link>
