@@ -1,5 +1,11 @@
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { CheckCircle2, AlertCircle, Clock, HelpCircle } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { Profile } from "@/types/profile";
 
 interface VerificationBadgeProps {
@@ -7,27 +13,55 @@ interface VerificationBadgeProps {
 }
 
 export function VerificationBadge({ status }: VerificationBadgeProps) {
-  switch (status) {
-    case 'verified':
-      return (
-        <Badge className="bg-green-500">
-          <CheckCircle2 className="mr-1 h-3 w-3" />
-          Verified
-        </Badge>
-      );
-    case 'rejected':
-      return (
-        <Badge variant="destructive">
-          <AlertCircle className="mr-1 h-3 w-3" />
-          Rejected
-        </Badge>
-      );
-    default:
-      return (
-        <Badge variant="secondary">
-          <Loader2 className="mr-1 h-3 w-3" />
-          Pending
-        </Badge>
-      );
-  }
+  const getStatusInfo = () => {
+    switch (status) {
+      case 'verified':
+        return {
+          icon: CheckCircle2,
+          label: 'Verified',
+          description: 'This profile has been verified by our team',
+          variant: 'default' as const,
+          className: 'bg-green-500'
+        };
+      case 'rejected':
+        return {
+          icon: AlertCircle,
+          label: 'Rejected',
+          description: 'Verification request was rejected. Please submit a new request',
+          variant: 'destructive' as const
+        };
+      case 'pending':
+        return {
+          icon: Clock,
+          label: 'Pending',
+          description: 'Verification request is being reviewed',
+          variant: 'secondary' as const
+        };
+      default:
+        return {
+          icon: HelpCircle,
+          label: 'Unverified',
+          description: 'No verification request submitted',
+          variant: 'outline' as const
+        };
+    }
+  };
+
+  const { icon: Icon, label, description, variant, className } = getStatusInfo();
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger>
+          <Badge variant={variant} className={className}>
+            <Icon className="mr-1 h-3 w-3" />
+            {label}
+          </Badge>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{description}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
 }

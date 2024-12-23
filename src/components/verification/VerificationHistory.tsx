@@ -9,8 +9,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, AlertCircle } from "lucide-react";
+import { Check, X, AlertCircle, FileText } from "lucide-react";
 import { format } from "date-fns";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import type { VerificationRequest } from "@/types/verification";
 
 export function VerificationHistory() {
@@ -40,6 +47,7 @@ export function VerificationHistory() {
             <TableHead>Status</TableHead>
             <TableHead>Submitted</TableHead>
             <TableHead>Reviewed</TableHead>
+            <TableHead>Documents</TableHead>
             <TableHead>Notes</TableHead>
           </TableRow>
         </TableHeader>
@@ -68,19 +76,61 @@ export function VerificationHistory() {
                 </Badge>
               </TableCell>
               <TableCell>
-                {format(new Date(request.submitted_at), "MMM d, yyyy")}
+                {format(new Date(request.submitted_at || ''), "MMM d, yyyy")}
               </TableCell>
               <TableCell>
                 {request.reviewed_at
                   ? format(new Date(request.reviewed_at), "MMM d, yyyy")
                   : "-"}
               </TableCell>
+              <TableCell>
+                {request.documents && request.documents.length > 0 ? (
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="ghost" size="sm">
+                        <FileText className="h-4 w-4 mr-2" />
+                        View ({request.documents.length})
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-4xl">
+                      <DialogHeader>
+                        <DialogTitle>Submitted Documents</DialogTitle>
+                      </DialogHeader>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        {request.documents.map((url, index) => (
+                          <div key={url} className="aspect-square rounded-lg border bg-muted flex items-center justify-center overflow-hidden">
+                            {url.toLowerCase().endsWith('.pdf') ? (
+                              <a 
+                                href={url} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-center p-4"
+                              >
+                                <FileText className="h-8 w-8 mx-auto mb-2" />
+                                <p className="text-sm">View PDF</p>
+                              </a>
+                            ) : (
+                              <img 
+                                src={url} 
+                                alt={`Document ${index + 1}`}
+                                className="object-cover w-full h-full"
+                              />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                ) : (
+                  "-"
+                )}
+              </TableCell>
               <TableCell>{request.reviewer_notes || "-"}</TableCell>
             </TableRow>
           ))}
           {!requests?.length && (
             <TableRow>
-              <TableCell colSpan={4} className="text-center">
+              <TableCell colSpan={5} className="text-center">
                 No verification requests found
               </TableCell>
             </TableRow>
