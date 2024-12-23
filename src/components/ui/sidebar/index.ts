@@ -1,8 +1,0 @@
-export * from "./components/Sidebar"
-export * from "./components/SidebarGroup"
-export * from "./components/SidebarMenu"
-export * from "./components/SidebarProvider"
-export * from "./components/SidebarTrigger"
-export * from "./types"
-export * from "./variants"
-export { SidebarContext, useSidebar } from "./context"
