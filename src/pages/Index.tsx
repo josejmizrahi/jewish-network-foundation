@@ -20,9 +20,9 @@ export default function Index() {
   if (user) {
     return (
       <SidebarProvider defaultOpen>
-        <div className="min-h-screen flex w-full">
+        <div className="min-h-screen flex w-full bg-background">
           <AppSidebar />
-          <div className="flex-1">
+          <div className="flex-1 flex flex-col">
             <MainNav>
               <SidebarTrigger className="mr-2" />
             </MainNav>
@@ -125,7 +125,7 @@ export default function Index() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background">
       <MainNav />
       
       {/* Hero Section */}

@@ -80,14 +80,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   ];
 
   return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
+    <Sidebar collapsible="icon" className="border-r" {...props}>
+      <SidebarHeader className="h-14 border-b px-2">
         <TeamSwitcher teams={teams} />
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="p-2">
         <NavMain items={navItems} />
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="border-t p-2">
         <NavUser user={userData} />
       </SidebarFooter>
       <SidebarRail />

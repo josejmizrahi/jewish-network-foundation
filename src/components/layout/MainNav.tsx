@@ -8,27 +8,27 @@ import { SearchBar } from "@/components/nav/search-bar";
 
 export function MainNav({ children }: { children?: React.ReactNode }) {
   return (
-    <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-6">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container h-14 flex items-center">
+        <div className="flex items-center gap-6 md:gap-8">
           {children}
           <Link to="/" className="flex items-center space-x-2">
-            <span className="font-serif text-2xl font-bold text-primary">JNS</span>
+            <span className="font-serif text-xl font-bold text-primary">JNS</span>
           </Link>
           <div className="hidden md:flex items-center space-x-6">
             <NavItems />
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-1 items-center justify-end space-x-4">
           <div className="hidden md:flex">
             <SearchBar />
           </div>
 
           <Sheet>
             <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="icon">
-                <MenuIcon className="h-6 w-6" />
+              <Button variant="ghost" size="icon" className="shrink-0">
+                <MenuIcon className="h-5 w-5" />
                 <span className="sr-only">Toggle Menu</span>
               </Button>
             </SheetTrigger>
