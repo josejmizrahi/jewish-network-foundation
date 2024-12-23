@@ -47,6 +47,8 @@ export type Database = {
       }
       events: {
         Row: {
+          category: string | null
+          category_color: string | null
           cover_image: string | null
           created_at: string | null
           current_attendees: number | null
@@ -66,6 +68,8 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          category?: string | null
+          category_color?: string | null
           cover_image?: string | null
           created_at?: string | null
           current_attendees?: number | null
@@ -85,6 +89,8 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          category?: string | null
+          category_color?: string | null
           cover_image?: string | null
           created_at?: string | null
           current_attendees?: number | null

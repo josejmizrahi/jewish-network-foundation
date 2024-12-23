@@ -1,8 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
-import { Calendar, MapPin, Users, Video } from "lucide-react";
+import { Calendar, MapPin, Users, Video, Tag } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Badge } from "@/components/ui/badge";
 
 interface Event {
   id: string;
@@ -18,14 +20,24 @@ interface Event {
   cover_image: string | null;
   status: string;
   is_private: boolean;
+  category: string;
+  category_color: string;
   organizer: {
     full_name: string;
     avatar_url: string;
   } | null;
 }
 
+const categoryColors: Record<string, string> = {
+  workshop: "bg-blue-500/20 text-blue-500",
+  meetup: "bg-green-500/20 text-green-500",
+  conference: "bg-purple-500/20 text-purple-500",
+  social: "bg-orange-500/20 text-orange-500",
+  other: "bg-gray-500/20 text-gray-500",
+};
+
 export function EventsList() {
-  const { data: events, isLoading } = useQuery({
+  const { data: events, isLoading, refetch } = useQuery({
     queryKey: ['events'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -40,6 +52,28 @@ export function EventsList() {
       return data as Event[];
     },
   });
+
+  // Subscribe to real-time changes
+  useEffect(() => {
+    const channel = supabase
+      .channel('events-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'events'
+        },
+        () => {
+          refetch();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [refetch]);
 
   if (isLoading) {
     return (
@@ -106,7 +140,7 @@ export function EventsList() {
                       <div className="w-24 h-24 bg-muted rounded-lg flex-shrink-0" />
                     )}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between">
+                      <div className="flex items-start justify-between gap-4">
                         <div>
                           <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
                             {event.title}
@@ -117,11 +151,20 @@ export function EventsList() {
                             </p>
                           )}
                         </div>
-                        {event.status === 'published' && (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/20 text-primary">
-                            Live
-                          </span>
-                        )}
+                        <div className="flex flex-col items-end gap-2">
+                          {event.status === 'published' && (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/20 text-primary">
+                              Live
+                            </span>
+                          )}
+                          <Badge 
+                            variant="secondary"
+                            className={`${categoryColors[event.category] || categoryColors.other}`}
+                          >
+                            <Tag className="w-3 h-3 mr-1" />
+                            {event.category}
+                          </Badge>
+                        </div>
                       </div>
                       <div className="flex flex-wrap gap-4 mt-3 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1.5">
