@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DatePicker } from "@/components/ui/date-time-picker/date-time-picker";
+import { DateTimePicker } from "@/components/ui/date-time-picker/date-time-picker";
 import { categoryColors } from "../list/types";
 
 interface EventFiltersProps {
@@ -57,15 +57,15 @@ export function EventFilters({
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label>Start Date</Label>
-          <DatePicker
-            date={startDate}
+          <DateTimePicker
+            date={startDate || new Date()}
             setDate={onStartDateChange}
           />
         </div>
         <div className="space-y-2">
           <Label>End Date</Label>
-          <DatePicker
-            date={endDate}
+          <DateTimePicker
+            date={endDate || new Date()}
             setDate={onEndDateChange}
           />
         </div>
