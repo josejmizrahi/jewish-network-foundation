@@ -10,6 +10,7 @@ import { EventOrganizer } from "./detail/EventOrganizer";
 import { EventAttendees } from "./detail/EventAttendees";
 import { EventRegistration } from "./detail/EventRegistration";
 import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Event {
   id: string;
@@ -35,6 +36,7 @@ interface Event {
 export function EventDetail() {
   const { id } = useParams();
   const { user } = useAuth();
+  const { toast } = useToast();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const { data: event, isLoading } = useQuery({
@@ -70,6 +72,30 @@ export function EventDetail() {
     },
   });
 
+  const handleCancelEvent = async () => {
+    if (!event) return;
+    
+    try {
+      const { error } = await supabase
+        .from('events')
+        .update({ status: 'cancelled' })
+        .eq('id', event.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Event cancelled",
+        description: "The event has been cancelled successfully.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to cancel the event.",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <Card className="p-6 animate-pulse">
@@ -99,6 +125,7 @@ export function EventDetail() {
           isPrivate={event.is_private}
           isOrganizer={isOrganizer}
           onEdit={() => setIsEditDialogOpen(true)}
+          onCancel={handleCancelEvent}
           status={event.status}
         />
 

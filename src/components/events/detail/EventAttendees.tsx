@@ -19,7 +19,7 @@ interface EventAttendeesProps {
 }
 
 interface Attendee {
-  id: string;
+  event_attendees_id: string;
   user: {
     id: string;
     full_name: string;
@@ -37,7 +37,7 @@ export function EventAttendees({ eventId, isOrganizer }: EventAttendeesProps) {
       const { data, error } = await supabase
         .from('event_attendees')
         .select(`
-          id,
+          event_attendees_id:id,
           status,
           created_at,
           user:profiles(id, full_name, avatar_url)
@@ -46,7 +46,7 @@ export function EventAttendees({ eventId, isOrganizer }: EventAttendeesProps) {
         .order('created_at', { ascending: true });
 
       if (error) throw error;
-      return data as Attendee[];
+      return data as unknown as Attendee[];
     },
     enabled: isOrganizer,
   });
@@ -88,7 +88,6 @@ export function EventAttendees({ eventId, isOrganizer }: EventAttendeesProps) {
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">Attendees</h3>
         <Button variant="outline" size="sm" onClick={() => {
-          // TODO: Implement export functionality
           toast({
             title: "Coming soon",
             description: "Export functionality will be available soon.",
@@ -100,7 +99,7 @@ export function EventAttendees({ eventId, isOrganizer }: EventAttendeesProps) {
       <ScrollArea className="h-[200px] rounded-md border">
         <div className="p-4 space-y-4">
           {attendees?.map((attendee) => (
-            <div key={attendee.id} className="flex items-center justify-between">
+            <div key={attendee.event_attendees_id} className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Avatar>
                   <AvatarImage src={attendee.user.avatar_url} />
@@ -123,7 +122,7 @@ export function EventAttendees({ eventId, isOrganizer }: EventAttendeesProps) {
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem 
                       className="text-destructive"
-                      onClick={() => handleRemoveAttendee(attendee.id)}
+                      onClick={() => handleRemoveAttendee(attendee.event_attendees_id)}
                     >
                       <UserX className="h-4 w-4 mr-2" />
                       Remove Attendee
