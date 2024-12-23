@@ -1,12 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { format } from "date-fns";
-import { useEffect } from "react";
+import { format, isAfter, isBefore, parseISO } from "date-fns";
+import { useEffect, useState } from "react";
 import { LoadingSkeleton } from "./list/LoadingSkeleton";
 import { EventDateGroup } from "./list/EventDateGroup";
 import { Event, categoryColors } from "./list/types";
+import { EventFilters } from "./filters/EventFilters";
 
 export function EventsList() {
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("all");
+  const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date>();
+
   const { data: events, isLoading, refetch } = useQuery({
     queryKey: ['events'],
     queryFn: async () => {
@@ -57,6 +63,21 @@ export function EventsList() {
     );
   }
 
+  // Filter events based on search, category, and date range
+  const filteredEvents = events.filter(event => {
+    const matchesSearch = search === "" || 
+      event.title.toLowerCase().includes(search.toLowerCase()) ||
+      (event.description?.toLowerCase().includes(search.toLowerCase()) ?? false);
+
+    const matchesCategory = category === "all" || event.category === category;
+
+    const eventDate = parseISO(event.start_time);
+    const matchesStartDate = !startDate || isAfter(eventDate, startDate);
+    const matchesEndDate = !endDate || isBefore(eventDate, endDate);
+
+    return matchesSearch && matchesCategory && matchesStartDate && matchesEndDate;
+  });
+
   const groupEventsByDate = (events: Event[]) => {
     const groups: { [key: string]: Event[] } = {};
     events.forEach(event => {
@@ -69,10 +90,40 @@ export function EventsList() {
     return groups;
   };
 
-  const groupedEvents = groupEventsByDate(events);
+  const groupedEvents = groupEventsByDate(filteredEvents);
+
+  if (Object.keys(groupedEvents).length === 0) {
+    return (
+      <div className="space-y-8">
+        <EventFilters
+          search={search}
+          onSearchChange={setSearch}
+          category={category}
+          onCategoryChange={setCategory}
+          startDate={startDate}
+          onStartDateChange={setStartDate}
+          endDate={endDate}
+          onEndDateChange={setEndDate}
+        />
+        <div className="text-center py-12 bg-card rounded-xl">
+          <p className="text-muted-foreground">No events match your filters</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
+      <EventFilters
+        search={search}
+        onSearchChange={setSearch}
+        category={category}
+        onCategoryChange={setCategory}
+        startDate={startDate}
+        onStartDateChange={setStartDate}
+        endDate={endDate}
+        onEndDateChange={setEndDate}
+      />
       {Object.entries(groupedEvents).map(([date, dateEvents]) => (
         <EventDateGroup
           key={date}
