@@ -11,6 +11,7 @@ export const eventFormSchema = z.object({
   meeting_url: z.string().url().optional(),
   max_capacity: z.number().int().positive().optional(),
   is_private: z.boolean().default(false),
+  cover_image: z.string().optional(),
 });
 
 export type EventFormValues = z.infer<typeof eventFormSchema>;
