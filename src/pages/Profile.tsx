@@ -29,7 +29,9 @@ export default function ProfilePage() {
     role: 'basic_member',
     points: 0,
     created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
+    updated_at: new Date().toISOString(),
+    profile_completed: false,
+    onboarding_step: 'welcome'
   });
 
   useEffect(() => {
