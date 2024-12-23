@@ -46,18 +46,18 @@ export function NavMain({ items }: NavMainProps) {
               {item.items?.length ? (
                 <>
                   <CollapsibleTrigger asChild>
-                    <Link to={item.url} className="w-full">
-                      <SidebarMenuButton 
-                        tooltip={item.title}
-                        isActive={location.pathname === item.url || 
-                                item.items?.some(subItem => location.pathname === subItem.url)}
-                        className="transition-colors duration-200 hover:bg-accent/80"
-                      >
+                    <SidebarMenuButton 
+                      tooltip={item.title}
+                      isActive={location.pathname === item.url || 
+                              item.items?.some(subItem => location.pathname === subItem.url)}
+                      className="transition-colors duration-200 hover:bg-accent/80 w-full"
+                    >
+                      <Link to={item.url} className="flex items-center gap-2 w-full group-data-[collapsible=icon]:justify-center">
                         <item.icon className="h-4 w-4 transition-transform duration-200 group-data-[collapsible=icon]:mx-auto" />
-                        <span>{item.title}</span>
+                        <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
                         <ChevronRight className="ml-auto h-4 w-4 shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-90 group-data-[collapsible=icon]:hidden" />
-                      </SidebarMenuButton>
-                    </Link>
+                      </Link>
+                    </SidebarMenuButton>
                   </CollapsibleTrigger>
                   <CollapsibleContent className="animate-accordion-down">
                     <SidebarMenuSub>
@@ -80,19 +80,19 @@ export function NavMain({ items }: NavMainProps) {
                   </CollapsibleContent>
                 </>
               ) : (
-                <Link 
-                  to={item.url}
-                  className="w-full"
+                <SidebarMenuButton 
+                  tooltip={item.title} 
+                  isActive={location.pathname === item.url}
+                  className="transition-colors duration-200 hover:bg-accent/80 w-full"
                 >
-                  <SidebarMenuButton 
-                    tooltip={item.title} 
-                    isActive={location.pathname === item.url}
-                    className="transition-colors duration-200 hover:bg-accent/80"
+                  <Link 
+                    to={item.url}
+                    className="flex items-center gap-2 w-full group-data-[collapsible=icon]:justify-center"
                   >
                     <item.icon className="h-4 w-4 transition-transform duration-200 group-data-[collapsible=icon]:mx-auto" />
-                    <span>{item.title}</span>
-                  </SidebarMenuButton>
-                </Link>
+                    <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
+                  </Link>
+                </SidebarMenuButton>
               )}
             </SidebarMenuItem>
           </Collapsible>
