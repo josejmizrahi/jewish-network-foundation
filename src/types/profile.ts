@@ -21,6 +21,7 @@ export interface Profile {
   is_public: boolean | null;
   social_links: Record<string, string> | null | Json;
   custom_username: string | null;
+  badge_style: string | null;
 }
 
 // Add Json type to handle Supabase JSONB
