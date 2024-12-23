@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { Loader2 } from "lucide-react"
+import { OnboardingModal } from "@/components/onboarding/OnboardingModal"
 
 export default function Login() {
   const navigate = useNavigate()
@@ -50,6 +51,7 @@ export default function Login() {
         </a>
         <LoginForm />
       </div>
+      <OnboardingModal />
     </div>
   )
 }
