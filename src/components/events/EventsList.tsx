@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { format, isAfter, isBefore, parseISO } from "date-fns";
 import { useState } from "react";
 import { LoadingSkeleton } from "./list/LoadingSkeleton";
 import { EventDateGroup } from "./list/EventDateGroup";
 import { Event, categoryColors } from "./list/types";
 import { EventFilters } from "./filters/EventFilters";
+import { EmptyState } from "./list/EmptyState";
+import { filterEvents, groupEventsByDate } from "./list/utils/eventGrouping";
 
 export function EventsList() {
   const [search, setSearch] = useState("");
@@ -33,42 +34,10 @@ export function EventsList() {
   }
 
   if (!events?.length) {
-    return (
-      <div className="text-center py-12 bg-card rounded-xl">
-        <p className="text-muted-foreground">No events found</p>
-      </div>
-    );
+    return <EmptyState hasFilters={false} />;
   }
 
-  // Filter events based on search, category, and time
-  const filteredEvents = events.filter(event => {
-    const matchesSearch = search === "" || 
-      event.title.toLowerCase().includes(search.toLowerCase()) ||
-      (event.description?.toLowerCase().includes(search.toLowerCase()) ?? false);
-
-    const matchesCategory = category === "all" || event.category === category;
-
-    const now = new Date();
-    const eventDate = parseISO(event.start_time);
-    const matchesTimeFilter = timeFilter === "all" || 
-      (timeFilter === "upcoming" && isAfter(eventDate, now)) ||
-      (timeFilter === "past" && isBefore(eventDate, now));
-
-    return matchesSearch && matchesCategory && matchesTimeFilter;
-  });
-
-  const groupEventsByDate = (events: Event[]) => {
-    const groups: { [key: string]: Event[] } = {};
-    events.forEach(event => {
-      const date = format(new Date(event.start_time), 'MMM dd');
-      if (!groups[date]) {
-        groups[date] = [];
-      }
-      groups[date].push(event);
-    });
-    return groups;
-  };
-
+  const filteredEvents = filterEvents(events, search, category, timeFilter);
   const groupedEvents = groupEventsByDate(filteredEvents);
 
   if (Object.keys(groupedEvents).length === 0) {
@@ -82,9 +51,7 @@ export function EventsList() {
           timeFilter={timeFilter}
           onTimeFilterChange={setTimeFilter}
         />
-        <div className="text-center py-12 bg-card rounded-xl">
-          <p className="text-muted-foreground">No events match your filters</p>
-        </div>
+        <EmptyState hasFilters={true} />
       </div>
     );
   }
