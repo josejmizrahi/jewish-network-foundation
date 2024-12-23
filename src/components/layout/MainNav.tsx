@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { MenuIcon } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 export function MainNav() {
+  const { user, signOut } = useAuth();
+
   return (
     <header className="border-b">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -19,12 +22,23 @@ export function MainNav() {
           <Link to="/resources" className="text-muted-foreground hover:text-primary transition-colors">
             Resources
           </Link>
-          <Button asChild variant="outline">
-            <Link to="/login">Sign In</Link>
-          </Button>
-          <Button asChild>
-            <Link to="/register">Join Now</Link>
-          </Button>
+          {user ? (
+            <>
+              <Button asChild variant="outline">
+                <Link to="/profile">Profile</Link>
+              </Button>
+              <Button onClick={signOut}>Sign Out</Button>
+            </>
+          ) : (
+            <>
+              <Button asChild variant="outline">
+                <Link to="/login">Sign In</Link>
+              </Button>
+              <Button asChild>
+                <Link to="/login">Join Now</Link>
+              </Button>
+            </>
+          )}
         </nav>
         <Button variant="ghost" size="icon" className="md:hidden">
           <MenuIcon className="h-6 w-6" />
