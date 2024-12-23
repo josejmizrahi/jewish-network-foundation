@@ -4,15 +4,10 @@ import { AppSidebar } from "@/components/layout/AppSidebar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "react-router-dom";
-import {
-  Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DashboardStats } from "@/components/dashboard/DashboardStats";
+import { DashboardChart } from "@/components/dashboard/DashboardChart";
+import { DashboardEvents } from "@/components/dashboard/DashboardEvents";
+import { DashboardActivity } from "@/components/dashboard/DashboardActivity";
 
 export default function Index() {
   const { user } = useAuth();
@@ -37,85 +32,14 @@ export default function Index() {
                   </div>
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Profile Completion</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">
-                        {user.user_metadata.profile_completed ? '100%' : '80%'}
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        Complete your profile to unlock all features
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Community Status</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">
-                        {user.user_metadata.role || 'Member'}
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        Your current membership level
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Activity Points</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">
-                        {user.user_metadata.points || '0'}
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        Points earned through participation
-                      </p>
-                    </CardContent>
-                  </Card>
+                <DashboardStats />
+
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+                  <DashboardChart />
+                  <DashboardEvents />
                 </div>
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle>About Us</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">
-                      Building the Digital Jewish Nation - Join a global community dedicated to preserving 
-                      and advancing Jewish culture, values, and innovation in the digital age.
-                    </p>
-                    <div className="mt-4 space-y-4">
-                      <div className="flex items-center">
-                        <div className="ml-4 space-y-1">
-                          <p className="text-sm font-medium leading-none">Community</p>
-                          <p className="text-sm text-muted-foreground">
-                            Connect with Jews worldwide
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="ml-4 space-y-1">
-                          <p className="text-sm font-medium leading-none">Identity</p>
-                          <p className="text-sm text-muted-foreground">
-                            Preserve Jewish identity
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="ml-4 space-y-1">
-                          <p className="text-sm font-medium leading-none">Innovation</p>
-                          <p className="text-sm text-muted-foreground">
-                            Build the future of Jewish life
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <DashboardActivity user={user} />
               </div>
             </SidebarInset>
           </div>
@@ -128,7 +52,6 @@ export default function Index() {
     <div className="min-h-screen bg-background">
       <MainNav />
       
-      {/* Hero Section */}
       <div className="relative isolate px-6 pt-14 lg:px-8">
         <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
           <div className="text-center">
@@ -151,7 +74,6 @@ export default function Index() {
         </div>
       </div>
 
-      {/* Features Section */}
       <div className="mx-auto max-w-7xl px-6 lg:px-8 py-24 sm:py-32">
         <div className="mx-auto max-w-2xl lg:text-center">
           <h2 className="text-base font-semibold leading-7 text-primary">Our Community</h2>
