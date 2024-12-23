@@ -49,14 +49,17 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           created_at: string
+          email_notifications: boolean | null
           full_name: string | null
           id: string
           is_admin: boolean | null
           location: string | null
+          marketing_emails: boolean | null
           onboarding_step: string | null
           points: number | null
           profile_completed: boolean | null
           role: string | null
+          security_emails: boolean | null
           updated_at: string
           username: string | null
           verification_status: string | null
@@ -65,14 +68,17 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
+          email_notifications?: boolean | null
           full_name?: string | null
           id: string
           is_admin?: boolean | null
           location?: string | null
+          marketing_emails?: boolean | null
           onboarding_step?: string | null
           points?: number | null
           profile_completed?: boolean | null
           role?: string | null
+          security_emails?: boolean | null
           updated_at?: string
           username?: string | null
           verification_status?: string | null
@@ -81,14 +87,17 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
+          email_notifications?: boolean | null
           full_name?: string | null
           id?: string
           is_admin?: boolean | null
           location?: string | null
+          marketing_emails?: boolean | null
           onboarding_step?: string | null
           points?: number | null
           profile_completed?: boolean | null
           role?: string | null
+          security_emails?: boolean | null
           updated_at?: string
           username?: string | null
           verification_status?: string | null

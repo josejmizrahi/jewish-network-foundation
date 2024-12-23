@@ -31,11 +31,13 @@ export default function Settings() {
 
       if (error) throw error;
       
-      // Ensure both verification_status and role are properly typed
       const typedProfile: Profile = {
         ...data,
         verification_status: (data.verification_status || 'pending') as VerificationStatus,
-        role: (data.role || 'basic_member') as UserRole
+        role: (data.role || 'basic_member') as UserRole,
+        email_notifications: data.email_notifications || false,
+        marketing_emails: data.marketing_emails || false,
+        security_emails: data.security_emails || true
       };
       
       setProfile(typedProfile);
@@ -51,6 +53,9 @@ export default function Settings() {
         .update({
           username: values.display_name,
           bio: values.bio,
+          email_notifications: values.email_notifications,
+          marketing_emails: values.marketing_emails,
+          security_emails: values.security_emails
         })
         .eq('id', user?.id);
 
@@ -165,7 +170,7 @@ export default function Settings() {
                     <TabsTrigger value="general">General</TabsTrigger>
                     <TabsTrigger value="notifications">Notifications</TabsTrigger>
                     <TabsTrigger value="security">Security</TabsTrigger>
-                    {profileData.is_admin && (
+                    {profileData?.is_admin && (
                       <TabsTrigger value="admin">Admin</TabsTrigger>
                     )}
                   </TabsList>
@@ -195,9 +200,9 @@ export default function Settings() {
                           onSubmit={updateNotifications}
                           isLoading={isUpdatingNotifications}
                           defaultValues={{
-                            email_notifications: profileData.email_notifications || false,
-                            marketing_emails: profileData.marketing_emails || false,
-                            security_emails: true,
+                            email_notifications: profileData?.email_notifications || false,
+                            marketing_emails: profileData?.marketing_emails || false,
+                            security_emails: profileData?.security_emails || true,
                           }}
                         />
                       </CardContent>
@@ -218,7 +223,7 @@ export default function Settings() {
                     </Card>
                   </TabsContent>
 
-                  {profileData.is_admin && (
+                  {profileData?.is_admin && (
                     <TabsContent value="admin" className="space-y-4">
                       <VerificationManagement />
                     </TabsContent>
