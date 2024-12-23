@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { NavItems } from "@/components/nav/nav-items";
 import { UserMenu } from "@/components/nav/user-menu";
 import { SearchBar } from "@/components/nav/search-bar";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 export function MainNav({ children }: { children?: React.ReactNode }) {
   return (
@@ -24,6 +25,8 @@ export function MainNav({ children }: { children?: React.ReactNode }) {
           <div className="hidden md:flex">
             <SearchBar />
           </div>
+
+          <ThemeToggle />
 
           <Sheet>
             <SheetTrigger asChild className="md:hidden">
