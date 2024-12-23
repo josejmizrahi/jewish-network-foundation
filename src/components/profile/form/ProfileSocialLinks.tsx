@@ -9,11 +9,17 @@ interface ProfileSocialLinksProps {
 
 export function ProfileSocialLinks({ profile, onProfileChange }: ProfileSocialLinksProps) {
   const handleSocialLinkChange = (platform: string, value: string) => {
+    const currentLinks = (profile.social_links as Record<string, string>) || {};
     const updatedLinks = {
-      ...(profile.social_links as Record<string, string>),
+      ...currentLinks,
       [platform]: value,
     };
     onProfileChange({ ...profile, social_links: updatedLinks });
+  };
+
+  const getSocialLink = (platform: string): string => {
+    const links = (profile.social_links as Record<string, string>) || {};
+    return links[platform] || "";
   };
 
   return (
@@ -26,19 +32,19 @@ export function ProfileSocialLinks({ profile, onProfileChange }: ProfileSocialLi
         <Input
           type="url"
           placeholder="Twitter URL"
-          value={(profile.social_links as Record<string, string>)?.twitter || ""}
+          value={getSocialLink("twitter")}
           onChange={(e) => handleSocialLinkChange("twitter", e.target.value)}
         />
         <Input
           type="url"
           placeholder="LinkedIn URL"
-          value={(profile.social_links as Record<string, string>)?.linkedin || ""}
+          value={getSocialLink("linkedin")}
           onChange={(e) => handleSocialLinkChange("linkedin", e.target.value)}
         />
         <Input
           type="url"
           placeholder="GitHub URL"
-          value={(profile.social_links as Record<string, string>)?.github || ""}
+          value={getSocialLink("github")}
           onChange={(e) => handleSocialLinkChange("github", e.target.value)}
         />
       </div>

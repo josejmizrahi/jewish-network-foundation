@@ -37,7 +37,9 @@ export default function Settings() {
         role: (data.role || 'basic_member') as UserRole,
         email_notifications: data.email_notifications || false,
         marketing_emails: data.marketing_emails || false,
-        security_emails: data.security_emails || true
+        security_emails: data.security_emails || true,
+        social_links: data.social_links || {},
+        is_public: data.is_public ?? true
       };
       
       setProfile(typedProfile);

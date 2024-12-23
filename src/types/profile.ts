@@ -19,6 +19,15 @@ export interface Profile {
   marketing_emails: boolean | null;
   security_emails: boolean | null;
   is_public: boolean | null;
-  social_links: Record<string, string> | null;
+  social_links: Record<string, string> | null | Json;
   custom_username: string | null;
 }
+
+// Add Json type to handle Supabase JSONB
+type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
