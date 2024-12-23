@@ -5,6 +5,7 @@ import { ProfileBasicInfo } from "./form/ProfileBasicInfo";
 import { ProfileBioLocation } from "./form/ProfileBioLocation";
 import { ProfileSocialLinks } from "./form/ProfileSocialLinks";
 import { ProfilePrivacy } from "./form/ProfilePrivacy";
+import { BadgeCustomization } from "./BadgeCustomization";
 import type { Profile } from "@/types/profile";
 
 interface ProfileFormProps {
@@ -30,6 +31,10 @@ export function ProfileForm({ profile, updating, onUpdateProfile, onProfileChang
         onProfileChange={onProfileChange}
       />
       <ProfileBioLocation 
+        profile={profile}
+        onProfileChange={onProfileChange}
+      />
+      <BadgeCustomization
         profile={profile}
         onProfileChange={onProfileChange}
       />

@@ -21,7 +21,10 @@ export function ProfileHeader({ profile, email }: ProfileHeaderProps) {
           <div className="flex-1 space-y-2">
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-2xl font-bold">{profile.full_name || "Anonymous"}</h1>
-              <VerificationBadge status={profile.verification_status} />
+              <VerificationBadge 
+                status={profile.verification_status} 
+                badgeStyle={profile.badge_style}
+              />
             </div>
             {profile.username && (
               <p className="text-muted-foreground">@{profile.username}</p>

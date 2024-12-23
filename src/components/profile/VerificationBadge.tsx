@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, AlertCircle, Clock, HelpCircle } from "lucide-react";
+import { CheckCircle2, AlertCircle, Clock, HelpCircle, Shield, ShieldCheck, BadgeCheck } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -10,18 +10,29 @@ import type { Profile } from "@/types/profile";
 
 interface VerificationBadgeProps {
   status: Profile['verification_status'];
+  badgeStyle?: string;
 }
 
-export function VerificationBadge({ status }: VerificationBadgeProps) {
+export function VerificationBadge({ status, badgeStyle = 'default' }: VerificationBadgeProps) {
   const getStatusInfo = () => {
+    const icons = {
+      default: BadgeCheck,
+      shield: Shield,
+      check: CheckCircle2,
+      secure: ShieldCheck,
+    };
+
     switch (status) {
       case 'verified':
         return {
-          icon: CheckCircle2,
+          icon: icons[badgeStyle as keyof typeof icons] || BadgeCheck,
           label: 'Verified',
           description: 'This profile has been verified by our team',
           variant: 'default' as const,
-          className: 'bg-green-500'
+          className: badgeStyle === 'shield' ? 'bg-blue-500' :
+                    badgeStyle === 'check' ? 'bg-green-500' :
+                    badgeStyle === 'secure' ? 'bg-purple-500' :
+                    'bg-primary'
         };
       case 'rejected':
         return {
