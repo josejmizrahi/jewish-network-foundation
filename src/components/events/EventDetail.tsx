@@ -46,7 +46,7 @@ export function EventDetail() {
         .from('events')
         .select(`
           *,
-          organizer:profiles(full_name, avatar_url)
+          organizer:profiles!events_organizer_id_fkey(full_name, avatar_url)
         `)
         .eq('id', id)
         .single();
