@@ -26,12 +26,12 @@ export default function Profile() {
         .single();
 
       if (error) throw error;
-      return data as Profile;
+      
+      const profile = data as Profile;
+      setProfileData(profile);
+      return profile;
     },
     enabled: !!user?.id,
-    onSuccess: (data) => {
-      setProfileData(data);
-    },
   });
 
   const { mutate: updateProfile, isPending: isUpdating } = useMutation({
