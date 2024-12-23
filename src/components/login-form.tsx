@@ -116,9 +116,9 @@ export function LoginForm({
                       loading_button_label: "Signing in...",
                       social_provider_text: "Continue with {{provider}}",
                     },
-                  },
-                  messages: {
-                    "user_already_exists": "An account with this email already exists. Please sign in instead.",
+                    errors: {
+                      user_already_exists: "An account with this email already exists. Please sign in instead."
+                    }
                   }
                 }}
               />
@@ -159,9 +159,9 @@ export function LoginForm({
                       loading_button_label: "Signing up...",
                       social_provider_text: "Continue with {{provider}}",
                     },
-                  },
-                  messages: {
-                    "user_already_exists": "An account with this email already exists. Please sign in instead.",
+                    errors: {
+                      user_already_exists: "An account with this email already exists. Please sign in instead."
+                    }
                   }
                 }}
               />
