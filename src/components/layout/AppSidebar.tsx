@@ -16,7 +16,6 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getNavItems } from "./sidebar/NavItems";
 import { isProfile } from "@/types/profile";
-import type { Profile } from "@/types/profile";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth();
@@ -35,7 +34,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
       if (error) throw error;
       
-      // Validate the profile data
       if (data && isProfile(data)) {
         return data;
       }
@@ -61,8 +59,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   ];
 
   return (
-    <Sidebar collapsible="icon" className="border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60" {...props}>
-      <SidebarHeader className="h-14 border-b px-2">
+    <Sidebar 
+      collapsible="icon" 
+      className="border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60" 
+      {...props}
+    >
+      <SidebarHeader className="h-14 border-b px-2 flex items-center">
         <TeamSwitcher teams={teams} />
       </SidebarHeader>
       <SidebarContent className="p-2">
