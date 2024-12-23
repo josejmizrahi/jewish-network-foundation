@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 import { ProfileForm } from "@/components/profile/ProfileForm";
 import { MembershipCard } from "@/components/profile/MembershipCard";
+import { ProfileProgress } from "@/components/profile/ProfileProgress";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -99,13 +100,16 @@ export default function Profile() {
               <div className="space-y-6">
                 <h1 className="text-3xl font-bold">Profile</h1>
                 <div className="grid gap-6 md:grid-cols-2">
-                  <ProfileForm
-                    profile={profileData || profile}
-                    updating={isUpdating}
-                    onUpdateProfile={handleUpdateProfile}
-                    onProfileChange={handleProfileChange}
-                  />
                   <div className="space-y-6">
+                    <ProfileForm
+                      profile={profileData || profile}
+                      updating={isUpdating}
+                      onUpdateProfile={handleUpdateProfile}
+                      onProfileChange={handleProfileChange}
+                    />
+                  </div>
+                  <div className="space-y-6">
+                    <ProfileProgress profile={profile} />
                     <MembershipCard profile={profile} />
                     <Card>
                       <CardHeader>

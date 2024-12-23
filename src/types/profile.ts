@@ -1,3 +1,5 @@
+import { VerificationStatus, UserRole } from "./verification";
+
 export interface Profile {
   id: string;
   username: string | null;
@@ -9,7 +11,7 @@ export interface Profile {
   updated_at: string;
   profile_completed: boolean | null;
   onboarding_step: string | null;
-  verification_status: 'pending' | 'verified' | 'rejected';
-  role: 'basic_member' | 'verified_member' | 'leader';
+  verification_status: VerificationStatus;
+  role: UserRole;
   points: number | null;
 }
