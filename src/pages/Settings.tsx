@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import type { Profile } from "@/types/profile";
 import type { VerificationStatus } from "@/types/verification";
+import type { UserRole } from "@/types/verification";
 
 export default function Settings() {
   const { user } = useAuth();
@@ -28,10 +29,11 @@ export default function Settings() {
 
       if (error) throw error;
 
-      // Ensure the verification_status is of the correct type
+      // Ensure both verification_status and role are of the correct type
       const typedData: Profile = {
         ...data,
         verification_status: (data.verification_status || 'pending') as VerificationStatus,
+        role: (data.role || 'basic_member') as UserRole,
       };
       
       setProfile(typedData);
