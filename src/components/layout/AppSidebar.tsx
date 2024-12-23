@@ -1,28 +1,20 @@
-"use client"
-
-import * as React from "react"
-import {
-  BookOpen,
-  GalleryVerticalEnd,
-  Home,
-  User,
-  Shield,
-} from "lucide-react"
-
-import { NavMain } from "@/components/nav-main"
-import { NavUser } from "@/components/nav-user"
-import { TeamSwitcher } from "@/components/team-switcher"
+import * as React from "react";
+import { GalleryVerticalEnd } from "lucide-react";
+import { NavMain } from "@/components/nav-main";
+import { NavUser } from "@/components/nav-user";
+import { TeamSwitcher } from "@/components/team-switcher";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar"
-import { useAuth } from "@/hooks/useAuth"
-import { useLocation } from "react-router-dom"
-import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/integrations/supabase/client"
+} from "@/components/ui/sidebar";
+import { useAuth } from "@/hooks/useAuth";
+import { useLocation } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { getNavItems } from "./sidebar/NavItems";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth();
@@ -45,53 +37,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     enabled: !!user?.id,
   });
 
-  const navItems = [
-    {
-      title: "Home",
-      url: "/",
-      icon: Home,
-      isActive: location.pathname === "/",
-    },
-    // Only show About section for non-authenticated users
-    ...(!user ? [{
-      title: "About",
-      url: "/about",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Community",
-          url: "/community",
-        },
-        {
-          title: "Resources",
-          url: "/resources",
-        },
-      ],
-      isActive: location.pathname.startsWith("/about") || 
-                location.pathname === "/community" || 
-                location.pathname === "/resources",
-    }] : []),
-    // Only show Profile section for authenticated users
-    ...(user ? [{
-      title: "Profile",
-      url: "/profile",
-      icon: User,
-      items: [
-        {
-          title: "Settings",
-          url: "/settings",
-        },
-      ],
-      isActive: location.pathname === "/profile" || location.pathname === "/settings",
-    }] : []),
-    // Only show Verification Management for admins
-    ...(profile?.is_admin ? [{
-      title: "Verification",
-      url: "/verification-management",
-      icon: Shield,
-      isActive: location.pathname === "/verification-management",
-    }] : []),
-  ];
+  const navItems = getNavItems(user, profile, location.pathname);
 
   const userData = {
     name: user?.user_metadata?.full_name || "User",
@@ -120,5 +66,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

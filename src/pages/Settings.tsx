@@ -1,11 +1,8 @@
 import { MainNav } from "@/components/layout/MainNav";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/AppSidebar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { SettingsForm } from "@/components/settings/SettingsForm";
-import { NotificationsForm } from "@/components/settings/NotificationsForm";
-import { SecurityForm } from "@/components/settings/SecurityForm";
+import { SettingsHeader } from "@/components/settings/SettingsHeader";
+import { SettingsTabs } from "@/components/settings/SettingsTabs";
 import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -173,64 +170,16 @@ export default function Settings() {
           <SidebarInset>
             <div className="container mx-auto px-4 py-8">
               <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <h1 className="text-3xl font-bold">Settings</h1>
-                </div>
-                <Tabs defaultValue="general" className="space-y-4">
-                  <TabsList>
-                    <TabsTrigger value="general">General</TabsTrigger>
-                    <TabsTrigger value="notifications">Notifications</TabsTrigger>
-                    <TabsTrigger value="security">Security</TabsTrigger>
-                  </TabsList>
-
-                  <TabsContent value="general" className="space-y-4">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>General Settings</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <SettingsForm
-                          profile={profileData}
-                          onSubmit={updateSettings}
-                          isLoading={isUpdating}
-                        />
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-
-                  <TabsContent value="notifications" className="space-y-4">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Notification Preferences</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <NotificationsForm
-                          onSubmit={updateNotifications}
-                          isLoading={isUpdatingNotifications}
-                          defaultValues={{
-                            email_notifications: profileData.email_notifications || false,
-                            marketing_emails: profileData.marketing_emails || false,
-                            security_emails: profileData.security_emails || true,
-                          }}
-                        />
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-
-                  <TabsContent value="security" className="space-y-4">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Security Settings</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <SecurityForm
-                          onSubmit={updatePassword}
-                          isLoading={isUpdatingPassword}
-                        />
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-                </Tabs>
+                <SettingsHeader />
+                <SettingsTabs
+                  profileData={profileData}
+                  onUpdateSettings={updateSettings}
+                  onUpdateNotifications={updateNotifications}
+                  onUpdatePassword={updatePassword}
+                  isUpdating={isUpdating}
+                  isUpdatingNotifications={isUpdatingNotifications}
+                  isUpdatingPassword={isUpdatingPassword}
+                />
               </div>
             </div>
           </SidebarInset>
