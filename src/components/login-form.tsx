@@ -47,10 +47,9 @@ export function LoginForm({
     }
   })
 
-  // Handle auth errors
-  const handleAuthError = (error: Error) => {
-    const errorMessage = error.message;
-    if (errorMessage.includes("user_already_exists")) {
+  // Handle auth state messages
+  const handleAuthMessage = (message: string) => {
+    if (message.includes("user_already_exists")) {
       toast({
         title: "Account already exists",
         description: "Please sign in with your existing account.",
@@ -60,7 +59,7 @@ export function LoginForm({
     } else {
       toast({
         title: "Error",
-        description: errorMessage,
+        description: message,
         variant: "destructive",
       });
     }
@@ -118,8 +117,10 @@ export function LoginForm({
                       social_provider_text: "Continue with {{provider}}",
                     },
                   },
+                  messages: {
+                    "user_already_exists": "An account with this email already exists. Please sign in instead.",
+                  }
                 }}
-                onError={handleAuthError}
               />
             </TabsContent>
             <TabsContent value="signup">
@@ -159,8 +160,10 @@ export function LoginForm({
                       social_provider_text: "Continue with {{provider}}",
                     },
                   },
+                  messages: {
+                    "user_already_exists": "An account with this email already exists. Please sign in instead.",
+                  }
                 }}
-                onError={handleAuthError}
               />
             </TabsContent>
           </Tabs>
