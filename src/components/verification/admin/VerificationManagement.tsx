@@ -15,6 +15,8 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { format } from "date-fns";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
+import { VerificationRequestList } from "./VerificationRequestList";
+import { ReviewForm } from "./ReviewForm";
 import type { VerificationRequest } from "@/types/verification";
 
 interface ProfileData {
@@ -77,6 +79,27 @@ export function VerificationManagement() {
 
         if (profileError) throw profileError;
       }
+
+      // Send email notification
+      const userId = requests?.find(r => r.id === selectedRequestId)?.user_id;
+      if (userId) {
+        const emailRes = await supabase.functions.invoke('send-verification-email', {
+          body: {
+            userId,
+            status: status === 'approved' ? 'verified' : 'rejected',
+            notes: reviewNotes
+          }
+        });
+
+        if (emailRes.error) {
+          console.error('Error sending email:', emailRes.error);
+          toast({
+            title: "Warning",
+            description: "Status updated but failed to send email notification.",
+            variant: "destructive",
+          });
+        }
+      }
     },
     onSuccess: () => {
       toast({
@@ -106,97 +129,25 @@ export function VerificationManagement() {
         <CardTitle>Verification Requests</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        {requests?.map((request) => (
-          <Card key={request.id} className="p-4">
-            <div className="flex items-start justify-between">
-              <div className="space-y-1">
-                <p className="font-medium">{request.profiles.full_name}</p>
-                <p className="text-sm text-muted-foreground">
-                  Submitted: {format(new Date(request.submitted_at), 'PPp')}
-                </p>
-                <Badge 
-                  variant={
-                    request.status === 'approved' 
-                      ? 'default'
-                      : request.status === 'rejected'
-                      ? 'destructive'
-                      : 'secondary'
-                  }
-                >
-                  {request.status}
-                </Badge>
-              </div>
-              <Button
-                variant="outline"
-                onClick={() => setSelectedRequestId(request.id)}
-                disabled={request.status !== 'pending'}
-              >
-                Review
-              </Button>
-            </div>
-
-            {selectedRequestId === request.id && (
-              <div className="mt-4 space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Status</label>
-                  <Select
-                    value={status}
-                    onValueChange={(value: "approved" | "rejected") => setStatus(value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="approved">
-                        <div className="flex items-center">
-                          <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
-                          Approve
-                        </div>
-                      </SelectItem>
-                      <SelectItem value="rejected">
-                        <div className="flex items-center">
-                          <XCircle className="mr-2 h-4 w-4 text-red-500" />
-                          Reject
-                        </div>
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Review Notes</label>
-                  <Textarea
-                    value={reviewNotes}
-                    onChange={(e) => setReviewNotes(e.target.value)}
-                    placeholder="Add your review notes here..."
-                    rows={3}
-                  />
-                </div>
-
-                <div className="flex justify-end space-x-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setSelectedRequestId(null);
-                      setReviewNotes("");
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={() => updateRequest()}
-                    disabled={isUpdating}
-                  >
-                    {isUpdating && (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    )}
-                    Submit Review
-                  </Button>
-                </div>
-              </div>
-            )}
-          </Card>
-        ))}
+        <VerificationRequestList
+          requests={requests || []}
+          selectedRequestId={selectedRequestId}
+          onSelectRequest={setSelectedRequestId}
+        />
+        {selectedRequestId && (
+          <ReviewForm
+            status={status}
+            reviewNotes={reviewNotes}
+            isUpdating={isUpdating}
+            onStatusChange={setStatus}
+            onNotesChange={setReviewNotes}
+            onSubmit={() => updateRequest()}
+            onCancel={() => {
+              setSelectedRequestId(null);
+              setReviewNotes("");
+            }}
+          />
+        )}
       </CardContent>
     </Card>
   );

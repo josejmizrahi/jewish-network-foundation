@@ -23,3 +23,10 @@ export interface VerificationRequest {
   created_at: string | null;
   updated_at: string | null;
 }
+
+export interface VerificationRequestWithProfile extends VerificationRequest {
+  profiles: {
+    full_name: string | null;
+    email: string | null;
+  };
+}
