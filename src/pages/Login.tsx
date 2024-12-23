@@ -9,6 +9,7 @@ import { OnboardingModal } from "@/components/onboarding/OnboardingModal"
 export default function Login() {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
+  const [showOnboarding, setShowOnboarding] = useState(false)
 
   useEffect(() => {
     const checkSession = async () => {
@@ -20,6 +21,9 @@ export default function Login() {
     }
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_UP') {
+        setShowOnboarding(true)
+      }
       if (session) {
         navigate("/")
       }
@@ -51,7 +55,7 @@ export default function Login() {
         </a>
         <LoginForm />
       </div>
-      <OnboardingModal />
+      {showOnboarding && <OnboardingModal />}
     </div>
   )
 }

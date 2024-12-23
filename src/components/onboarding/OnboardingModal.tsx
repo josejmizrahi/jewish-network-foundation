@@ -23,71 +23,93 @@ export function OnboardingModal() {
 
   useEffect(() => {
     const checkOnboardingStatus = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("profile_completed, onboarding_step")
-          .eq("id", session.user.id)
-          .single();
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("profile_completed, onboarding_step")
+            .eq("id", session.user.id)
+            .single();
 
-        if (profile && !profile.profile_completed) {
-          setCurrentStep(profile.onboarding_step);
-          setOpen(true);
-          // Calculate initial progress
-          const currentIndex = steps.indexOf(profile.onboarding_step);
-          setProgress((currentIndex / (steps.length - 1)) * 100);
+          if (profile && !profile.profile_completed) {
+            setCurrentStep(profile.onboarding_step || "welcome");
+            setOpen(true);
+            // Calculate initial progress
+            const currentIndex = steps.indexOf(profile.onboarding_step || "welcome");
+            setProgress((currentIndex / (steps.length - 1)) * 100);
+          }
         }
+      } catch (error) {
+        console.error("Error checking onboarding status:", error);
       }
     };
 
+    // Check onboarding status when component mounts
     checkOnboardingStatus();
+
+    // Also check when auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_IN') {
+        checkOnboardingStatus();
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const updateStep = async (newStep: string) => {
     setLoading(true);
-    const { error } = await supabase
-      .from("profiles")
-      .update({ onboarding_step: newStep })
-      .eq("id", (await supabase.auth.getSession()).data.session?.user.id);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ onboarding_step: newStep })
+        .eq("id", (await supabase.auth.getSession()).data.session?.user.id);
 
-    if (error) {
+      if (error) throw error;
+
+      setCurrentStep(newStep);
+      // Update progress bar
+      const newIndex = steps.indexOf(newStep);
+      setProgress((newIndex / (steps.length - 1)) * 100);
+    } catch (error: any) {
       toast({
         title: "Error",
         description: "Failed to update progress",
         variant: "destructive",
       });
-    } else {
-      setCurrentStep(newStep);
-      // Update progress bar
-      const newIndex = steps.indexOf(newStep);
-      setProgress((newIndex / (steps.length - 1)) * 100);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const completeOnboarding = async () => {
     setLoading(true);
-    const { error } = await supabase
-      .from("profiles")
-      .update({ profile_completed: true })
-      .eq("id", (await supabase.auth.getSession()).data.session?.user.id);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ profile_completed: true })
+        .eq("id", (await supabase.auth.getSession()).data.session?.user.id);
 
-    if (error) {
+      if (error) throw error;
+
+      toast({
+        title: "Welcome aboard! 🎉",
+        description: "Your profile is now complete. Let's explore!",
+      });
+      setOpen(false);
+      navigate("/profile");
+    } catch (error: any) {
       toast({
         title: "Error",
         description: "Failed to complete onboarding",
         variant: "destructive",
       });
-    } else {
-      toast({
-        title: "Welcome aboard!",
-        description: "Your profile is now complete.",
-      });
-      setOpen(false);
-      navigate("/profile");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -100,7 +122,7 @@ export function OnboardingModal() {
           </p>
         </div>
         {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-background/80">
+          <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm">
             <Loader2 className="h-8 w-8 animate-spin" />
           </div>
         )}
