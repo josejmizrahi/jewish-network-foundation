@@ -24,7 +24,7 @@ export default function Login() {
       if (event === "SIGNED_IN") {
         navigate("/")
       }
-      if (event === "SIGNED_UP") {
+      if (event === AuthChangeEvent.SIGNED_UP) {
         setShowOnboarding(true)
       }
     })
