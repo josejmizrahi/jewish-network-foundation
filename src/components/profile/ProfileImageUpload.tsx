@@ -21,7 +21,7 @@ export function ProfileImageUpload({ avatarUrl, fullName, userId, onUploadComple
       setUploading(true);
       
       if (!event.target.files || event.target.files.length === 0) {
-        throw new Error('You must select an image to upload.');
+        return; // Just return silently if no file is selected
       }
 
       const file = event.target.files[0];
@@ -100,7 +100,7 @@ export function ProfileImageUpload({ avatarUrl, fullName, userId, onUploadComple
           ) : (
             <Upload className="h-4 w-4 mr-2" />
           )}
-          Change Avatar
+          {avatarUrl ? 'Change Avatar' : 'Add Avatar'}
           <input
             id="avatar-upload"
             type="file"
