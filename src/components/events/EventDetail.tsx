@@ -12,6 +12,7 @@ import { EventRegistration } from "./detail/EventRegistration";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { InviteMembers } from "./detail/InviteMembers";
 
 interface Event {
   id: string;
@@ -155,7 +156,10 @@ export function EventDetail() {
           )}
 
           {isOrganizer && (
-            <EventAttendees eventId={event.id} isOrganizer={isOrganizer} />
+            <>
+              <InviteMembers eventId={event.id} isOrganizer={isOrganizer} />
+              <EventAttendees eventId={event.id} isOrganizer={isOrganizer} />
+            </>
           )}
         </div>
 
