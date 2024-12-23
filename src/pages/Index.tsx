@@ -1,14 +1,74 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { Button } from "@/components/ui/button";
+import { MainNav } from "@/components/layout/MainNav";
+import { Footer } from "@/components/layout/Footer";
+import { Link } from "react-router-dom";
+import { ArrowRight, Globe, Shield, Users } from "lucide-react";
 
-const Index = () => {
+export default function Index() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
+    <div className="flex flex-col min-h-screen">
+      <MainNav />
+      <main className="flex-1">
+        {/* Hero Section */}
+        <section className="py-20 px-4 text-center bg-gradient-to-b from-muted/50">
+          <div className="container mx-auto max-w-4xl">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80">
+              Building the Digital Jewish Nation
+            </h1>
+            <p className="text-xl md:text-2xl text-muted-foreground mb-8">
+              Join a global community dedicated to preserving and advancing Jewish culture, values, and innovation in the digital age.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button asChild size="lg" className="text-lg">
+                <Link to="/register">
+                  Join the Movement
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="outline" className="text-lg">
+                <Link to="/about">Learn More</Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section className="py-20 px-4 bg-muted/30">
+          <div className="container mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Core Pillars</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="bg-background p-6 rounded-lg shadow-sm border">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                  <Users className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2">Community</h3>
+                <p className="text-muted-foreground">
+                  Connect with Jews worldwide, share resources, and build meaningful relationships.
+                </p>
+              </div>
+              <div className="bg-background p-6 rounded-lg shadow-sm border">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                  <Shield className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2">Identity</h3>
+                <p className="text-muted-foreground">
+                  Preserve and strengthen Jewish identity through digital citizenship and verification.
+                </p>
+              </div>
+              <div className="bg-background p-6 rounded-lg shadow-sm border">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                  <Globe className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2">Innovation</h3>
+                <p className="text-muted-foreground">
+                  Build the future of Jewish life through technology and collaboration.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+      <Footer />
     </div>
   );
-};
-
-export default Index;
+}
