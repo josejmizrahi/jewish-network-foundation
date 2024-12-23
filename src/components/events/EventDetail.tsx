@@ -1,17 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
+import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { EditEventDialog } from "./EditEventDialog";
-import { EventRegistration } from "./detail/EventRegistration";
+import { EventHeader } from "./detail/EventHeader";
+import { EventInfo } from "./detail/EventInfo";
+import { EventOrganizer } from "./detail/EventOrganizer";
 import { EventAttendees } from "./detail/EventAttendees";
-import { EventImage } from "./detail/EventImage";
-import { EventTimeDetails } from "./detail/EventTimeDetails";
-import { EventOptions } from "./detail/EventOptions";
+import { EventRegistration } from "./detail/EventRegistration";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { MapPin } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 interface Event {
   id: string;
@@ -99,117 +98,62 @@ export function EventDetail() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-900 text-white p-8">
-        <div className="animate-pulse space-y-4 max-w-4xl mx-auto">
-          <div className="h-8 bg-slate-800 rounded w-1/3"></div>
-          <div className="h-4 bg-slate-800 rounded w-1/2"></div>
-          <div className="h-4 bg-slate-800 rounded w-1/4"></div>
-        </div>
-      </div>
+      <Card className="p-6 animate-pulse">
+        <div className="h-8 bg-muted rounded w-1/3 mb-4"></div>
+        <div className="h-4 bg-muted rounded w-1/2 mb-2"></div>
+        <div className="h-4 bg-muted rounded w-1/4"></div>
+      </Card>
     );
   }
 
   if (!event) {
     return (
-      <div className="min-h-screen bg-slate-900 text-white p-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <p className="text-slate-400">Event not found</p>
-        </div>
-      </div>
+      <Card className="p-6">
+        <p className="text-center text-muted-foreground">Event not found</p>
+      </Card>
     );
   }
 
   const isOrganizer = user?.id === event.organizer_id;
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white">
-      <div className="max-w-4xl mx-auto p-8">
-        {/* Header Section */}
-        <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center space-x-4">
-            <div className="bg-slate-800 rounded-full px-4 py-2 text-sm">
-              Personal Calendar
-            </div>
-          </div>
-          <div className="flex items-center space-x-4">
-            {isOrganizer && (
-              <>
-                <Button
-                  variant="outline"
-                  onClick={() => setIsEditDialogOpen(true)}
-                  className="border-slate-700 text-slate-300 hover:bg-slate-800"
-                >
-                  Edit Event
-                </Button>
-                <Button
-                  variant="destructive"
-                  onClick={handleCancelEvent}
-                >
-                  Cancel Event
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
+    <Card className="p-6">
+      <div className="space-y-6">
+        <EventHeader
+          title={event.title}
+          description={event.description}
+          isPrivate={event.is_private}
+          isOrganizer={isOrganizer}
+          onEdit={() => setIsEditDialogOpen(true)}
+          onCancel={handleCancelEvent}
+          status={event.status}
+        />
 
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Column - Event Image */}
-          <EventImage imageUrl="/lovable-uploads/f9d4f097-2caa-4377-bbfc-63b31b2d6a42.png" />
+        <EventInfo
+          startTime={event.start_time}
+          endTime={event.end_time}
+          isOnline={event.is_online}
+          meetingUrl={event.meeting_url}
+          location={event.location}
+          maxCapacity={event.max_capacity}
+          currentAttendees={event.current_attendees}
+          isRegistered={!!isRegistered}
+        />
 
-          {/* Right Column - Event Details */}
-          <div className="space-y-6">
-            <h1 className="text-3xl font-bold">{event.title}</h1>
-
-            {/* Date and Time */}
-            <EventTimeDetails
-              startTime={event.start_time}
-              endTime={event.end_time}
-              timezone={event.timezone}
-            />
-
-            {event.location && (
-              <div className="flex items-center space-x-4 text-slate-300">
-                <MapPin className="h-5 w-5" />
-                <div>{event.location}</div>
-              </div>
-            )}
-
-            {/* Event Options */}
-            <div className="space-y-4 pt-6 border-t border-slate-800">
-              <h3 className="text-lg font-semibold mb-4">Event Options</h3>
-              <EventOptions
-                maxCapacity={event.max_capacity}
-                currentAttendees={event.current_attendees}
-              />
-            </div>
-
-            {/* Registration Button */}
-            <div className="pt-6">
-              <EventRegistration
-                eventId={event.id}
-                isRegistered={!!isRegistered}
-                status={event.status}
-                user={user}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Description Section */}
-        {event.description && (
-          <div className="mt-12 p-6 bg-slate-800/50 rounded-lg">
-            <h3 className="text-lg font-semibold mb-4">Description</h3>
-            <p className="text-slate-300 whitespace-pre-wrap">{event.description}</p>
-          </div>
+        {event.organizer && (
+          <EventOrganizer organizerName={event.organizer.full_name} />
         )}
 
-        {/* Attendees Section */}
         {isOrganizer && (
-          <div className="mt-8">
-            <EventAttendees eventId={event.id} isOrganizer={isOrganizer} />
-          </div>
+          <EventAttendees eventId={event.id} isOrganizer={isOrganizer} />
         )}
+
+        <EventRegistration
+          eventId={event.id}
+          isRegistered={!!isRegistered}
+          status={event.status}
+          user={user}
+        />
       </div>
 
       {isOrganizer && (
@@ -219,6 +163,6 @@ export function EventDetail() {
           event={event}
         />
       )}
-    </div>
+    </Card>
   );
 }

@@ -57,16 +57,17 @@ export function EventRegistration({
   };
 
   return (
-    <Button
-      onClick={handleRegister}
-      disabled={isRegistered || !user || status === 'cancelled'}
-      className="w-full h-12 text-lg font-medium bg-blue-600 hover:bg-blue-700"
-    >
-      {status === 'cancelled' 
-        ? "Event Cancelled" 
-        : isRegistered 
-          ? "Already Registered" 
-          : "Register for Event"}
-    </Button>
+    <div className="flex justify-end">
+      <Button
+        onClick={handleRegister}
+        disabled={isRegistered || !user || status === 'cancelled'}
+      >
+        {status === 'cancelled' 
+          ? "Event Cancelled" 
+          : isRegistered 
+            ? "Already Registered" 
+            : "Register for Event"}
+      </Button>
+    </div>
   );
 }
