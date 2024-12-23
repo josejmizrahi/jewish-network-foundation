@@ -15,6 +15,8 @@ import { useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getNavItems } from "./sidebar/NavItems";
+import { isProfile } from "@/types/profile";
+import type { Profile } from "@/types/profile";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth();
@@ -32,7 +34,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         .single();
 
       if (error) throw error;
-      return data;
+      
+      // Validate the profile data
+      if (data && isProfile(data)) {
+        return data;
+      }
+      throw new Error('Invalid profile data received');
     },
     enabled: !!user?.id,
   });

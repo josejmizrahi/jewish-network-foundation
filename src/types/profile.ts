@@ -1,4 +1,4 @@
-import { VerificationStatus, UserRole } from "./verification";
+import { VerificationStatus, UserRole, isVerificationStatus } from "./verification";
 
 export interface Profile {
   id: string;
@@ -32,3 +32,13 @@ type Json =
   | null
   | { [key: string]: Json | undefined }
   | Json[]
+
+// Add a type guard to ensure profile data matches the Profile interface
+export function isProfile(data: any): data is Profile {
+  return (
+    typeof data === 'object' &&
+    data !== null &&
+    typeof data.id === 'string' &&
+    (data.verification_status === null || isVerificationStatus(data.verification_status))
+  );
+}

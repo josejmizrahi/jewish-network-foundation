@@ -31,3 +31,8 @@ export interface VerificationRequestWithProfile extends VerificationRequest {
   };
   onSelectRequest?: (id: string) => void;
 }
+
+// Add a type guard to check if a string is a valid VerificationStatus
+export function isVerificationStatus(status: string): status is VerificationStatus {
+  return ["pending", "verified", "rejected"].includes(status);
+}
