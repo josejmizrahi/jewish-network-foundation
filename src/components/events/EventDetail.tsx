@@ -1,9 +1,6 @@
-import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { EditEventDialog } from "./EditEventDialog";
@@ -11,6 +8,8 @@ import { EventHeader } from "./detail/EventHeader";
 import { EventInfo } from "./detail/EventInfo";
 import { EventOrganizer } from "./detail/EventOrganizer";
 import { EventAttendees } from "./detail/EventAttendees";
+import { EventRegistration } from "./detail/EventRegistration";
+import { useState } from "react";
 
 interface Event {
   id: string;
@@ -36,8 +35,6 @@ interface Event {
 export function EventDetail() {
   const { id } = useParams();
   const { user } = useAuth();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const { data: event, isLoading } = useQuery({
@@ -73,66 +70,6 @@ export function EventDetail() {
     },
   });
 
-  const handleRegister = async () => {
-    if (!user) {
-      toast({
-        title: "Authentication required",
-        description: "Please sign in to register for events.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      const { error } = await supabase
-        .from('event_attendees')
-        .insert({
-          event_id: id,
-          user_id: user.id,
-        });
-
-      if (error) throw error;
-
-      toast({
-        title: "Registration successful",
-        description: "You have been registered for this event.",
-      });
-      
-      queryClient.invalidateQueries({ queryKey: ['event-registration', id] });
-      queryClient.invalidateQueries({ queryKey: ['event-attendees', id] });
-    } catch (error: any) {
-      toast({
-        title: "Registration failed",
-        description: error.message || "Failed to register for the event.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleCancelEvent = async () => {
-    try {
-      const { error } = await supabase
-        .from('events')
-        .update({ status: 'cancelled' })
-        .eq('id', id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Event cancelled",
-        description: "The event has been cancelled successfully.",
-      });
-      
-      queryClient.invalidateQueries({ queryKey: ['events', id] });
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to cancel the event.",
-        variant: "destructive",
-      });
-    }
-  };
-
   if (isLoading) {
     return (
       <Card className="p-6 animate-pulse">
@@ -162,7 +99,6 @@ export function EventDetail() {
           isPrivate={event.is_private}
           isOrganizer={isOrganizer}
           onEdit={() => setIsEditDialogOpen(true)}
-          onCancel={handleCancelEvent}
           status={event.status}
         />
 
@@ -185,18 +121,12 @@ export function EventDetail() {
           <EventAttendees eventId={event.id} isOrganizer={isOrganizer} />
         )}
 
-        <div className="flex justify-end">
-          <Button
-            onClick={handleRegister}
-            disabled={isRegistered || !user || event.status === 'cancelled'}
-          >
-            {event.status === 'cancelled' 
-              ? "Event Cancelled" 
-              : isRegistered 
-                ? "Already Registered" 
-                : "Register for Event"}
-          </Button>
-        </div>
+        <EventRegistration
+          eventId={event.id}
+          isRegistered={!!isRegistered}
+          status={event.status}
+          user={user}
+        />
       </div>
 
       {isOrganizer && (
