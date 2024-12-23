@@ -1,7 +1,8 @@
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Loader2, User, MapPin, Link, FileText } from "lucide-react";
+import { Loader2, User, MapPin, FileText } from "lucide-react";
+import { ProfileImageUpload } from "@/components/profile/ProfileImageUpload";
 import type { Profile } from "@/types/profile";
 
 interface ProfileFormProps {
@@ -12,9 +13,18 @@ interface ProfileFormProps {
 }
 
 export function ProfileForm({ profile, updating, onUpdateProfile, onProfileChange }: ProfileFormProps) {
+  const handleAvatarUpload = (url: string) => {
+    onProfileChange({ ...profile, avatar_url: url });
+  };
+
   return (
-    <div className="space-y-4">
-      <h2 className="text-lg font-semibold">Edit Profile</h2>
+    <div className="space-y-6">
+      <ProfileImageUpload
+        avatarUrl={profile.avatar_url}
+        fullName={profile.full_name}
+        userId={profile.id}
+        onUploadComplete={handleAvatarUpload}
+      />
       <div className="space-y-4">
         <div className="space-y-2">
           <label htmlFor="username" className="text-sm font-medium flex items-center gap-2">
@@ -73,21 +83,6 @@ export function ProfileForm({ profile, updating, onUpdateProfile, onProfileChang
               onProfileChange({ ...profile, location: e.target.value })
             }
             placeholder="Enter your location"
-          />
-        </div>
-        <div className="space-y-2">
-          <label htmlFor="avatarUrl" className="text-sm font-medium flex items-center gap-2">
-            <Link className="h-4 w-4" />
-            Avatar URL
-          </label>
-          <Input
-            id="avatarUrl"
-            type="text"
-            value={profile.avatar_url || ""}
-            onChange={(e) =>
-              onProfileChange({ ...profile, avatar_url: e.target.value })
-            }
-            placeholder="Enter your avatar URL"
           />
         </div>
       </div>
