@@ -34,6 +34,7 @@ export function VerificationHistory() {
       return data as VerificationRequest[];
     },
     enabled: !!user?.id,
+    refetchInterval: 5000, // Refetch every 5 seconds to keep status updated
   });
 
   const getStatusIcon = (status: string) => {
