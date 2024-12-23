@@ -22,16 +22,16 @@ export function NavUser({ user }: NavUserProps) {
         <SidebarMenuButton
           asChild
           tooltip={user.name}
-          className="hover:bg-accent hover:text-accent-foreground"
+          className="hover:bg-accent hover:text-accent-foreground transition-colors duration-200"
         >
-          <Link to="/profile" className="w-full flex items-center gap-3">
-            <Avatar className="h-8 w-8 border">
+          <Link to="/profile" className="w-full flex items-center gap-4">
+            <Avatar className="h-9 w-9 border ring-2 ring-background">
               <AvatarImage src={user.avatar} alt={user.name} />
-              <AvatarFallback>{user.name[0]}</AvatarFallback>
+              <AvatarFallback className="bg-primary/10 text-primary">{user.name[0]}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col text-left">
               <span className="text-sm font-medium leading-none">{user.name}</span>
-              <span className="text-xs leading-none text-muted-foreground mt-1">
+              <span className="text-xs leading-none text-muted-foreground mt-1.5">
                 {user.email}
               </span>
             </div>

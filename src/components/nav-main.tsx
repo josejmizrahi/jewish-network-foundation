@@ -34,7 +34,7 @@ export function NavMain({ items }: NavMainProps) {
   
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+      <SidebarGroupLabel className="text-xs font-medium text-muted-foreground mb-2">Navigation</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible
@@ -52,6 +52,7 @@ export function NavMain({ items }: NavMainProps) {
                         tooltip={item.title}
                         isActive={location.pathname === item.url || 
                                 item.items?.some(subItem => location.pathname === subItem.url)}
+                        className="transition-colors duration-200"
                       >
                         <item.icon className="h-4 w-4" />
                         <span>{item.title}</span>
@@ -69,6 +70,7 @@ export function NavMain({ items }: NavMainProps) {
                           >
                             <SidebarMenuSubButton 
                               isActive={location.pathname === subItem.url}
+                              className="transition-colors duration-200"
                             >
                               {subItem.title}
                             </SidebarMenuSubButton>
@@ -86,6 +88,7 @@ export function NavMain({ items }: NavMainProps) {
                   <SidebarMenuButton 
                     tooltip={item.title} 
                     isActive={location.pathname === item.url}
+                    className="transition-colors duration-200"
                   >
                     <item.icon className="h-4 w-4" />
                     <span>{item.title}</span>
