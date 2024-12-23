@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
-import { Shield, Upload, Loader2 } from "lucide-react";
+import { Shield } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { CriteriaList } from "./form/CriteriaList";
+import { DocumentUpload } from "./form/DocumentUpload";
 import type { VerificationCriteria } from "@/types/verification";
 
 interface VerificationRequestFormProps {
@@ -115,64 +115,15 @@ export function VerificationRequestForm({ userId, onRequestSubmitted }: Verifica
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="space-y-4">
-          <h3 className="font-medium">Verification Criteria</h3>
-          {criteria?.map((item) => (
-            <div key={item.id} className="flex items-start space-x-2">
-              <Checkbox
-                id={item.id}
-                checked={selectedCriteria.includes(item.id)}
-                onCheckedChange={(checked) => {
-                  setSelectedCriteria(prev =>
-                    checked
-                      ? [...prev, item.id]
-                      : prev.filter(id => id !== item.id)
-                  );
-                }}
-              />
-              <div className="grid gap-1.5 leading-none">
-                <label
-                  htmlFor={item.id}
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  {item.name}
-                  {item.required && <span className="text-red-500 ml-1">*</span>}
-                </label>
-                <p className="text-sm text-muted-foreground">
-                  {item.description}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="space-y-4">
-          <h3 className="font-medium">Upload Documents</h3>
-          <Button
-            variant="outline"
-            disabled={uploading || isSubmitting}
-            className="w-full relative"
-            onClick={() => document.getElementById('document-upload')?.click()}
-          >
-            {(uploading || isSubmitting) ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Upload className="h-4 w-4 mr-2" />
-            )}
-            Upload Verification Documents
-            <input
-              id="document-upload"
-              type="file"
-              multiple
-              accept="image/*,.pdf"
-              onChange={handleFileUpload}
-              disabled={uploading || isSubmitting}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            />
-          </Button>
-          <p className="text-sm text-muted-foreground">
-            Accepted file types: Images (PNG, JPG) and PDF documents
-          </p>
-        </div>
+        <CriteriaList
+          criteria={criteria || []}
+          selectedCriteria={selectedCriteria}
+          onCriteriaChange={setSelectedCriteria}
+        />
+        <DocumentUpload
+          onFileChange={handleFileUpload}
+          isUploading={uploading || isSubmitting}
+        />
       </CardContent>
     </Card>
   );
