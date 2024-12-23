@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { ProfileForm } from "@/components/profile/ProfileForm";
 import { MembershipCard } from "@/components/profile/MembershipCard";
 import { ProfileProgress } from "@/components/profile/ProfileProgress";
+import { VerificationBadge } from "@/components/profile/VerificationBadge";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -98,7 +99,10 @@ export default function Profile() {
           <SidebarInset>
             <div className="container mx-auto px-4 py-8">
               <div className="space-y-6">
-                <h1 className="text-3xl font-bold">Profile</h1>
+                <div className="flex items-center justify-between">
+                  <h1 className="text-3xl font-bold">Profile</h1>
+                  <VerificationBadge status={profile.verification_status} />
+                </div>
                 <div className="grid gap-6 md:grid-cols-2">
                   <div className="space-y-6">
                     <ProfileForm
