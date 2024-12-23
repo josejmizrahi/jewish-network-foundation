@@ -16,7 +16,7 @@ export function NavUser({ user }: NavUserProps) {
       <SidebarMenuButton
         asChild
         tooltip={user.name}
-        className="hover:bg-accent hover:text-accent-foreground transition-colors duration-200 group"
+        className="hover:bg-accent hover:text-accent-foreground transition-colors duration-200"
       >
         <Link to="/profile" className="w-full flex items-center gap-4 group-data-[collapsible=icon]:justify-center">
           <Avatar className="h-9 w-9 border ring-2 ring-background transition-shadow duration-200 group-hover:ring-accent/20">

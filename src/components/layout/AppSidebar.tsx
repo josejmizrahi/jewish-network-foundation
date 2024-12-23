@@ -61,19 +61,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar 
       collapsible="icon" 
-      className="border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-300 ease-in-out group" 
+      className="border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60" 
       {...props}
     >
-      <SidebarHeader className="h-14 border-b px-4 flex items-center bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-colors duration-200">
+      <SidebarHeader className="h-14 border-b px-4 flex items-center">
         <TeamSwitcher teams={teams} />
       </SidebarHeader>
       <SidebarContent className="flex flex-col flex-grow p-4 space-y-6">
         <NavMain items={navItems} />
       </SidebarContent>
-      <SidebarFooter className="border-t p-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-colors duration-200">
+      <SidebarFooter className="border-t p-4">
         <NavUser user={userData} />
       </SidebarFooter>
-      <SidebarRail className="hover:bg-muted/50 transition-colors duration-200 group-data-[collapsible=icon]:border-r" />
+      <SidebarRail className="hover:bg-muted/50 transition-colors duration-200" />
     </Sidebar>
   );
 }

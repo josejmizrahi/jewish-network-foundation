@@ -34,14 +34,13 @@ export function NavMain({ items }: NavMainProps) {
   
   return (
     <SidebarGroup>
-      <SidebarGroupLabel className="text-xs font-medium text-muted-foreground mb-2">Navigation</SidebarGroupLabel>
+      <SidebarGroupLabel className="text-xs font-medium text-muted-foreground">Navigation</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible
             key={item.title}
             asChild
             defaultOpen={item.isActive || location.pathname.startsWith(item.url)}
-            className="group/collapsible"
           >
             <SidebarMenuItem>
               {item.items?.length ? (
@@ -56,7 +55,7 @@ export function NavMain({ items }: NavMainProps) {
                       >
                         <item.icon className="h-4 w-4 transition-transform duration-200 group-data-[collapsible=icon]:mx-auto" />
                         <span>{item.title}</span>
-                        <ChevronRight className="ml-auto h-4 w-4 shrink-0 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 group-data-[collapsible=icon]:hidden" />
+                        <ChevronRight className="ml-auto h-4 w-4 shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-90 group-data-[collapsible=icon]:hidden" />
                       </SidebarMenuButton>
                     </Link>
                   </CollapsibleTrigger>
