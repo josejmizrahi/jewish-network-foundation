@@ -26,11 +26,25 @@ export function ProfileImageUpload({ avatarUrl, fullName, userId, onUploadComple
 
       const file = event.target.files[0];
       const fileExt = file.name.split('.').pop();
-      const filePath = `${userId}/${Math.random()}.${fileExt}`;
+      const fileName = `${userId}-${Math.random()}.${fileExt}`;
+      const filePath = `${userId}/${fileName}`;
 
-      const { error: uploadError, data } = await supabase.storage
+      // Check file size (max 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        throw new Error('File size must be less than 2MB');
+      }
+
+      // Check file type
+      if (!['image/jpeg', 'image/png', 'image/gif'].includes(file.type)) {
+        throw new Error('File type must be JPEG, PNG or GIF');
+      }
+
+      const { error: uploadError } = await supabase.storage
         .from('profile-images')
-        .upload(filePath, file, { upsert: true });
+        .upload(filePath, file, { 
+          upsert: true,
+          contentType: file.type
+        });
 
       if (uploadError) {
         throw uploadError;
@@ -40,16 +54,26 @@ export function ProfileImageUpload({ avatarUrl, fullName, userId, onUploadComple
         .from('profile-images')
         .getPublicUrl(filePath);
 
+      // Update profile with new avatar URL
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: publicUrl })
+        .eq('id', userId);
+
+      if (updateError) {
+        throw updateError;
+      }
+
       onUploadComplete(publicUrl);
 
       toast({
         title: "Success",
         description: "Profile image updated successfully",
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message,
+        description: error.message || "Failed to upload image",
         variant: "destructive",
       });
     } finally {
