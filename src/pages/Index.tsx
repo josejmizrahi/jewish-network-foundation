@@ -1,6 +1,7 @@
 import { MainNav } from "@/components/layout/MainNav";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/AppSidebar";
+import { Button } from "@/components/ui/button"; // Add this import
 import {
   Breadcrumb,
   BreadcrumbItem,
