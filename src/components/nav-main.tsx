@@ -11,8 +11,8 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarMenuSub,
-  SidebarMenuSubButton,
   SidebarMenuSubItem,
+  SidebarMenuSubButton,
 } from "@/components/ui/sidebar"
 import { Link, useLocation } from "react-router-dom"
 
@@ -49,7 +49,8 @@ export function NavMain({ items }: NavMainProps) {
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton 
                       tooltip={item.title}
-                      isActive={item.isActive}
+                      isActive={location.pathname === item.url || 
+                              item.items?.some(subItem => location.pathname === subItem.url)}
                     >
                       <item.icon className="h-4 w-4" />
                       <span>{item.title}</span>
@@ -60,28 +61,34 @@ export function NavMain({ items }: NavMainProps) {
                     <SidebarMenuSub>
                       {item.items.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.title}>
-                          <SidebarMenuSubButton 
-                            asChild
-                            isActive={location.pathname === subItem.url}
+                          <Link 
+                            to={subItem.url}
+                            className="w-full"
                           >
-                            <Link to={subItem.url}>{subItem.title}</Link>
-                          </SidebarMenuSubButton>
+                            <SidebarMenuSubButton 
+                              isActive={location.pathname === subItem.url}
+                            >
+                              {subItem.title}
+                            </SidebarMenuSubButton>
+                          </Link>
                         </SidebarMenuSubItem>
                       ))}
                     </SidebarMenuSub>
                   </CollapsibleContent>
                 </>
               ) : (
-                <SidebarMenuButton 
-                  asChild 
-                  tooltip={item.title} 
-                  isActive={location.pathname === item.url}
+                <Link 
+                  to={item.url}
+                  className="w-full"
                 >
-                  <Link to={item.url}>
+                  <SidebarMenuButton 
+                    tooltip={item.title} 
+                    isActive={location.pathname === item.url}
+                  >
                     <item.icon className="h-4 w-4" />
                     <span>{item.title}</span>
-                  </Link>
-                </SidebarMenuButton>
+                  </SidebarMenuButton>
+                </Link>
               )}
             </SidebarMenuItem>
           </Collapsible>
