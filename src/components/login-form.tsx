@@ -87,7 +87,7 @@ export function LoginForm({
         },
       },
     },
-    providers: ['google', 'apple', 'github'],
+    // Remove the providers array since it's not needed for the default OAuth providers
   }
 
   return (
