@@ -29,6 +29,7 @@ interface Event {
   timezone: string;
   organizer_id: string;
   cover_image: string | null;
+  waitlist_enabled: boolean;
   organizer: {
     full_name: string;
     avatar_url: string;
@@ -165,6 +166,9 @@ export function EventDetail() {
               isRegistered={!!isRegistered}
               status={event.status}
               user={user}
+              currentAttendees={event.current_attendees}
+              maxCapacity={event.max_capacity}
+              waitlistEnabled={event.waitlist_enabled}
             />
           </div>
         </div>
