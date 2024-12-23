@@ -17,6 +17,7 @@ import { ProfileProgress } from "@/components/profile/ProfileProgress";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ProfileStats } from "@/components/profile/ProfileStats";
 import { VerificationRequestForm } from "@/components/verification/VerificationRequestForm";
+import { VerificationHistory } from "@/components/verification/VerificationHistory";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -130,8 +131,11 @@ export default function Profile() {
                         />
                       </DialogContent>
                     </Dialog>
-                    {profile.verification_status !== 'verified' && (
-                      <Dialog open={showVerificationForm} onOpenChange={setShowVerificationForm}>
+                    {profile.verification_status !== "verified" && (
+                      <Dialog
+                        open={showVerificationForm}
+                        onOpenChange={setShowVerificationForm}
+                      >
                         <DialogTrigger asChild>
                           <Button variant="outline">Request Verification</Button>
                         </DialogTrigger>
@@ -155,6 +159,7 @@ export default function Profile() {
                     <ProfileProgress profile={profile} />
                     <MembershipCard profile={profile} />
                   </div>
+                  <VerificationHistory />
                 </div>
               </div>
             </div>
