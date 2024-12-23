@@ -9,6 +9,110 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      event_attendees: {
+        Row: {
+          created_at: string | null
+          event_id: string
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          event_id: string
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          event_id?: string
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_attendees_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_attendees_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          cover_image: string | null
+          created_at: string | null
+          current_attendees: number | null
+          description: string | null
+          end_time: string
+          id: string
+          is_online: boolean | null
+          is_private: boolean | null
+          location: string | null
+          max_capacity: number | null
+          meeting_url: string | null
+          organizer_id: string
+          start_time: string
+          status: string | null
+          timezone: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          cover_image?: string | null
+          created_at?: string | null
+          current_attendees?: number | null
+          description?: string | null
+          end_time: string
+          id?: string
+          is_online?: boolean | null
+          is_private?: boolean | null
+          location?: string | null
+          max_capacity?: number | null
+          meeting_url?: string | null
+          organizer_id: string
+          start_time: string
+          status?: string | null
+          timezone: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          cover_image?: string | null
+          created_at?: string | null
+          current_attendees?: number | null
+          description?: string | null
+          end_time?: string
+          id?: string
+          is_online?: boolean | null
+          is_private?: boolean | null
+          location?: string | null
+          max_capacity?: number | null
+          meeting_url?: string | null
+          organizer_id?: string
+          start_time?: string
+          status?: string | null
+          timezone?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_organizer_id_fkey"
+            columns: ["organizer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       posts: {
         Row: {
           author_id: string

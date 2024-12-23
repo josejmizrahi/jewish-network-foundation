@@ -1,4 +1,4 @@
-import { Home, User, Shield, type LucideIcon } from "lucide-react";
+import { Home, User, Shield, Calendar, type LucideIcon } from "lucide-react";
 import type { Profile } from "@/types/profile";
 
 interface NavItem {
@@ -51,6 +51,13 @@ export function getNavItems(user: any | null, profile: Profile | null, pathname:
         },
       ],
       isActive: pathname === "/profile" || pathname === "/settings",
+    }] : []),
+    // Show Events section for authenticated users
+    ...(user ? [{
+      title: "Events",
+      url: "/events",
+      icon: Calendar,
+      isActive: pathname.startsWith("/events"),
     }] : []),
     // Only show Verification Management for admins
     ...(profile?.is_admin ? [{
