@@ -1,5 +1,7 @@
 import { Calendar, Clock, MapPin, Users, Video } from "lucide-react";
 import { format } from "date-fns";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface EventInfoProps {
   startTime: string;
@@ -23,49 +25,82 @@ export function EventInfo({
   isRegistered,
 }: EventInfoProps) {
   return (
-    <div className="grid gap-4 text-sm text-muted-foreground">
-      <div className="flex items-center gap-2">
-        <Calendar className="h-4 w-4" />
-        <span>{format(new Date(startTime), "PPP")}</span>
-      </div>
+    <Card className="p-6 space-y-6">
+      <div className="grid gap-6 md:grid-cols-2">
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+              <Calendar className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <p className="font-medium">{format(new Date(startTime), "EEEE, MMMM d, yyyy")}</p>
+              <p className="text-sm text-muted-foreground">Date</p>
+            </div>
+          </div>
 
-      <div className="flex items-center gap-2">
-        <Clock className="h-4 w-4" />
-        <span>
-          {format(new Date(startTime), "p")} - {format(new Date(endTime), "p")}
-        </span>
-      </div>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+              <Clock className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <p className="font-medium">
+                {format(new Date(startTime), "h:mm a")} - {format(new Date(endTime), "h:mm a")}
+              </p>
+              <p className="text-sm text-muted-foreground">Time</p>
+            </div>
+          </div>
 
-      {isOnline ? (
-        <div className="flex items-center gap-2">
-          <Video className="h-4 w-4" />
-          <span>Online Event</span>
-          {meetingUrl && isRegistered && (
-            <a 
-              href={meetingUrl} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-primary hover:underline"
-            >
-              Join Meeting
-            </a>
+          {maxCapacity && (
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                <Users className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="font-medium">{currentAttendees} / {maxCapacity} attendees</p>
+                <p className="text-sm text-muted-foreground">Capacity</p>
+              </div>
+            </div>
           )}
         </div>
-      ) : location ? (
-        <div className="flex items-center gap-2">
-          <MapPin className="h-4 w-4" />
-          <span>{location}</span>
-        </div>
-      ) : null}
 
-      {maxCapacity && (
-        <div className="flex items-center gap-2">
-          <Users className="h-4 w-4" />
-          <span>
-            {currentAttendees} / {maxCapacity} attendees
-          </span>
+        <div className="space-y-4">
+          {isOnline ? (
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                <Video className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="font-medium">Online Event</p>
+                {meetingUrl && isRegistered && (
+                  <Button
+                    variant="link"
+                    className="h-auto p-0 text-primary"
+                    asChild
+                  >
+                    <a
+                      href={meetingUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Join Meeting
+                    </a>
+                  </Button>
+                )}
+              </div>
+            </div>
+          ) : location ? (
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                <MapPin className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="font-medium">{location}</p>
+                <p className="text-sm text-muted-foreground">Location</p>
+              </div>
+            </div>
+          ) : null}
         </div>
-      )}
-    </div>
+      </div>
+    </Card>
   );
 }

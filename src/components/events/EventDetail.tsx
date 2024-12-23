@@ -11,6 +11,7 @@ import { EventAttendees } from "./detail/EventAttendees";
 import { EventRegistration } from "./detail/EventRegistration";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Event {
   id: string;
@@ -98,11 +99,13 @@ export function EventDetail() {
 
   if (isLoading) {
     return (
-      <Card className="p-6 animate-pulse">
-        <div className="h-8 bg-muted rounded w-1/3 mb-4"></div>
-        <div className="h-4 bg-muted rounded w-1/2 mb-2"></div>
-        <div className="h-4 bg-muted rounded w-1/4"></div>
-      </Card>
+      <div className="space-y-6">
+        <Skeleton className="h-48 w-full" />
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-1/3" />
+          <Skeleton className="h-4 w-1/2" />
+        </div>
+      </div>
     );
   }
 
@@ -117,43 +120,52 @@ export function EventDetail() {
   const isOrganizer = user?.id === event.organizer_id;
 
   return (
-    <Card className="p-6">
-      <div className="space-y-6">
-        <EventHeader
-          title={event.title}
-          description={event.description}
-          isPrivate={event.is_private}
-          isOrganizer={isOrganizer}
-          onEdit={() => setIsEditDialogOpen(true)}
-          onCancel={handleCancelEvent}
-          status={event.status}
-        />
+    <div className="max-w-4xl mx-auto space-y-6">
+      <EventHeader
+        title={event.title}
+        description={event.description}
+        isPrivate={event.is_private}
+        isOrganizer={isOrganizer}
+        onEdit={() => setIsEditDialogOpen(true)}
+        onCancel={handleCancelEvent}
+        status={event.status}
+      />
 
-        <EventInfo
-          startTime={event.start_time}
-          endTime={event.end_time}
-          isOnline={event.is_online}
-          meetingUrl={event.meeting_url}
-          location={event.location}
-          maxCapacity={event.max_capacity}
-          currentAttendees={event.current_attendees}
-          isRegistered={!!isRegistered}
-        />
+      <div className="grid gap-6 md:grid-cols-3">
+        <div className="md:col-span-2 space-y-6">
+          <EventInfo
+            startTime={event.start_time}
+            endTime={event.end_time}
+            isOnline={event.is_online}
+            meetingUrl={event.meeting_url}
+            location={event.location}
+            maxCapacity={event.max_capacity}
+            currentAttendees={event.current_attendees}
+            isRegistered={!!isRegistered}
+          />
 
-        {event.organizer && (
-          <EventOrganizer organizerName={event.organizer.full_name} />
-        )}
+          {event.organizer && (
+            <EventOrganizer 
+              organizerName={event.organizer.full_name}
+              organizerAvatar={event.organizer.avatar_url}
+            />
+          )}
 
-        {isOrganizer && (
-          <EventAttendees eventId={event.id} isOrganizer={isOrganizer} />
-        )}
+          {isOrganizer && (
+            <EventAttendees eventId={event.id} isOrganizer={isOrganizer} />
+          )}
+        </div>
 
-        <EventRegistration
-          eventId={event.id}
-          isRegistered={!!isRegistered}
-          status={event.status}
-          user={user}
-        />
+        <div>
+          <div className="sticky top-6">
+            <EventRegistration
+              eventId={event.id}
+              isRegistered={!!isRegistered}
+              status={event.status}
+              user={user}
+            />
+          </div>
+        </div>
       </div>
 
       {isOrganizer && (
@@ -163,6 +175,6 @@ export function EventDetail() {
           event={event}
         />
       )}
-    </Card>
+    </div>
   );
 }

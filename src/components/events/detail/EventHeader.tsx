@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Edit2 } from "lucide-react";
+import { Edit2, Share2 } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 interface EventHeaderProps {
   title: string;
@@ -22,29 +23,52 @@ export function EventHeader({
   status,
 }: EventHeaderProps) {
   return (
-    <div>
-      <div className="flex items-center justify-between mb-2">
-        <h1 className="text-2xl font-bold">{title}</h1>
+    <div className="space-y-4">
+      <div className="flex items-start justify-between">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            {status === 'cancelled' && (
+              <Badge variant="destructive" className="rounded-full">Cancelled</Badge>
+            )}
+            {isPrivate && (
+              <Badge variant="secondary" className="rounded-full">Private</Badge>
+            )}
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
+        </div>
         <div className="flex items-center gap-2">
-          {status === 'cancelled' && (
-            <Badge variant="destructive">Cancelled</Badge>
-          )}
-          {isPrivate && (
-            <Badge variant="secondary">Private</Badge>
-          )}
+          <Button
+            variant="outline"
+            size="sm"
+            className="rounded-full"
+            onClick={() => {
+              navigator.share({
+                title,
+                text: description || '',
+                url: window.location.href,
+              }).catch(() => {
+                navigator.clipboard.writeText(window.location.href);
+              });
+            }}
+          >
+            <Share2 className="h-4 w-4 mr-2" />
+            Share
+          </Button>
           {isOrganizer && status !== 'cancelled' && (
             <>
               <Button
                 variant="outline"
                 size="sm"
+                className="rounded-full"
                 onClick={onEdit}
               >
                 <Edit2 className="h-4 w-4 mr-2" />
-                Edit Event
+                Edit
               </Button>
               <Button
                 variant="destructive"
                 size="sm"
+                className="rounded-full"
                 onClick={onCancel}
               >
                 Cancel Event
@@ -54,7 +78,10 @@ export function EventHeader({
         </div>
       </div>
       {description && (
-        <p className="text-muted-foreground">{description}</p>
+        <>
+          <Separator />
+          <p className="text-muted-foreground leading-relaxed">{description}</p>
+        </>
       )}
     </div>
   );
