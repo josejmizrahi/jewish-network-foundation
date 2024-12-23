@@ -15,7 +15,7 @@ export function EventsList() {
   const [timeFilter, setTimeFilter] = useState<"upcoming" | "past" | "all">("upcoming");
   const [activeTab, setActiveTab] = useState<"all" | "invitations">("all");
 
-  const { data: events, isLoading: eventsLoading } = useQuery({
+  const { data: events, isLoading: eventsLoading, error: eventsError } = useQuery({
     queryKey: ['events'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -31,7 +31,7 @@ export function EventsList() {
     },
   });
 
-  const { data: invitations, isLoading: invitationsLoading } = useQuery({
+  const { data: invitations, isLoading: invitationsLoading, error: invitationsError } = useQuery({
     queryKey: ['event-invitations'],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -49,12 +49,20 @@ export function EventsList() {
         .eq('status', 'pending');
 
       if (error) throw error;
-      return invitationData?.map(inv => inv.event) as Event[] || [];
+      return invitationData?.map(inv => inv.event).filter(Boolean) as Event[];
     },
   });
 
   if (eventsLoading || invitationsLoading) {
     return <LoadingSkeleton />;
+  }
+
+  if (eventsError || invitationsError) {
+    return (
+      <div className="text-center py-12 bg-card rounded-xl">
+        <p className="text-destructive">Error loading events. Please try again later.</p>
+      </div>
+    );
   }
 
   const currentEvents = activeTab === "all" ? (events || []) : (invitations || []);

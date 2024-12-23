@@ -6,14 +6,14 @@ export const filterEvents = (
   search: string,
   category: string,
   timeFilter: "upcoming" | "past" | "all"
-) => {
-  if (!events) return [];
+): Event[] => {
+  if (!Array.isArray(events)) return [];
   
   return events.filter(event => {
-    if (!event || !event.start_time) return false;
+    if (!event?.start_time) return false;
 
     const matchesSearch = search === "" || 
-      event.title.toLowerCase().includes(search.toLowerCase()) ||
+      event.title?.toLowerCase().includes(search.toLowerCase()) ||
       (event.description?.toLowerCase().includes(search.toLowerCase()) ?? false);
 
     const matchesCategory = category === "all" || event.category === category;
@@ -28,12 +28,13 @@ export const filterEvents = (
   });
 };
 
-export const groupEventsByDate = (events: Event[]) => {
-  if (!events) return {};
+export const groupEventsByDate = (events: Event[]): { [key: string]: Event[] } => {
+  if (!Array.isArray(events)) return {};
   
   const groups: { [key: string]: Event[] } = {};
+  
   events.forEach(event => {
-    if (!event || !event.start_time) return;
+    if (!event?.start_time) return;
     
     const date = format(new Date(event.start_time), 'MMM dd');
     if (!groups[date]) {
@@ -41,5 +42,6 @@ export const groupEventsByDate = (events: Event[]) => {
     }
     groups[date].push(event);
   });
+  
   return groups;
 };
