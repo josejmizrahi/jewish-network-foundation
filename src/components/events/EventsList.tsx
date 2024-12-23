@@ -46,9 +46,9 @@ export function EventsList() {
       <div className="space-y-6">
         {[...Array(3)].map((_, i) => (
           <div key={i} className="animate-pulse">
-            <div className="h-48 bg-gray-700 rounded-xl mb-4"></div>
-            <div className="h-4 bg-gray-700 rounded w-1/3 mb-2"></div>
-            <div className="h-4 bg-gray-700 rounded w-1/4"></div>
+            <div className="h-48 bg-muted rounded-xl mb-4"></div>
+            <div className="h-4 bg-muted rounded w-1/3 mb-2"></div>
+            <div className="h-4 bg-muted rounded w-1/4"></div>
           </div>
         ))}
       </div>
@@ -57,8 +57,8 @@ export function EventsList() {
 
   if (!events?.length) {
     return (
-      <div className="text-center py-12 bg-[#221F26] rounded-xl">
-        <p className="text-gray-400">No events found</p>
+      <div className="text-center py-12 bg-card rounded-xl">
+        <p className="text-muted-foreground">No events found</p>
       </div>
     );
   }
@@ -81,10 +81,10 @@ export function EventsList() {
     <div className="space-y-8">
       {Object.entries(groupedEvents).map(([date, dateEvents]) => (
         <div key={date} className="space-y-4">
-          <div className="sticky top-0 bg-[#1A1F2C] py-2 z-10">
-            <h2 className="text-lg font-semibold text-white">
+          <div className="sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 py-2 z-10">
+            <h2 className="text-lg font-semibold text-foreground">
               {date}
-              <span className="text-gray-400 ml-2 font-normal">
+              <span className="text-muted-foreground ml-2 font-normal">
                 {format(new Date(dateEvents[0].start_time), 'EEEE')}
               </span>
             </h2>
@@ -92,7 +92,7 @@ export function EventsList() {
           <div className="space-y-4">
             {dateEvents.map((event) => (
               <Link key={event.id} to={`/events/${event.id}`}>
-                <div className="group relative bg-[#221F26] rounded-xl p-4 hover:bg-[#2A2730] transition-colors">
+                <div className="group relative bg-card hover:bg-accent transition-colors rounded-xl p-4">
                   <div className="flex gap-4">
                     {event.cover_image ? (
                       <div className="w-24 h-24 flex-shrink-0">
@@ -103,27 +103,27 @@ export function EventsList() {
                         />
                       </div>
                     ) : (
-                      <div className="w-24 h-24 bg-gray-700 rounded-lg flex-shrink-0" />
+                      <div className="w-24 h-24 bg-muted rounded-lg flex-shrink-0" />
                     )}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between">
                         <div>
-                          <h3 className="text-lg font-semibold text-white group-hover:text-[#9b87f5] transition-colors">
+                          <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
                             {event.title}
                           </h3>
                           {event.description && (
-                            <p className="text-gray-400 text-sm mt-1 line-clamp-2">
+                            <p className="text-muted-foreground text-sm mt-1 line-clamp-2">
                               {event.description}
                             </p>
                           )}
                         </div>
                         {event.status === 'published' && (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/20 text-primary">
                             Live
                           </span>
                         )}
                       </div>
-                      <div className="flex flex-wrap gap-4 mt-3 text-sm text-gray-400">
+                      <div className="flex flex-wrap gap-4 mt-3 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1.5">
                           <Calendar className="h-4 w-4" />
                           <span>

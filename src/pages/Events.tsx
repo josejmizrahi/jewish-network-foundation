@@ -11,7 +11,7 @@ export default function Events() {
 
   return (
     <SidebarProvider defaultOpen>
-      <div className="min-h-screen flex w-full bg-[#1A1F2C] text-white">
+      <div className="min-h-screen flex w-full bg-background text-foreground">
         <AppSidebar />
         <div className="flex-1">
           <MainNav />
