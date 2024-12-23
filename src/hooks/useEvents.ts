@@ -30,6 +30,8 @@ export function useEventInvitations() {
       const { data: invitationData, error } = await supabase
         .from('event_invitations')
         .select(`
+          id,
+          status,
           event:events(
             *,
             organizer:profiles!events_organizer_id_fkey(full_name, avatar_url)
@@ -39,7 +41,15 @@ export function useEventInvitations() {
         .eq('status', 'pending');
 
       if (error) throw error;
-      return (invitationData?.map(inv => inv.event).filter(Boolean) || []) as Event[];
+
+      // Filter out any null events and map to the expected Event type
+      return (invitationData || [])
+        .filter(inv => inv.event)
+        .map(inv => ({
+          ...inv.event,
+          invitation_id: inv.id,
+          invitation_status: inv.status
+        })) as Event[];
     },
   });
 }

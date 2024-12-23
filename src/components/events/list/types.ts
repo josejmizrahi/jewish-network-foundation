@@ -18,6 +18,8 @@ export interface Event {
     full_name: string;
     avatar_url: string;
   } | null;
+  invitation_id?: string;
+  invitation_status?: string;
 }
 
 export const categoryColors: Record<string, string> = {
