@@ -5,6 +5,8 @@ import { Footer } from "@/components/layout/Footer";
 import { PostsList } from "@/components/posts/PostsList";
 import { CreatePostForm } from "@/components/posts/CreatePostForm";
 import { useAuth } from "@/hooks/useAuth";
+import { Link } from "react-router-dom";
+import { ArrowRight, Shield, Globe, Users } from "lucide-react";
 
 export default function Index() {
   const { user } = useAuth();
