@@ -11,6 +11,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import type { Profile } from "@/types/profile";
+import type { VerificationStatus } from "@/types/verification";
 
 export default function Settings() {
   const { user } = useAuth();
@@ -27,8 +28,15 @@ export default function Settings() {
         .single();
 
       if (error) throw error;
-      setProfile(data);
-      return data as Profile;
+      
+      // Ensure verification_status is of type VerificationStatus
+      const typedProfile: Profile = {
+        ...data,
+        verification_status: (data.verification_status || 'pending') as VerificationStatus
+      };
+      
+      setProfile(typedProfile);
+      return typedProfile;
     },
     enabled: !!user?.id,
   });
