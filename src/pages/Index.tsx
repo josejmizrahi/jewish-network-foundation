@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MainNav } from "@/components/layout/MainNav";
 import { Footer } from "@/components/layout/Footer";
 import { Link } from "react-router-dom";
@@ -37,33 +38,47 @@ export default function Index() {
           <div className="container mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Core Pillars</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-background p-6 rounded-lg shadow-sm border">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                  <Users className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold mb-2">Community</h3>
-                <p className="text-muted-foreground">
-                  Connect with Jews worldwide, share resources, and build meaningful relationships.
-                </p>
-              </div>
-              <div className="bg-background p-6 rounded-lg shadow-sm border">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                  <Shield className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold mb-2">Identity</h3>
-                <p className="text-muted-foreground">
-                  Preserve and strengthen Jewish identity through digital citizenship and verification.
-                </p>
-              </div>
-              <div className="bg-background p-6 rounded-lg shadow-sm border">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                  <Globe className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold mb-2">Innovation</h3>
-                <p className="text-muted-foreground">
-                  Build the future of Jewish life through technology and collaboration.
-                </p>
-              </div>
+              <Card>
+                <CardHeader>
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                    <Users className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle>Community</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription>
+                    Connect with Jews worldwide, share resources, and build meaningful relationships.
+                  </CardDescription>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                    <Shield className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle>Identity</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription>
+                    Preserve and strengthen Jewish identity through digital citizenship and verification.
+                  </CardDescription>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                    <Globe className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle>Innovation</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription>
+                    Build the future of Jewish life through technology and collaboration.
+                  </CardDescription>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </section>
