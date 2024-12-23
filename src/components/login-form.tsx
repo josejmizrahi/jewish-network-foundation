@@ -65,6 +65,31 @@ export function LoginForm({
     }
   };
 
+  const sharedAuthProps = {
+    supabaseClient: supabase,
+    appearance: {
+      theme: ThemeSupa,
+      style: {
+        container: { width: '100%' },
+        button: {
+          width: '100%',
+          borderRadius: 'var(--radius)',
+          height: '2.5rem',
+          fontSize: '0.875rem',
+          backgroundColor: 'var(--primary)',
+          color: 'var(--primary-foreground)',
+        },
+        input: {
+          borderRadius: 'var(--radius)',
+          height: '2.5rem',
+          fontSize: '0.875rem',
+          borderColor: 'var(--input)',
+        },
+      },
+    },
+    providers: ["google", "apple", "github"],
+  }
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -82,29 +107,8 @@ export function LoginForm({
             </TabsList>
             <TabsContent value="signin">
               <Auth
-                supabaseClient={supabase}
+                {...sharedAuthProps}
                 view="sign_in"
-                appearance={{
-                  theme: ThemeSupa,
-                  style: {
-                    container: { width: '100%' },
-                    button: {
-                      width: '100%',
-                      borderRadius: 'var(--radius)',
-                      height: '2.5rem',
-                      fontSize: '0.875rem',
-                      backgroundColor: 'var(--primary)',
-                      color: 'var(--primary-foreground)',
-                    },
-                    input: {
-                      borderRadius: 'var(--radius)',
-                      height: '2.5rem',
-                      fontSize: '0.875rem',
-                      borderColor: 'var(--input)',
-                    },
-                  },
-                }}
-                providers={["google", "apple", "github"]}
                 localization={{
                   variables: {
                     sign_in: {
@@ -115,9 +119,6 @@ export function LoginForm({
                       button_label: "Sign in",
                       loading_button_label: "Signing in...",
                       social_provider_text: "Continue with {{provider}}",
-                    },
-                    errors: {
-                      user_already_exists: "An account with this email already exists. Please sign in instead."
                     }
                   }
                 }}
@@ -125,29 +126,8 @@ export function LoginForm({
             </TabsContent>
             <TabsContent value="signup">
               <Auth
-                supabaseClient={supabase}
+                {...sharedAuthProps}
                 view="sign_up"
-                appearance={{
-                  theme: ThemeSupa,
-                  style: {
-                    container: { width: '100%' },
-                    button: {
-                      width: '100%',
-                      borderRadius: 'var(--radius)',
-                      height: '2.5rem',
-                      fontSize: '0.875rem',
-                      backgroundColor: 'var(--primary)',
-                      color: 'var(--primary-foreground)',
-                    },
-                    input: {
-                      borderRadius: 'var(--radius)',
-                      height: '2.5rem',
-                      fontSize: '0.875rem',
-                      borderColor: 'var(--input)',
-                    },
-                  },
-                }}
-                providers={["google", "apple", "github"]}
                 localization={{
                   variables: {
                     sign_up: {
@@ -158,9 +138,6 @@ export function LoginForm({
                       button_label: "Sign up",
                       loading_button_label: "Signing up...",
                       social_provider_text: "Continue with {{provider}}",
-                    },
-                    errors: {
-                      user_already_exists: "An account with this email already exists. Please sign in instead."
                     }
                   }
                 }}
