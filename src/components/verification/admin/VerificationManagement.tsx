@@ -2,31 +2,10 @@ import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
-import { format } from "date-fns";
-import { Loader2, CheckCircle, XCircle } from "lucide-react";
-import { VerificationRequestList } from "./VerificationRequestList";
 import { ReviewForm } from "./ReviewForm";
-import type { VerificationRequest } from "@/types/verification";
-
-interface ProfileData {
-  full_name: string | null;
-  email: string | null;
-}
-
-type VerificationRequestWithProfile = VerificationRequest & {
-  profiles: ProfileData;
-};
+import { VerificationRequestsTable } from "./VerificationRequestsTable";
+import type { VerificationRequestWithProfile } from "@/types/verification";
 
 export function VerificationManagement() {
   const { toast } = useToast();
@@ -129,9 +108,8 @@ export function VerificationManagement() {
         <CardTitle>Verification Requests</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <VerificationRequestList
+        <VerificationRequestsTable
           requests={requests || []}
-          selectedRequestId={selectedRequestId}
           onSelectRequest={setSelectedRequestId}
         />
         {selectedRequestId && (
