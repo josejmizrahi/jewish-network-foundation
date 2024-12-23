@@ -15,4 +15,7 @@ export interface Profile {
   role: UserRole;
   points: number | null;
   is_admin: boolean | null;
+  email_notifications: boolean | null;
+  marketing_emails: boolean | null;
+  security_emails: boolean | null;
 }

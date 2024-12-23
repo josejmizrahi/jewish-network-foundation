@@ -4,6 +4,8 @@ import { AppSidebar } from "@/components/layout/AppSidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SettingsForm } from "@/components/settings/SettingsForm";
+import { NotificationsForm } from "@/components/settings/NotificationsForm";
+import { SecurityForm } from "@/components/settings/SecurityForm";
 import { VerificationManagement } from "@/components/verification/admin/VerificationManagement";
 import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
@@ -71,6 +73,61 @@ export default function Settings() {
     },
   });
 
+  const { mutate: updateNotifications, isPending: isUpdatingNotifications } = useMutation({
+    mutationFn: async (values: any) => {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          email_notifications: values.email_notifications,
+          marketing_emails: values.marketing_emails,
+          security_emails: values.security_emails,
+        })
+        .eq('id', user?.id);
+
+      if (error) throw error;
+      return values;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Notification preferences updated",
+        description: "Your notification settings have been saved successfully.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update notification preferences. Please try again.",
+        variant: "destructive",
+      });
+      console.error('Error updating notification preferences:', error);
+    },
+  });
+
+  const { mutate: updatePassword, isPending: isUpdatingPassword } = useMutation({
+    mutationFn: async (values: any) => {
+      const { error } = await supabase.auth.updateUser({
+        password: values.new_password
+      });
+
+      if (error) throw error;
+      return values;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Password updated",
+        description: "Your password has been updated successfully.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update password. Please try again.",
+        variant: "destructive",
+      });
+      console.error('Error updating password:', error);
+    },
+  });
+
   if (isLoading || !profileData) {
     return (
       <SidebarProvider defaultOpen>
@@ -134,9 +191,15 @@ export default function Settings() {
                         <CardTitle>Notification Preferences</CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-muted-foreground">
-                          Manage how you receive notifications.
-                        </p>
+                        <NotificationsForm
+                          onSubmit={updateNotifications}
+                          isLoading={isUpdatingNotifications}
+                          defaultValues={{
+                            email_notifications: profileData.email_notifications || false,
+                            marketing_emails: profileData.marketing_emails || false,
+                            security_emails: true,
+                          }}
+                        />
                       </CardContent>
                     </Card>
                   </TabsContent>
@@ -147,9 +210,10 @@ export default function Settings() {
                         <CardTitle>Security Settings</CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-muted-foreground">
-                          Manage your account security settings.
-                        </p>
+                        <SecurityForm
+                          onSubmit={updatePassword}
+                          isLoading={isUpdatingPassword}
+                        />
                       </CardContent>
                     </Card>
                   </TabsContent>
