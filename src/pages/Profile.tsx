@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { MainNav } from "@/components/layout/MainNav";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { Button } from "@/components/ui/button";
 import {
@@ -91,7 +91,9 @@ export default function Profile() {
         <div className="min-h-screen flex w-full">
           <AppSidebar />
           <div className="flex-1">
-            <MainNav />
+            <MainNav>
+              <SidebarTrigger />
+            </MainNav>
             <SidebarInset>
               <div className="container mx-auto px-4 py-8">
                 Loading...
@@ -108,7 +110,9 @@ export default function Profile() {
       <div className="min-h-screen flex w-full">
         <AppSidebar />
         <div className="flex-1">
-          <MainNav />
+          <MainNav>
+            <SidebarTrigger />
+          </MainNav>
           <SidebarInset>
             <div className="container mx-auto px-4 py-8">
               <div className="space-y-6">
