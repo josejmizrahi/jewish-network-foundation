@@ -4,7 +4,6 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { OnboardingModal } from "@/components/onboarding/OnboardingModal"
-import { AuthChangeEvent } from "@supabase/supabase-js"
 
 export default function Login() {
   const navigate = useNavigate()
@@ -20,11 +19,11 @@ export default function Login() {
       setLoading(false)
     }
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: AuthChangeEvent) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === "SIGNED_IN") {
         navigate("/")
       }
-      if (event === AuthChangeEvent.SIGNED_UP) {
+      if (event === "SIGNED_UP") {
         setShowOnboarding(true)
       }
     })
