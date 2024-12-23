@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Auth } from "@supabase/auth-ui-react"
-import { ThemeSupa, Provider } from "@supabase/auth-ui-shared"
+import { ThemeSupa } from "@supabase/auth-ui-shared"
 import { supabase } from "@/integrations/supabase/client"
 import { Loader2 } from "lucide-react"
 import { useState } from "react"
@@ -87,7 +87,7 @@ export function LoginForm({
         },
       },
     },
-    providers: [Provider.GOOGLE, Provider.APPLE, Provider.GITHUB],
+    providers: ['google', 'apple', 'github'],
   }
 
   return (
