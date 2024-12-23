@@ -12,6 +12,7 @@ import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import About from "./pages/About";
+import VerificationManagement from "./pages/VerificationManagement";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,14 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <Settings />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/verification-management"
+                element={
+                  <ProtectedRoute>
+                    <VerificationManagement />
                   </ProtectedRoute>
                 }
               />

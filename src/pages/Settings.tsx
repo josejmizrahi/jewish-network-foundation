@@ -6,7 +6,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SettingsForm } from "@/components/settings/SettingsForm";
 import { NotificationsForm } from "@/components/settings/NotificationsForm";
 import { SecurityForm } from "@/components/settings/SecurityForm";
-import { VerificationManagement } from "@/components/verification/admin/VerificationManagement";
 import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -182,9 +181,6 @@ export default function Settings() {
                     <TabsTrigger value="general">General</TabsTrigger>
                     <TabsTrigger value="notifications">Notifications</TabsTrigger>
                     <TabsTrigger value="security">Security</TabsTrigger>
-                    {profileData.is_admin && (
-                      <TabsTrigger value="admin">Admin</TabsTrigger>
-                    )}
                   </TabsList>
 
                   <TabsContent value="general" className="space-y-4">
@@ -234,12 +230,6 @@ export default function Settings() {
                       </CardContent>
                     </Card>
                   </TabsContent>
-
-                  {profileData.is_admin && (
-                    <TabsContent value="admin" className="space-y-4">
-                      <VerificationManagement />
-                    </TabsContent>
-                  )}
                 </Tabs>
               </div>
             </div>

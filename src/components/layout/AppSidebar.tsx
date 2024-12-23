@@ -6,6 +6,7 @@ import {
   GalleryVerticalEnd,
   Home,
   User,
+  Shield,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -20,10 +21,29 @@ import {
 } from "@/components/ui/sidebar"
 import { useAuth } from "@/hooks/useAuth"
 import { useLocation } from "react-router-dom"
+import { useQuery } from "@tanstack/react-query"
+import { supabase } from "@/integrations/supabase/client"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth();
   const location = useLocation();
+
+  const { data: profile } = useQuery({
+    queryKey: ['profile', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id,
+  });
 
   const navItems = [
     {
@@ -63,6 +83,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         },
       ],
       isActive: location.pathname === "/profile" || location.pathname === "/settings",
+    }] : []),
+    // Only show Verification Management for admins
+    ...(profile?.is_admin ? [{
+      title: "Verification",
+      url: "/verification-management",
+      icon: Shield,
+      isActive: location.pathname === "/verification-management",
     }] : []),
   ];
 
