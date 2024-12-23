@@ -38,11 +38,6 @@ export function LoginForm({
         title: "Profile updated",
         description: "Your profile has been updated successfully.",
       })
-    } else if (event === 'USER_DELETED') {
-      toast({
-        title: "Account deleted",
-        description: "Your account has been deleted successfully.",
-      })
     } else if (event === 'PASSWORD_RECOVERY') {
       toast({
         title: "Password recovery email sent",
@@ -127,7 +122,6 @@ export function LoginForm({
               variables: {
                 sign_in: {
                   social_provider_text: "Continue with {{provider}}",
-                  divider_text: "or",
                 },
               },
             }}
