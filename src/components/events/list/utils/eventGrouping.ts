@@ -12,9 +12,9 @@ export const filterEvents = (
   return events.filter(event => {
     if (!event?.start_time) return false;
 
-    const matchesSearch = search === "" || 
+    const matchesSearch = !search || 
       event.title?.toLowerCase().includes(search.toLowerCase()) ||
-      (event.description?.toLowerCase().includes(search.toLowerCase()) ?? false);
+      event.description?.toLowerCase().includes(search.toLowerCase());
 
     const matchesCategory = category === "all" || event.category === category;
 
