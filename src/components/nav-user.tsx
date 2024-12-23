@@ -5,7 +5,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 
 interface NavUserProps {
   user: {
@@ -16,17 +16,14 @@ interface NavUserProps {
 }
 
 export function NavUser({ user }: NavUserProps) {
-  const navigate = useNavigate();
-  
   return (
     <SidebarMenu>
       <SidebarMenuItem>
         <SidebarMenuButton
           asChild
           tooltip={user.name}
-          onClick={() => navigate("/profile")}
         >
-          <button className="w-full flex items-center gap-3">
+          <Link to="/profile" className="w-full flex items-center gap-3">
             <Avatar className="h-8 w-8">
               <AvatarImage src={user.avatar} alt={user.name} />
               <AvatarFallback>{user.name[0]}</AvatarFallback>
@@ -37,7 +34,7 @@ export function NavUser({ user }: NavUserProps) {
                 {user.email}
               </span>
             </div>
-          </button>
+          </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>

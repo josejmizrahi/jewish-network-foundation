@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { MenuIcon, Search } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -16,9 +16,18 @@ import {
 
 export function MainNav() {
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   const NavItems = () => (
     <>
+      <Link to="/" className="text-muted-foreground hover:text-primary transition-colors">
+        Home
+      </Link>
       <Link to="/about" className="text-muted-foreground hover:text-primary transition-colors">
         About
       </Link>
@@ -53,7 +62,7 @@ export function MainNav() {
               <Link to="/settings">Settings</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={signOut}>
+            <DropdownMenuItem onClick={handleSignOut}>
               Sign out
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -92,7 +101,6 @@ export function MainNav() {
             />
           </div>
 
-          {/* Mobile Navigation */}
           <Sheet>
             <SheetTrigger asChild className="md:hidden">
               <Button variant="ghost" size="icon">

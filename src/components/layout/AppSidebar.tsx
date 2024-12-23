@@ -47,7 +47,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           url: "/resources",
         },
       ],
-      isActive: location.pathname.startsWith("/about"),
+      isActive: location.pathname.startsWith("/about") || 
+                location.pathname === "/community" || 
+                location.pathname === "/resources",
     },
     {
       title: "Profile",
