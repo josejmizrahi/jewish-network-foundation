@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { EventFormFields } from "./EventFormFields";
 import { eventFormSchema, type EventFormValues } from "./schemas/eventFormSchema";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface CreateEventDialogProps {
   open: boolean;
@@ -46,7 +47,7 @@ export function CreateEventDialog({ open, onOpenChange }: CreateEventDialogProps
         organizer_id: user.id,
         status: 'published',
         timezone: data.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
-        title: data.title, // Ensure title is included
+        title: data.title,
       };
 
       const { error } = await supabase
@@ -75,31 +76,33 @@ export function CreateEventDialog({ open, onOpenChange }: CreateEventDialogProps
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px] h-[80vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>Create Event</DialogTitle>
         </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <EventFormFields form={form} />
-            
-            <div className="flex justify-end space-x-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                Create Event
-              </Button>
-            </div>
-          </form>
-        </Form>
+        <ScrollArea className="flex-1 px-1">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <EventFormFields form={form} />
+              
+              <div className="flex justify-end space-x-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => onOpenChange(false)}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Create Event
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
