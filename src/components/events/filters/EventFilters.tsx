@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DateTimePicker } from "@/components/ui/date-time-picker/date-time-picker";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { categoryColors } from "../list/types";
 
 interface EventFiltersProps {
@@ -9,10 +9,8 @@ interface EventFiltersProps {
   onSearchChange: (value: string) => void;
   category: string;
   onCategoryChange: (value: string) => void;
-  startDate: Date | undefined;
-  onStartDateChange: (date: Date | undefined) => void;
-  endDate: Date | undefined;
-  onEndDateChange: (date: Date | undefined) => void;
+  timeFilter: "upcoming" | "past" | "all";
+  onTimeFilterChange: (value: "upcoming" | "past" | "all") => void;
 }
 
 export function EventFilters({
@@ -20,10 +18,8 @@ export function EventFilters({
   onSearchChange,
   category,
   onCategoryChange,
-  startDate,
-  onStartDateChange,
-  endDate,
-  onEndDateChange,
+  timeFilter,
+  onTimeFilterChange,
 }: EventFiltersProps) {
   return (
     <div className="space-y-4 bg-card p-4 rounded-lg border">
@@ -54,21 +50,26 @@ export function EventFilters({
         </Select>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label>Start Date</Label>
-          <DateTimePicker
-            date={startDate || new Date()}
-            setDate={onStartDateChange}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label>End Date</Label>
-          <DateTimePicker
-            date={endDate || new Date()}
-            setDate={onEndDateChange}
-          />
-        </div>
+      <div className="space-y-2">
+        <Label>Time</Label>
+        <RadioGroup
+          value={timeFilter}
+          onValueChange={(value) => onTimeFilterChange(value as "upcoming" | "past" | "all")}
+          className="flex gap-4"
+        >
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="all" id="all" />
+            <Label htmlFor="all">All Events</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="upcoming" id="upcoming" />
+            <Label htmlFor="upcoming">Upcoming</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="past" id="past" />
+            <Label htmlFor="past">Past</Label>
+          </div>
+        </RadioGroup>
       </div>
     </div>
   );

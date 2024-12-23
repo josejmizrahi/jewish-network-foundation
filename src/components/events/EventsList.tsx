@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format, isAfter, isBefore, parseISO } from "date-fns";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { LoadingSkeleton } from "./list/LoadingSkeleton";
 import { EventDateGroup } from "./list/EventDateGroup";
 import { Event, categoryColors } from "./list/types";
@@ -10,10 +10,9 @@ import { EventFilters } from "./filters/EventFilters";
 export function EventsList() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
-  const [startDate, setStartDate] = useState<Date>();
-  const [endDate, setEndDate] = useState<Date>();
+  const [timeFilter, setTimeFilter] = useState<"upcoming" | "past" | "all">("upcoming");
 
-  const { data: events, isLoading, refetch } = useQuery({
+  const { data: events, isLoading } = useQuery({
     queryKey: ['events'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -29,28 +28,6 @@ export function EventsList() {
     },
   });
 
-  // Subscribe to real-time changes
-  useEffect(() => {
-    const channel = supabase
-      .channel('events-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'events'
-        },
-        () => {
-          refetch();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [refetch]);
-
   if (isLoading) {
     return <LoadingSkeleton />;
   }
@@ -63,7 +40,7 @@ export function EventsList() {
     );
   }
 
-  // Filter events based on search, category, and date range
+  // Filter events based on search, category, and time
   const filteredEvents = events.filter(event => {
     const matchesSearch = search === "" || 
       event.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -71,11 +48,13 @@ export function EventsList() {
 
     const matchesCategory = category === "all" || event.category === category;
 
+    const now = new Date();
     const eventDate = parseISO(event.start_time);
-    const matchesStartDate = !startDate || isAfter(eventDate, startDate);
-    const matchesEndDate = !endDate || isBefore(eventDate, endDate);
+    const matchesTimeFilter = timeFilter === "all" || 
+      (timeFilter === "upcoming" && isAfter(eventDate, now)) ||
+      (timeFilter === "past" && isBefore(eventDate, now));
 
-    return matchesSearch && matchesCategory && matchesStartDate && matchesEndDate;
+    return matchesSearch && matchesCategory && matchesTimeFilter;
   });
 
   const groupEventsByDate = (events: Event[]) => {
@@ -100,10 +79,8 @@ export function EventsList() {
           onSearchChange={setSearch}
           category={category}
           onCategoryChange={setCategory}
-          startDate={startDate}
-          onStartDateChange={setStartDate}
-          endDate={endDate}
-          onEndDateChange={setEndDate}
+          timeFilter={timeFilter}
+          onTimeFilterChange={setTimeFilter}
         />
         <div className="text-center py-12 bg-card rounded-xl">
           <p className="text-muted-foreground">No events match your filters</p>
@@ -119,10 +96,8 @@ export function EventsList() {
         onSearchChange={setSearch}
         category={category}
         onCategoryChange={setCategory}
-        startDate={startDate}
-        onStartDateChange={setStartDate}
-        endDate={endDate}
-        onEndDateChange={setEndDate}
+        timeFilter={timeFilter}
+        onTimeFilterChange={setTimeFilter}
       />
       {Object.entries(groupedEvents).map(([date, dateEvents]) => (
         <EventDateGroup
