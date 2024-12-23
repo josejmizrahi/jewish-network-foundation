@@ -35,6 +35,9 @@ export function EventsList() {
   const { data: invitations, isLoading: invitationsLoading } = useQuery({
     queryKey: ['event-invitations'],
     queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return [];
+
       const { data: invitationData, error } = await supabase
         .from('event_invitations')
         .select(`
@@ -43,12 +46,11 @@ export function EventsList() {
             organizer:profiles!events_organizer_id_fkey(full_name, avatar_url)
           )
         `)
-        .eq('invitee_id', (await supabase.auth.getUser()).data.user?.id)
-        .eq('status', 'pending')
-        .order('created_at', { ascending: false });
+        .eq('invitee_id', user.id)
+        .eq('status', 'pending');
 
       if (error) throw error;
-      return invitationData?.map(inv => inv.event) as Event[];
+      return invitationData?.map(inv => inv.event) as Event[] || [];
     },
   });
 
@@ -56,15 +58,13 @@ export function EventsList() {
     return <LoadingSkeleton />;
   }
 
+  const currentEvents = activeTab === "all" ? events || [] : invitations || [];
+  const filteredEvents = filterEvents(currentEvents, search, category, timeFilter);
+  const groupedEvents = groupEventsByDate(filteredEvents);
+
   if (!events?.length && !invitations?.length) {
     return <EmptyState hasFilters={false} />;
   }
-
-  const filteredEvents = activeTab === "all" 
-    ? filterEvents(events || [], search, category, timeFilter)
-    : filterEvents(invitations || [], search, category, timeFilter);
-  
-  const groupedEvents = groupEventsByDate(filteredEvents);
 
   if (Object.keys(groupedEvents).length === 0) {
     return (
@@ -84,7 +84,7 @@ export function EventsList() {
 
   return (
     <div className="space-y-8">
-      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "all" | "invitations")}>
+      <Tabs defaultValue="all" value={activeTab} onValueChange={(value) => setActiveTab(value as "all" | "invitations")}>
         <TabsList className="w-full">
           <TabsTrigger value="all" className="flex-1">All Events</TabsTrigger>
           <TabsTrigger value="invitations" className="flex-1 flex items-center justify-center gap-2">
@@ -96,7 +96,7 @@ export function EventsList() {
             ) : null}
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="all" className="space-y-8">
+        <TabsContent value="all" className="mt-6">
           <EventFilters
             search={search}
             onSearchChange={setSearch}
@@ -105,16 +105,18 @@ export function EventsList() {
             timeFilter={timeFilter}
             onTimeFilterChange={setTimeFilter}
           />
-          {Object.entries(groupedEvents).map(([date, dateEvents]) => (
-            <EventDateGroup
-              key={date}
-              date={date}
-              events={dateEvents}
-              categoryColors={categoryColors}
-            />
-          ))}
+          <div className="mt-8">
+            {Object.entries(groupedEvents).map(([date, dateEvents]) => (
+              <EventDateGroup
+                key={date}
+                date={date}
+                events={dateEvents}
+                categoryColors={categoryColors}
+              />
+            ))}
+          </div>
         </TabsContent>
-        <TabsContent value="invitations" className="space-y-8">
+        <TabsContent value="invitations" className="mt-6">
           <EventFilters
             search={search}
             onSearchChange={setSearch}
@@ -123,14 +125,16 @@ export function EventsList() {
             timeFilter={timeFilter}
             onTimeFilterChange={setTimeFilter}
           />
-          {Object.entries(groupedEvents).map(([date, dateEvents]) => (
-            <EventDateGroup
-              key={date}
-              date={date}
-              events={dateEvents}
-              categoryColors={categoryColors}
-            />
-          ))}
+          <div className="mt-8">
+            {Object.entries(groupedEvents).map(([date, dateEvents]) => (
+              <EventDateGroup
+                key={date}
+                date={date}
+                events={dateEvents}
+                categoryColors={categoryColors}
+              />
+            ))}
+          </div>
         </TabsContent>
       </Tabs>
     </div>
