@@ -47,15 +47,17 @@ export function NavMain({ items }: NavMainProps) {
               {item.items?.length ? (
                 <>
                   <CollapsibleTrigger asChild>
-                    <SidebarMenuButton 
-                      tooltip={item.title}
-                      isActive={location.pathname === item.url || 
-                              item.items?.some(subItem => location.pathname === subItem.url)}
-                    >
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
-                      <ChevronRight className="ml-auto h-4 w-4 shrink-0 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                    </SidebarMenuButton>
+                    <Link to={item.url} className="w-full">
+                      <SidebarMenuButton 
+                        tooltip={item.title}
+                        isActive={location.pathname === item.url || 
+                                item.items?.some(subItem => location.pathname === subItem.url)}
+                      >
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.title}</span>
+                        <ChevronRight className="ml-auto h-4 w-4 shrink-0 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                      </SidebarMenuButton>
+                    </Link>
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <SidebarMenuSub>
