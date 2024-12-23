@@ -14,14 +14,38 @@ export default function Login() {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (session) {
-        navigate("/")
+        // If user has completed profile, navigate to home, otherwise show onboarding
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('profile_completed')
+          .eq('id', session.user.id)
+          .single()
+
+        if (profile?.profile_completed) {
+          navigate("/")
+        } else {
+          setShowOnboarding(true)
+        }
       }
       setLoading(false)
     }
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === "SIGNED_IN") {
-        navigate("/")
+        // Check if profile is completed
+        if (session) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('profile_completed')
+            .eq('id', session.user.id)
+            .single()
+
+          if (profile?.profile_completed) {
+            navigate("/")
+          } else {
+            setShowOnboarding(true)
+          }
+        }
       }
       if (event === "SIGNED_UP") {
         setShowOnboarding(true)
