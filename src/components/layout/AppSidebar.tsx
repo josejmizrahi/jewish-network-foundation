@@ -4,8 +4,10 @@ import * as React from "react"
 import {
   BookOpen,
   GalleryVerticalEnd,
+  Home,
+  Users,
   Settings2,
-  SquareTerminal,
+  Library,
   User,
 } from "lucide-react"
 
@@ -30,7 +32,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     {
       title: "Home",
       url: "/",
-      icon: SquareTerminal,
+      icon: Home,
       isActive: location.pathname === "/",
     },
     {
@@ -80,7 +82,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   ];
 
   return (
-    <Sidebar collapsible="icon" className="border-r" {...props}>
+    <Sidebar collapsible="icon" className="border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60" {...props}>
       <SidebarHeader className="h-14 border-b px-2">
         <TeamSwitcher teams={teams} />
       </SidebarHeader>
