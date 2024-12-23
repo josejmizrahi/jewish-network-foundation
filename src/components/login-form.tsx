@@ -117,11 +117,17 @@ export function LoginForm({
             theme="light"
             providers={["google", "apple", "github"]}
             redirectTo={window.location.origin}
-            onlyThirdPartyProviders={true}
+            onlyThirdPartyProviders={false}
             localization={{
               variables: {
                 sign_in: {
                   social_provider_text: "Continue with {{provider}}",
+                  email_label: "Email address",
+                  password_label: "Password",
+                  email_input_placeholder: "Your email address",
+                  password_input_placeholder: "Your password",
+                  button_label: "Sign in",
+                  loading_button_label: "Signing in...",
                 },
               },
             }}
