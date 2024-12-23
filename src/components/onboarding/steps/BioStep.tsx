@@ -34,7 +34,11 @@ export function BioStep({ onBack, onNext }: BioStepProps) {
 
     const { error } = await supabase
       .from("profiles")
-      .update({ bio, location })
+      .update({
+        bio,
+        location,
+        updated_at: new Date().toISOString(),
+      })
       .eq("id", (await supabase.auth.getSession()).data.session?.user.id);
 
     if (error) {

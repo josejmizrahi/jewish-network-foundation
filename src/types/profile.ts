@@ -5,9 +5,11 @@ export interface Profile {
   avatar_url: string | null;
   bio: string | null;
   location: string | null;
-  verification_status: 'pending' | 'verified' | 'rejected';
-  role: 'basic_member' | 'verified_member' | 'leader';
-  points: number;
   created_at: string;
   updated_at: string;
+  profile_completed: boolean | null;
+  onboarding_step: string | null;
+  verification_status: 'pending' | 'verified' | 'rejected';
+  role: 'basic_member' | 'verified_member' | 'leader';
+  points: number | null;
 }
