@@ -23,14 +23,23 @@ export default function Settings() {
   const { data: profileData, isLoading } = useQuery({
     queryKey: ['profile', user?.id],
     queryFn: async () => {
+      if (!user?.id) throw new Error('No user ID');
+      
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', user?.id)
+        .eq('id', user.id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching profile:', error);
+        throw error;
+      }
       
+      if (!data) {
+        throw new Error('No profile found');
+      }
+
       const typedProfile: Profile = {
         ...data,
         verification_status: (data.verification_status || 'pending') as VerificationStatus,
@@ -39,7 +48,8 @@ export default function Settings() {
         marketing_emails: data.marketing_emails || false,
         security_emails: data.security_emails || true,
         social_links: data.social_links || {},
-        is_public: data.is_public ?? true
+        is_public: data.is_public ?? true,
+        is_admin: data.is_admin || false
       };
       
       setProfile(typedProfile);
@@ -172,7 +182,7 @@ export default function Settings() {
                     <TabsTrigger value="general">General</TabsTrigger>
                     <TabsTrigger value="notifications">Notifications</TabsTrigger>
                     <TabsTrigger value="security">Security</TabsTrigger>
-                    {profileData?.is_admin && (
+                    {profileData.is_admin && (
                       <TabsTrigger value="admin">Admin</TabsTrigger>
                     )}
                   </TabsList>
@@ -202,9 +212,9 @@ export default function Settings() {
                           onSubmit={updateNotifications}
                           isLoading={isUpdatingNotifications}
                           defaultValues={{
-                            email_notifications: profileData?.email_notifications || false,
-                            marketing_emails: profileData?.marketing_emails || false,
-                            security_emails: profileData?.security_emails || true,
+                            email_notifications: profileData.email_notifications || false,
+                            marketing_emails: profileData.marketing_emails || false,
+                            security_emails: profileData.security_emails || true,
                           }}
                         />
                       </CardContent>
@@ -225,7 +235,7 @@ export default function Settings() {
                     </Card>
                   </TabsContent>
 
-                  {profileData?.is_admin && (
+                  {profileData.is_admin && (
                     <TabsContent value="admin" className="space-y-4">
                       <VerificationManagement />
                     </TabsContent>
