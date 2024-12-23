@@ -4,6 +4,7 @@ import { AppSidebar } from "@/components/layout/AppSidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProfileForm } from "@/components/profile/ProfileForm";
+import { VerificationManagement } from "@/components/verification/admin/VerificationManagement";
 import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -29,7 +30,6 @@ export default function Settings() {
 
       if (error) throw error;
 
-      // Ensure both verification_status and role are of the correct type
       const typedData: Profile = {
         ...data,
         verification_status: (data.verification_status || 'pending') as VerificationStatus,
@@ -111,6 +111,9 @@ export default function Settings() {
                     <TabsTrigger value="profile">Profile</TabsTrigger>
                     <TabsTrigger value="account">Account</TabsTrigger>
                     <TabsTrigger value="notifications">Notifications</TabsTrigger>
+                    {profileData?.is_admin && (
+                      <TabsTrigger value="admin">Admin</TabsTrigger>
+                    )}
                   </TabsList>
 
                   <TabsContent value="profile" className="space-y-4">
@@ -156,6 +159,12 @@ export default function Settings() {
                       </CardContent>
                     </Card>
                   </TabsContent>
+
+                  {profileData?.is_admin && (
+                    <TabsContent value="admin" className="space-y-4">
+                      <VerificationManagement />
+                    </TabsContent>
+                  )}
                 </Tabs>
               </div>
             </div>
