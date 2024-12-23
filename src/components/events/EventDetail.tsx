@@ -1,20 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { EditEventDialog } from "./EditEventDialog";
-import { EventHeader } from "./detail/EventHeader";
-import { EventInfo } from "./detail/EventInfo";
-import { EventOrganizer } from "./detail/EventOrganizer";
-import { EventAttendees } from "./detail/EventAttendees";
 import { EventRegistration } from "./detail/EventRegistration";
+import { EventAttendees } from "./detail/EventAttendees";
+import { EventImage } from "./detail/EventImage";
+import { EventTimeDetails } from "./detail/EventTimeDetails";
+import { EventOptions } from "./detail/EventOptions";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { format } from "date-fns";
-import { MapPin, Calendar, Clock, Globe2 } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 
 interface Event {
   id: string;
@@ -158,78 +155,33 @@ export function EventDetail() {
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left Column - Event Image */}
-          <div className="relative aspect-square rounded-lg overflow-hidden bg-slate-800">
-            <img 
-              src="/lovable-uploads/f9d4f097-2caa-4377-bbfc-63b31b2d6a42.png"
-              alt="Event cover"
-              className="w-full h-full object-cover"
-            />
-          </div>
+          <EventImage imageUrl="/lovable-uploads/f9d4f097-2caa-4377-bbfc-63b31b2d6a42.png" />
 
           {/* Right Column - Event Details */}
           <div className="space-y-6">
             <h1 className="text-3xl font-bold">{event.title}</h1>
 
             {/* Date and Time */}
-            <div className="space-y-4">
-              <div className="flex items-center space-x-4 text-slate-300">
-                <Calendar className="h-5 w-5" />
-                <div>
-                  <div>Start: {format(new Date(event.start_time), "EEE, MMM d")}</div>
-                  <div>End: {format(new Date(event.end_time), "EEE, MMM d")}</div>
-                </div>
-              </div>
+            <EventTimeDetails
+              startTime={event.start_time}
+              endTime={event.end_time}
+              timezone={event.timezone}
+            />
 
+            {event.location && (
               <div className="flex items-center space-x-4 text-slate-300">
-                <Clock className="h-5 w-5" />
-                <div>
-                  <div>{format(new Date(event.start_time), "hh:mm a")}</div>
-                  <div>{format(new Date(event.end_time), "hh:mm a")}</div>
-                </div>
+                <MapPin className="h-5 w-5" />
+                <div>{event.location}</div>
               </div>
-
-              <div className="flex items-center space-x-4 text-slate-300">
-                <Globe2 className="h-5 w-5" />
-                <div>{event.timezone}</div>
-              </div>
-
-              {event.location && (
-                <div className="flex items-center space-x-4 text-slate-300">
-                  <MapPin className="h-5 w-5" />
-                  <div>{event.location}</div>
-                </div>
-              )}
-            </div>
+            )}
 
             {/* Event Options */}
             <div className="space-y-4 pt-6 border-t border-slate-800">
               <h3 className="text-lg font-semibold mb-4">Event Options</h3>
-              
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-lg">
-                  <div>
-                    <div className="font-medium">Tickets</div>
-                    <div className="text-sm text-slate-400">Free</div>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-lg">
-                  <div>
-                    <div className="font-medium">Require Approval</div>
-                    <div className="text-sm text-slate-400">Manually approve attendees</div>
-                  </div>
-                  <Switch />
-                </div>
-
-                <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-lg">
-                  <div>
-                    <div className="font-medium">Capacity</div>
-                    <div className="text-sm text-slate-400">
-                      {event.max_capacity ? `${event.current_attendees}/${event.max_capacity}` : 'Unlimited'}
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <EventOptions
+                maxCapacity={event.max_capacity}
+                currentAttendees={event.current_attendees}
+              />
             </div>
 
             {/* Registration Button */}
