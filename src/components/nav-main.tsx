@@ -54,9 +54,9 @@ export function NavMain({ items }: NavMainProps) {
                                 item.items?.some(subItem => location.pathname === subItem.url)}
                         className="transition-colors duration-200 hover:bg-accent/80"
                       >
-                        <item.icon className="h-4 w-4 transition-transform duration-200" />
+                        <item.icon className="h-4 w-4 transition-transform duration-200 group-data-[collapsible=icon]:mx-auto" />
                         <span>{item.title}</span>
-                        <ChevronRight className="ml-auto h-4 w-4 shrink-0 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                        <ChevronRight className="ml-auto h-4 w-4 shrink-0 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 group-data-[collapsible=icon]:hidden" />
                       </SidebarMenuButton>
                     </Link>
                   </CollapsibleTrigger>
@@ -90,7 +90,7 @@ export function NavMain({ items }: NavMainProps) {
                     isActive={location.pathname === item.url}
                     className="transition-colors duration-200 hover:bg-accent/80"
                   >
-                    <item.icon className="h-4 w-4 transition-transform duration-200" />
+                    <item.icon className="h-4 w-4 transition-transform duration-200 group-data-[collapsible=icon]:mx-auto" />
                     <span>{item.title}</span>
                   </SidebarMenuButton>
                 </Link>

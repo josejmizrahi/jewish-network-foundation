@@ -67,7 +67,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader className="h-14 border-b px-4 flex items-center bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-colors duration-200">
         <TeamSwitcher teams={teams} />
       </SidebarHeader>
-      <SidebarContent className="p-4 space-y-6">
+      <SidebarContent className="flex flex-col flex-grow p-4 space-y-6">
         <NavMain items={navItems} />
       </SidebarContent>
       <SidebarFooter className="border-t p-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-colors duration-200">
