@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import { supabase } from "@/integrations/supabase/client";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
+import About from "./pages/About";
 
 const queryClient = new QueryClient();
 
@@ -21,8 +22,12 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
+            {/* Public Routes */}
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/about" element={<About />} />
+            
+            {/* Protected Routes */}
             <Route
               path="/profile"
               element={
@@ -39,6 +44,25 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/community"
+              element={
+                <ProtectedRoute>
+                  <Index />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/resources"
+              element={
+                <ProtectedRoute>
+                  <Index />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Catch all route - redirect to home */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
