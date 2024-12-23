@@ -1,15 +1,15 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { format } from "date-fns";
-import { Calendar, Clock, MapPin, Users, Video, Edit2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { EditEventDialog } from "./EditEventDialog";
+import { EventHeader } from "./detail/EventHeader";
+import { EventInfo } from "./detail/EventInfo";
+import { EventOrganizer } from "./detail/EventOrganizer";
 
 interface Event {
   id: string;
@@ -22,7 +22,6 @@ interface Event {
   meeting_url: string | null;
   max_capacity: number | null;
   current_attendees: number;
-  cover_image: string | null;
   status: string;
   is_private: boolean;
   timezone: string;
@@ -37,6 +36,7 @@ export function EventDetail() {
   const { id } = useParams();
   const { user } = useAuth();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const { data: event, isLoading } = useQuery({
@@ -96,10 +96,36 @@ export function EventDetail() {
         title: "Registration successful",
         description: "You have been registered for this event.",
       });
+      
+      queryClient.invalidateQueries({ queryKey: ['event-registration', id] });
     } catch (error: any) {
       toast({
         title: "Registration failed",
         description: error.message || "Failed to register for the event.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleCancelEvent = async () => {
+    try {
+      const { error } = await supabase
+        .from('events')
+        .update({ status: 'cancelled' })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Event cancelled",
+        description: "The event has been cancelled successfully.",
+      });
+      
+      queryClient.invalidateQueries({ queryKey: ['events', id] });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to cancel the event.",
         variant: "destructive",
       });
     }
@@ -128,89 +154,41 @@ export function EventDetail() {
   return (
     <Card className="p-6">
       <div className="space-y-6">
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <h1 className="text-2xl font-bold">{event.title}</h1>
-            <div className="flex items-center gap-2">
-              {event.is_private && (
-                <Badge variant="secondary">Private</Badge>
-              )}
-              {isOrganizer && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setIsEditDialogOpen(true)}
-                >
-                  <Edit2 className="h-4 w-4 mr-2" />
-                  Edit Event
-                </Button>
-              )}
-            </div>
-          </div>
-          {event.description && (
-            <p className="text-muted-foreground">{event.description}</p>
-          )}
-        </div>
+        <EventHeader
+          title={event.title}
+          description={event.description}
+          isPrivate={event.is_private}
+          isOrganizer={isOrganizer}
+          onEdit={() => setIsEditDialogOpen(true)}
+          onCancel={handleCancelEvent}
+          status={event.status}
+        />
 
-        <div className="grid gap-4 text-sm text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4" />
-            <span>{format(new Date(event.start_time), "PPP")}</span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Clock className="h-4 w-4" />
-            <span>
-              {format(new Date(event.start_time), "p")} - {format(new Date(event.end_time), "p")}
-            </span>
-          </div>
-
-          {event.is_online ? (
-            <div className="flex items-center gap-2">
-              <Video className="h-4 w-4" />
-              <span>Online Event</span>
-              {event.meeting_url && isRegistered && (
-                <a 
-                  href={event.meeting_url} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  Join Meeting
-                </a>
-              )}
-            </div>
-          ) : event.location ? (
-            <div className="flex items-center gap-2">
-              <MapPin className="h-4 w-4" />
-              <span>{event.location}</span>
-            </div>
-          ) : null}
-
-          {event.max_capacity && (
-            <div className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              <span>
-                {event.current_attendees} / {event.max_capacity} attendees
-              </span>
-            </div>
-          )}
-        </div>
+        <EventInfo
+          startTime={event.start_time}
+          endTime={event.end_time}
+          isOnline={event.is_online}
+          meetingUrl={event.meeting_url}
+          location={event.location}
+          maxCapacity={event.max_capacity}
+          currentAttendees={event.current_attendees}
+          isRegistered={!!isRegistered}
+        />
 
         {event.organizer && (
-          <div className="pt-4 border-t">
-            <p className="text-sm text-muted-foreground">
-              Organized by {event.organizer.full_name}
-            </p>
-          </div>
+          <EventOrganizer organizerName={event.organizer.full_name} />
         )}
 
         <div className="flex justify-end">
           <Button
             onClick={handleRegister}
-            disabled={isRegistered || !user}
+            disabled={isRegistered || !user || event.status === 'cancelled'}
           >
-            {isRegistered ? "Already Registered" : "Register for Event"}
+            {event.status === 'cancelled' 
+              ? "Event Cancelled" 
+              : isRegistered 
+                ? "Already Registered" 
+                : "Register for Event"}
           </Button>
         </div>
       </div>
