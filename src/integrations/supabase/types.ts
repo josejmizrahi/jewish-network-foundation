@@ -13,20 +13,26 @@ export type Database = {
         Row: {
           created_at: string | null
           event_id: string
+          registration_type: string | null
           status: string | null
           user_id: string
+          waitlist_position: number | null
         }
         Insert: {
           created_at?: string | null
           event_id: string
+          registration_type?: string | null
           status?: string | null
           user_id: string
+          waitlist_position?: number | null
         }
         Update: {
           created_at?: string | null
           event_id?: string
+          registration_type?: string | null
           status?: string | null
           user_id?: string
+          waitlist_position?: number | null
         }
         Relationships: [
           {
@@ -66,6 +72,7 @@ export type Database = {
           timezone: string
           title: string
           updated_at: string | null
+          waitlist_enabled: boolean | null
         }
         Insert: {
           category?: string | null
@@ -87,6 +94,7 @@ export type Database = {
           timezone: string
           title: string
           updated_at?: string | null
+          waitlist_enabled?: boolean | null
         }
         Update: {
           category?: string | null
@@ -108,6 +116,7 @@ export type Database = {
           timezone?: string
           title?: string
           updated_at?: string | null
+          waitlist_enabled?: boolean | null
         }
         Relationships: [
           {

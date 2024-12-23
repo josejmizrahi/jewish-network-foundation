@@ -10,16 +10,25 @@ interface EventRegistrationProps {
   isRegistered: boolean;
   status: string;
   user: User | null;
+  currentAttendees: number;
+  maxCapacity: number | null;
+  waitlistEnabled: boolean;
 }
 
 export function EventRegistration({ 
   eventId, 
   isRegistered, 
   status,
-  user 
+  user,
+  currentAttendees,
+  maxCapacity,
+  waitlistEnabled
 }: EventRegistrationProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  const isFull = maxCapacity !== null && currentAttendees >= maxCapacity;
+  const canJoinWaitlist = isFull && waitlistEnabled && !isRegistered;
 
   const handleRegister = async () => {
     if (!user) {
@@ -32,18 +41,24 @@ export function EventRegistration({
     }
 
     try {
+      const registrationType = isFull && waitlistEnabled ? 'waitlist' : 'registered';
+      
       const { error } = await supabase
         .from('event_attendees')
         .insert({
           event_id: eventId,
           user_id: user.id,
+          registration_type: registrationType,
+          waitlist_position: registrationType === 'waitlist' ? currentAttendees - maxCapacity! + 1 : null
         });
 
       if (error) throw error;
 
       toast({
-        title: "Registration successful",
-        description: "You have been registered for this event.",
+        title: registrationType === 'waitlist' ? "Added to waitlist" : "Registration successful",
+        description: registrationType === 'waitlist' 
+          ? "You have been added to the waitlist for this event."
+          : "You have been registered for this event.",
       });
       
       queryClient.invalidateQueries({ queryKey: ['event-registration', eventId] });
@@ -57,6 +72,14 @@ export function EventRegistration({
     }
   };
 
+  const getButtonText = () => {
+    if (status === 'cancelled') return "Event Cancelled";
+    if (isRegistered) return "Already Registered";
+    if (canJoinWaitlist) return "Join Waitlist";
+    if (isFull && !waitlistEnabled) return "Event Full";
+    return "Register Now";
+  };
+
   return (
     <Card className="p-6">
       <div className="flex flex-col items-center text-center space-y-4">
@@ -65,26 +88,35 @@ export function EventRegistration({
             ? "This event has been cancelled" 
             : isRegistered 
               ? "You're registered!"
-              : "Register for this event"}
+              : canJoinWaitlist
+                ? "Event is full - Waitlist available"
+                : isFull
+                  ? "Event is full"
+                  : "Register for this event"}
         </h3>
         <p className="text-muted-foreground">
           {status === 'cancelled' 
             ? "The organizer has cancelled this event."
             : isRegistered 
               ? "We look forward to seeing you there!"
-              : "Secure your spot for this exciting event."}
+              : canJoinWaitlist
+                ? "Join the waitlist to be notified if spots become available."
+                : isFull
+                  ? "This event has reached maximum capacity."
+                  : "Secure your spot for this exciting event."}
         </p>
+        {maxCapacity && (
+          <p className="text-sm text-muted-foreground">
+            {currentAttendees} / {maxCapacity} spots filled
+          </p>
+        )}
         <Button
           className="w-full rounded-full"
           size="lg"
           onClick={handleRegister}
-          disabled={isRegistered || !user || status === 'cancelled'}
+          disabled={isRegistered || !user || status === 'cancelled' || (isFull && !waitlistEnabled)}
         >
-          {status === 'cancelled' 
-            ? "Event Cancelled" 
-            : isRegistered 
-              ? "Already Registered" 
-              : "Register Now"}
+          {getButtonText()}
         </Button>
       </div>
     </Card>

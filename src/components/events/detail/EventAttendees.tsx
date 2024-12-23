@@ -27,6 +27,8 @@ interface Attendee {
     avatar_url: string;
   };
   status: string;
+  registration_type: string;
+  waitlist_position: number | null;
   created_at: string;
 }
 
@@ -41,10 +43,13 @@ export function EventAttendees({ eventId, isOrganizer }: EventAttendeesProps) {
           event_id,
           user_id,
           status,
+          registration_type,
+          waitlist_position,
           created_at,
           user:profiles(id, full_name, avatar_url)
         `)
         .eq('event_id', eventId)
+        .order('registration_type', { ascending: true })
         .order('created_at', { ascending: true });
 
       if (error) throw error;
@@ -86,6 +91,9 @@ export function EventAttendees({ eventId, isOrganizer }: EventAttendeesProps) {
     </div>;
   }
 
+  const registeredAttendees = attendees?.filter(a => a.registration_type === 'registered') || [];
+  const waitlistAttendees = attendees?.filter(a => a.registration_type === 'waitlist') || [];
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -99,42 +107,91 @@ export function EventAttendees({ eventId, isOrganizer }: EventAttendeesProps) {
           Export List
         </Button>
       </div>
-      <ScrollArea className="h-[200px] rounded-md border">
-        <div className="p-4 space-y-4">
-          {attendees?.map((attendee) => (
-            <div key={`${attendee.event_id}-${attendee.user_id}`} className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Avatar>
-                  <AvatarImage src={attendee.user.avatar_url} />
-                  <AvatarFallback>
-                    {attendee.user.full_name.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                <span>{attendee.user.full_name}</span>
+      <ScrollArea className="h-[400px] rounded-md border">
+        <div className="p-4 space-y-6">
+          <div className="space-y-4">
+            <h4 className="font-medium">Registered ({registeredAttendees.length})</h4>
+            {registeredAttendees.map((attendee) => (
+              <div key={`${attendee.event_id}-${attendee.user_id}`} className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Avatar>
+                    <AvatarImage src={attendee.user.avatar_url} />
+                    <AvatarFallback>
+                      {attendee.user.full_name.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span>{attendee.user.full_name}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="default">
+                    Registered
+                  </Badge>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem 
+                        className="text-destructive"
+                        onClick={() => handleRemoveAttendee(attendee.user_id)}
+                      >
+                        <UserX className="h-4 w-4 mr-2" />
+                        Remove Attendee
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Badge variant={attendee.status === 'registered' ? 'default' : 'secondary'}>
-                  {attendee.status}
-                </Badge>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem 
-                      className="text-destructive"
-                      onClick={() => handleRemoveAttendee(attendee.user_id)}
-                    >
-                      <UserX className="h-4 w-4 mr-2" />
-                      Remove Attendee
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
+            ))}
+          </div>
+
+          {waitlistAttendees.length > 0 && (
+            <div className="space-y-4">
+              <h4 className="font-medium">Waitlist ({waitlistAttendees.length})</h4>
+              {waitlistAttendees.map((attendee) => (
+                <div key={`${attendee.event_id}-${attendee.user_id}`} className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Avatar>
+                      <AvatarImage src={attendee.user.avatar_url} />
+                      <AvatarFallback>
+                        {attendee.user.full_name.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col">
+                      <span>{attendee.user.full_name}</span>
+                      <span className="text-sm text-muted-foreground">
+                        Position: #{attendee.waitlist_position}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary">
+                      Waitlisted
+                    </Badge>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem 
+                          className="text-destructive"
+                          onClick={() => handleRemoveAttendee(attendee.user_id)}
+                        >
+                          <UserX className="h-4 w-4 mr-2" />
+                          Remove from Waitlist
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          )}
+
           {!attendees?.length && (
             <p className="text-center text-muted-foreground">No attendees yet</p>
           )}
