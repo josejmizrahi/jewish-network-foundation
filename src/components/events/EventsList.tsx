@@ -8,7 +8,6 @@ import { EventFilters } from "./filters/EventFilters";
 import { EmptyState } from "./list/EmptyState";
 import { filterEvents, groupEventsByDate } from "./list/utils/eventGrouping";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Mail } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export function EventsList() {
@@ -39,7 +38,6 @@ export function EventsList() {
       const { data: invitationData, error } = await supabase
         .from('event_invitations')
         .select(`
-          *,
           event:events(
             *,
             organizer:profiles!events_organizer_id_fkey(full_name, avatar_url)
@@ -87,12 +85,12 @@ export function EventsList() {
   return (
     <div className="space-y-8">
       <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "all" | "invitations")}>
-        <TabsList>
-          <TabsTrigger value="all">All Events</TabsTrigger>
-          <TabsTrigger value="invitations" className="flex items-center gap-2">
+        <TabsList className="w-full">
+          <TabsTrigger value="all" className="flex-1">All Events</TabsTrigger>
+          <TabsTrigger value="invitations" className="flex-1 flex items-center justify-center gap-2">
             Invitations
             {invitations?.length ? (
-              <Badge variant="secondary" className="ml-1">
+              <Badge variant="secondary">
                 {invitations.length}
               </Badge>
             ) : null}
