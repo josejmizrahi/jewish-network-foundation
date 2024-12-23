@@ -64,6 +64,7 @@ export function ProfileImageUpload({ avatarUrl, fullName, userId, onUploadComple
         throw updateError;
       }
 
+      // Call the callback with the new URL to update UI state
       onUploadComplete(publicUrl);
 
       toast({
