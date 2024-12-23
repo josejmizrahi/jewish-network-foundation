@@ -20,6 +20,7 @@ export function LoginForm({
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   const [loading, setLoading] = useState(false)
+  const [activeTab, setActiveTab] = useState("signin")
   const { toast } = useToast()
 
   supabase.auth.onAuthStateChange((event, session) => {
@@ -46,6 +47,25 @@ export function LoginForm({
     }
   })
 
+  // Handle auth errors
+  const handleAuthError = (error: Error) => {
+    const errorMessage = error.message;
+    if (errorMessage.includes("user_already_exists")) {
+      toast({
+        title: "Account already exists",
+        description: "Please sign in with your existing account.",
+        variant: "destructive",
+      });
+      setActiveTab("signin");
+    } else {
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -56,7 +76,7 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="signin" className="space-y-4">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="signin">Sign In</TabsTrigger>
               <TabsTrigger value="signup">Sign Up</TabsTrigger>
@@ -99,6 +119,7 @@ export function LoginForm({
                     },
                   },
                 }}
+                onError={handleAuthError}
               />
             </TabsContent>
             <TabsContent value="signup">
@@ -139,6 +160,7 @@ export function LoginForm({
                     },
                   },
                 }}
+                onError={handleAuthError}
               />
             </TabsContent>
           </Tabs>
