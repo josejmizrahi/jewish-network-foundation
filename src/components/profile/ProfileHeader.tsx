@@ -10,37 +10,37 @@ interface ProfileHeaderProps {
 
 export function ProfileHeader({ profile, email }: ProfileHeaderProps) {
   return (
-    <div className="relative">
-      <div className="h-32 w-full bg-gradient-to-r from-blue-100 to-blue-50 rounded-t-lg" />
-      <div className="px-6 pb-6">
-        <div className="flex flex-col sm:flex-row gap-4 -mt-12 sm:-mt-16">
-          <Avatar className="h-24 w-24 sm:h-32 sm:w-32 border-4 border-background">
+    <div className="relative bg-background">
+      <div className="h-48 w-full bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg" />
+      <div className="px-8 pb-8">
+        <div className="flex flex-col sm:flex-row gap-6 -mt-16 sm:-mt-20">
+          <Avatar className="h-32 w-32 sm:h-40 sm:w-40 border-4 border-background shadow-xl">
             <AvatarImage src={profile.avatar_url || ""} alt={profile.full_name || ""} />
             <AvatarFallback>{profile.full_name?.[0]}</AvatarFallback>
           </Avatar>
-          <div className="flex-1 space-y-2">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-2xl font-bold">{profile.full_name || "Anonymous"}</h1>
+          <div className="flex-1 space-y-4">
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1 className="text-3xl font-bold tracking-tight">{profile.full_name || "Anonymous"}</h1>
               <VerificationBadge 
                 status={profile.verification_status} 
                 badgeStyle={profile.badge_style}
               />
             </div>
             {profile.username && (
-              <p className="text-muted-foreground">@{profile.username}</p>
+              <p className="text-muted-foreground text-lg">@{profile.username}</p>
             )}
             {profile.bio && (
-              <p className="text-sm">{profile.bio}</p>
+              <p className="text-base leading-relaxed max-w-2xl">{profile.bio}</p>
             )}
-            <div className="flex items-center gap-4 flex-wrap">
+            <div className="flex items-center gap-6 flex-wrap text-muted-foreground">
               {profile.location && (
-                <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
                   <MapPin className="h-4 w-4" />
                   <span>{profile.location}</span>
                 </div>
               )}
               {email && (
-                <span className="text-sm text-muted-foreground">{email}</span>
+                <span>{email}</span>
               )}
             </div>
           </div>

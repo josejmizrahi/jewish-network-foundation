@@ -21,22 +21,23 @@ export function ProfileProgress({ profile }: ProfileProgressProps) {
 
   const progress = calculateProgress();
 
-  // Don't render the card if profile is complete
   if (progress === 100) {
     return null;
   }
 
   return (
-    <Card>
+    <Card className="border-none bg-background/50 backdrop-blur supports-[backdrop-filter]:bg-background/50">
       <CardHeader>
-        <CardTitle>Profile Completion</CardTitle>
+        <CardTitle className="text-2xl font-semibold tracking-tight">Profile Completion</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <Progress value={progress} className="h-2" />
-        <div className="text-sm text-muted-foreground">
-          {progress}% Complete
+      <CardContent className="space-y-6">
+        <div className="space-y-2">
+          <Progress value={progress} className="h-2" />
+          <div className="text-sm text-muted-foreground">
+            {progress}% Complete
+          </div>
         </div>
-        <ul className="text-sm space-y-2">
+        <ul className="text-sm space-y-2 text-muted-foreground">
           {!profile.username && (
             <li>• Add a username</li>
           )}

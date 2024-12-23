@@ -8,24 +8,24 @@ interface MembershipCardProps {
 
 export function MembershipCard({ profile }: MembershipCardProps) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Membership Status</CardTitle>
-        <CardDescription>
+    <Card className="border-none bg-background/50 backdrop-blur supports-[backdrop-filter]:bg-background/50">
+      <CardHeader className="space-y-1">
+        <CardTitle className="text-2xl font-semibold tracking-tight">Membership Status</CardTitle>
+        <CardDescription className="text-base">
           Your current role and verification status
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div>
-            <div className="text-sm font-medium">Role</div>
-            <Badge variant="outline" className="mt-1">
+            <div className="text-sm font-medium mb-2.5">Role</div>
+            <Badge variant="secondary" className="text-sm">
               {profile.role.replace('_', ' ')}
             </Badge>
           </div>
           <div>
-            <div className="text-sm font-medium">Points</div>
-            <div className="mt-1 text-2xl font-bold">{profile.points}</div>
+            <div className="text-sm font-medium mb-1">Points</div>
+            <div className="text-3xl font-light tracking-tight">{profile.points}</div>
           </div>
         </div>
       </CardContent>
