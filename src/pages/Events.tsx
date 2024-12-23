@@ -11,13 +11,13 @@ export default function Events() {
 
   return (
     <SidebarProvider defaultOpen>
-      <div className="min-h-screen flex w-full">
+      <div className="min-h-screen flex w-full bg-[#1A1F2C] text-white">
         <AppSidebar />
         <div className="flex-1">
           <MainNav />
           <SidebarInset>
             <div className="container mx-auto px-4 py-8">
-              <div className="space-y-6">
+              <div className="space-y-8">
                 <EventsHeader onCreateEvent={() => setIsCreateDialogOpen(true)} />
                 <EventsList />
                 <CreateEventDialog 
