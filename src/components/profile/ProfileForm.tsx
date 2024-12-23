@@ -3,6 +3,8 @@ import { Loader2 } from "lucide-react";
 import { ProfileAvatar } from "./form/ProfileAvatar";
 import { ProfileBasicInfo } from "./form/ProfileBasicInfo";
 import { ProfileBioLocation } from "./form/ProfileBioLocation";
+import { ProfileSocialLinks } from "./form/ProfileSocialLinks";
+import { ProfilePrivacy } from "./form/ProfilePrivacy";
 import type { Profile } from "@/types/profile";
 
 interface ProfileFormProps {
@@ -28,6 +30,14 @@ export function ProfileForm({ profile, updating, onUpdateProfile, onProfileChang
         onProfileChange={onProfileChange}
       />
       <ProfileBioLocation 
+        profile={profile}
+        onProfileChange={onProfileChange}
+      />
+      <ProfileSocialLinks
+        profile={profile}
+        onProfileChange={onProfileChange}
+      />
+      <ProfilePrivacy
         profile={profile}
         onProfileChange={onProfileChange}
       />

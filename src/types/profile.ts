@@ -18,4 +18,7 @@ export interface Profile {
   email_notifications: boolean | null;
   marketing_emails: boolean | null;
   security_emails: boolean | null;
+  is_public: boolean | null;
+  social_links: Record<string, string> | null;
+  custom_username: string | null;
 }
