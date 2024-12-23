@@ -10,6 +10,7 @@ import { EditEventDialog } from "./EditEventDialog";
 import { EventHeader } from "./detail/EventHeader";
 import { EventInfo } from "./detail/EventInfo";
 import { EventOrganizer } from "./detail/EventOrganizer";
+import { EventAttendees } from "./detail/EventAttendees";
 
 interface Event {
   id: string;
@@ -98,6 +99,7 @@ export function EventDetail() {
       });
       
       queryClient.invalidateQueries({ queryKey: ['event-registration', id] });
+      queryClient.invalidateQueries({ queryKey: ['event-attendees', id] });
     } catch (error: any) {
       toast({
         title: "Registration failed",
@@ -177,6 +179,10 @@ export function EventDetail() {
 
         {event.organizer && (
           <EventOrganizer organizerName={event.organizer.full_name} />
+        )}
+
+        {isOrganizer && (
+          <EventAttendees eventId={event.id} isOrganizer={isOrganizer} />
         )}
 
         <div className="flex justify-end">
