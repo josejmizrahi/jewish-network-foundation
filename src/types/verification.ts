@@ -27,7 +27,6 @@ export interface VerificationRequest {
 export interface VerificationRequestWithProfile extends VerificationRequest {
   profiles: {
     full_name: string | null;
-    email: string | null;
   };
   onSelectRequest?: (id: string) => void;
 }

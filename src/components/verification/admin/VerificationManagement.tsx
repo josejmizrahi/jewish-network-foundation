@@ -21,8 +21,7 @@ export function VerificationManagement() {
         .select(`
           *,
           profiles (
-            full_name,
-            email
+            full_name
           )
         `)
         .order('created_at', { ascending: false });
