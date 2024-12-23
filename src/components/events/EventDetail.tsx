@@ -28,6 +28,7 @@ interface Event {
   is_private: boolean;
   timezone: string;
   organizer_id: string;
+  cover_image: string | null;
   organizer: {
     full_name: string;
     avatar_url: string;
@@ -100,7 +101,7 @@ export function EventDetail() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <Skeleton className="h-48 w-full" />
+        <Skeleton className="h-[400px] w-full rounded-lg" />
         <div className="space-y-2">
           <Skeleton className="h-8 w-1/3" />
           <Skeleton className="h-4 w-1/2" />
@@ -120,7 +121,7 @@ export function EventDetail() {
   const isOrganizer = user?.id === event.organizer_id;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-8">
       <EventHeader
         title={event.title}
         description={event.description}
@@ -129,10 +130,11 @@ export function EventDetail() {
         onEdit={() => setIsEditDialogOpen(true)}
         onCancel={handleCancelEvent}
         status={event.status}
+        coverImage={event.cover_image}
       />
 
-      <div className="grid gap-6 md:grid-cols-3">
-        <div className="md:col-span-2 space-y-6">
+      <div className="grid gap-8 md:grid-cols-3">
+        <div className="md:col-span-2 space-y-8">
           <EventInfo
             startTime={event.start_time}
             endTime={event.end_time}

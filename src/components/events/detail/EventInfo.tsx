@@ -25,80 +25,85 @@ export function EventInfo({
   isRegistered,
 }: EventInfoProps) {
   return (
-    <Card className="p-6 space-y-6">
-      <div className="grid gap-6 md:grid-cols-2">
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-              <Calendar className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <p className="font-medium">{format(new Date(startTime), "EEEE, MMMM d, yyyy")}</p>
-              <p className="text-sm text-muted-foreground">Date</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-              <Clock className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <p className="font-medium">
-                {format(new Date(startTime), "h:mm a")} - {format(new Date(endTime), "h:mm a")}
-              </p>
-              <p className="text-sm text-muted-foreground">Time</p>
-            </div>
-          </div>
-
-          {maxCapacity && (
+    <Card className="p-6">
+      <div className="space-y-6">
+        <h2 className="text-lg font-semibold">Event Details</h2>
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="space-y-6">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                <Users className="h-5 w-5 text-primary" />
+                <Calendar className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="font-medium">{currentAttendees} / {maxCapacity} attendees</p>
-                <p className="text-sm text-muted-foreground">Capacity</p>
+                <p className="font-medium">{format(new Date(startTime), "EEEE, MMMM d, yyyy")}</p>
+                <p className="text-sm text-muted-foreground">Date</p>
               </div>
             </div>
-          )}
-        </div>
 
-        <div className="space-y-4">
-          {isOnline ? (
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                <Video className="h-5 w-5 text-primary" />
+                <Clock className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="font-medium">Online Event</p>
-                {meetingUrl && isRegistered && (
-                  <Button
-                    variant="link"
-                    className="h-auto p-0 text-primary"
-                    asChild
-                  >
-                    <a
-                      href={meetingUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                <p className="font-medium">
+                  {format(new Date(startTime), "h:mm a")} - {format(new Date(endTime), "h:mm a")}
+                </p>
+                <p className="text-sm text-muted-foreground">Time</p>
+              </div>
+            </div>
+
+            {maxCapacity && (
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                  <Users className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="font-medium">
+                    {currentAttendees} / {maxCapacity} attendees
+                  </p>
+                  <p className="text-sm text-muted-foreground">Capacity</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-6">
+            {isOnline ? (
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                  <Video className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="font-medium">Online Event</p>
+                  {meetingUrl && isRegistered && (
+                    <Button
+                      variant="link"
+                      className="h-auto p-0 text-primary"
+                      asChild
                     >
-                      Join Meeting
-                    </a>
-                  </Button>
-                )}
+                      <a
+                        href={meetingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Join Meeting
+                      </a>
+                    </Button>
+                  )}
+                </div>
               </div>
-            </div>
-          ) : location ? (
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                <MapPin className="h-5 w-5 text-primary" />
+            ) : location ? (
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                  <MapPin className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="font-medium">{location}</p>
+                  <p className="text-sm text-muted-foreground">Location</p>
+                </div>
               </div>
-              <div>
-                <p className="font-medium">{location}</p>
-                <p className="text-sm text-muted-foreground">Location</p>
-              </div>
-            </div>
-          ) : null}
+            ) : null}
+          </div>
         </div>
       </div>
     </Card>

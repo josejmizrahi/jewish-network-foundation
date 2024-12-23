@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Edit2, Share2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 interface EventHeaderProps {
   title: string;
@@ -11,6 +12,7 @@ interface EventHeaderProps {
   onEdit: () => void;
   onCancel: () => void;
   status: string;
+  coverImage?: string | null;
 }
 
 export function EventHeader({
@@ -21,9 +23,30 @@ export function EventHeader({
   onEdit,
   onCancel,
   status,
+  coverImage,
 }: EventHeaderProps) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      {coverImage ? (
+        <div className="overflow-hidden rounded-lg border bg-card">
+          <AspectRatio ratio={16 / 9}>
+            <img
+              src={coverImage}
+              alt={title}
+              className="object-cover w-full h-full"
+            />
+          </AspectRatio>
+        </div>
+      ) : (
+        <div className="overflow-hidden rounded-lg border bg-card">
+          <AspectRatio ratio={16 / 9}>
+            <div className="w-full h-full bg-muted flex items-center justify-center">
+              <p className="text-muted-foreground">No cover image</p>
+            </div>
+          </AspectRatio>
+        </div>
+      )}
+      
       <div className="flex items-start justify-between">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
@@ -80,7 +103,7 @@ export function EventHeader({
       {description && (
         <>
           <Separator />
-          <p className="text-muted-foreground leading-relaxed">{description}</p>
+          <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{description}</p>
         </>
       )}
     </div>
