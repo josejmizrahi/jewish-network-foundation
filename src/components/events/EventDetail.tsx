@@ -102,7 +102,7 @@ export function EventDetail() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <Skeleton className="h-[400px] w-full rounded-lg" />
+        <Skeleton className="h-[200px] md:h-[400px] w-full rounded-lg" />
         <div className="space-y-2">
           <Skeleton className="h-8 w-1/3" />
           <Skeleton className="h-4 w-1/2" />
@@ -113,7 +113,7 @@ export function EventDetail() {
 
   if (!event) {
     return (
-      <Card className="p-6">
+      <Card className="p-4 md:p-6">
         <p className="text-center text-muted-foreground">Event not found</p>
       </Card>
     );
@@ -122,7 +122,7 @@ export function EventDetail() {
   const isOrganizer = user?.id === event.organizer_id;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-4xl mx-auto space-y-4 md:space-y-8">
       <EventHeader
         title={event.title}
         description={event.description}
@@ -134,8 +134,8 @@ export function EventDetail() {
         coverImage={event.cover_image}
       />
 
-      <div className="grid gap-8 md:grid-cols-3">
-        <div className="md:col-span-2 space-y-8">
+      <div className="grid gap-4 md:gap-8 md:grid-cols-3">
+        <div className="md:col-span-2 space-y-4 md:space-y-8">
           <EventInfo
             startTime={event.start_time}
             endTime={event.end_time}
@@ -159,8 +159,8 @@ export function EventDetail() {
           )}
         </div>
 
-        <div>
-          <div className="sticky top-6">
+        <div className="order-first md:order-none">
+          <div className="md:sticky md:top-6">
             <EventRegistration
               eventId={event.id}
               isRegistered={!!isRegistered}
