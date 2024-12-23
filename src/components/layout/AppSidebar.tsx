@@ -5,9 +5,6 @@ import {
   BookOpen,
   GalleryVerticalEnd,
   Home,
-  Users,
-  Settings2,
-  Library,
   User,
 } from "lucide-react"
 
@@ -35,7 +32,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       icon: Home,
       isActive: location.pathname === "/",
     },
-    {
+    // Only show About section for non-authenticated users
+    ...(!user ? [{
       title: "About",
       url: "/about",
       icon: BookOpen,
@@ -52,8 +50,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       isActive: location.pathname.startsWith("/about") || 
                 location.pathname === "/community" || 
                 location.pathname === "/resources",
-    },
-    {
+    }] : []),
+    // Only show Profile section for authenticated users
+    ...(user ? [{
       title: "Profile",
       url: "/profile",
       icon: User,
@@ -64,7 +63,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         },
       ],
       isActive: location.pathname === "/profile" || location.pathname === "/settings",
-    },
+    }] : []),
   ];
 
   const userData = {
