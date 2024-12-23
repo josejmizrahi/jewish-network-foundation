@@ -2,12 +2,20 @@ import { useState } from "react";
 import { MainNav } from "@/components/layout/MainNav";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/AppSidebar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useAuth } from "@/hooks/useAuth";
 import { ProfileForm } from "@/components/profile/ProfileForm";
 import { MembershipCard } from "@/components/profile/MembershipCard";
 import { ProfileProgress } from "@/components/profile/ProfileProgress";
-import { VerificationBadge } from "@/components/profile/VerificationBadge";
+import { ProfileHeader } from "@/components/profile/ProfileHeader";
+import { ProfileStats } from "@/components/profile/ProfileStats";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -17,6 +25,7 @@ export default function Profile() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [profileData, setProfileData] = useState<Profile | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ['profile', user?.id],
@@ -51,6 +60,7 @@ export default function Profile() {
         title: "Profile updated",
         description: "Your profile has been successfully updated.",
       });
+      setIsDialogOpen(false);
     },
     onError: (error) => {
       toast({
@@ -101,39 +111,29 @@ export default function Profile() {
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <h1 className="text-3xl font-bold">Profile</h1>
-                  <VerificationBadge status={profile.verification_status} />
+                  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button>Edit Profile</Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Edit Profile</DialogTitle>
+                      </DialogHeader>
+                      <ProfileForm
+                        profile={profileData || profile}
+                        updating={isUpdating}
+                        onUpdateProfile={handleUpdateProfile}
+                        onProfileChange={handleProfileChange}
+                      />
+                    </DialogContent>
+                  </Dialog>
                 </div>
-                <div className="grid gap-6 md:grid-cols-2">
-                  <div className="space-y-6">
-                    <ProfileForm
-                      profile={profileData || profile}
-                      updating={isUpdating}
-                      onUpdateProfile={handleUpdateProfile}
-                      onProfileChange={handleProfileChange}
-                    />
-                  </div>
-                  <div className="space-y-6">
+                <div className="space-y-6">
+                  <ProfileHeader profile={profile} email={user?.email} />
+                  <ProfileStats profile={profile} />
+                  <div className="grid gap-6 md:grid-cols-2">
                     <ProfileProgress profile={profile} />
                     <MembershipCard profile={profile} />
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Account Information</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-4">
-                          <div>
-                            <p className="text-sm font-medium">Email</p>
-                            <p className="text-sm text-muted-foreground">{user?.email}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium">Member Since</p>
-                            <p className="text-sm text-muted-foreground">
-                              {new Date(user?.created_at || '').toLocaleDateString()}
-                            </p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
                   </div>
                 </div>
               </div>
