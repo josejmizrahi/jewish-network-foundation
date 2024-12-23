@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import { supabase } from "@/integrations/supabase/client";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { NonAuthRoute } from "@/components/auth/NonAuthRoute";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
@@ -26,16 +25,7 @@ const App = () => (
             {/* Public Routes */}
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
-            
-            {/* Non-Auth Routes */}
-            <Route
-              path="/about"
-              element={
-                <NonAuthRoute>
-                  <About />
-                </NonAuthRoute>
-              }
-            />
+            <Route path="/about" element={<About />} />
             
             {/* Protected Routes */}
             <Route
