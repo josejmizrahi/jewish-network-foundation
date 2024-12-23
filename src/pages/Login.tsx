@@ -1,9 +1,8 @@
-import { GalleryVerticalEnd } from "lucide-react"
+import { GalleryVerticalEnd, Loader2 } from "lucide-react"
 import { LoginForm } from "@/components/login-form"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
-import { Loader2 } from "lucide-react"
 import { OnboardingModal } from "@/components/onboarding/OnboardingModal"
 
 export default function Login() {
@@ -20,12 +19,12 @@ export default function Login() {
       setLoading(false)
     }
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_UP') {
-        setShowOnboarding(true)
-      }
-      if (session) {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN") {
         navigate("/")
+      }
+      if (event === "SIGNED_UP") {
+        setShowOnboarding(true)
       }
     })
 
