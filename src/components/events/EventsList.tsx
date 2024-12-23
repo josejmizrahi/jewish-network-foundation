@@ -7,8 +7,7 @@ import { Event, categoryColors } from "./list/types";
 import { EventFilters } from "./filters/EventFilters";
 import { EmptyState } from "./list/EmptyState";
 import { filterEvents, groupEventsByDate } from "./list/utils/eventGrouping";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
+import { EventTabs } from "./list/EventTabs";
 
 export function EventsList() {
   const [search, setSearch] = useState("");
@@ -66,37 +65,14 @@ export function EventsList() {
     return <EmptyState hasFilters={false} />;
   }
 
-  if (Object.keys(groupedEvents).length === 0) {
-    return (
-      <div className="space-y-8">
-        <EventFilters
-          search={search}
-          onSearchChange={setSearch}
-          category={category}
-          onCategoryChange={setCategory}
-          timeFilter={timeFilter}
-          onTimeFilterChange={setTimeFilter}
-        />
-        <EmptyState hasFilters={true} />
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-8">
-      <Tabs defaultValue="all" value={activeTab} onValueChange={(value) => setActiveTab(value as "all" | "invitations")}>
-        <TabsList className="w-full">
-          <TabsTrigger value="all" className="flex-1">All Events</TabsTrigger>
-          <TabsTrigger value="invitations" className="flex-1 flex items-center justify-center gap-2">
-            Invitations
-            {invitations?.length ? (
-              <Badge variant="secondary">
-                {invitations.length}
-              </Badge>
-            ) : null}
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="all" className="mt-6">
+      <EventTabs
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        invitationsCount={invitations?.length || 0}
+      >
+        <div className="mt-6">
           <EventFilters
             search={search}
             onSearchChange={setSearch}
@@ -105,38 +81,22 @@ export function EventsList() {
             timeFilter={timeFilter}
             onTimeFilterChange={setTimeFilter}
           />
-          <div className="mt-8">
-            {Object.entries(groupedEvents).map(([date, dateEvents]) => (
-              <EventDateGroup
-                key={date}
-                date={date}
-                events={dateEvents}
-                categoryColors={categoryColors}
-              />
-            ))}
-          </div>
-        </TabsContent>
-        <TabsContent value="invitations" className="mt-6">
-          <EventFilters
-            search={search}
-            onSearchChange={setSearch}
-            category={category}
-            onCategoryChange={setCategory}
-            timeFilter={timeFilter}
-            onTimeFilterChange={setTimeFilter}
-          />
-          <div className="mt-8">
-            {Object.entries(groupedEvents).map(([date, dateEvents]) => (
-              <EventDateGroup
-                key={date}
-                date={date}
-                events={dateEvents}
-                categoryColors={categoryColors}
-              />
-            ))}
-          </div>
-        </TabsContent>
-      </Tabs>
+          {Object.keys(groupedEvents).length === 0 ? (
+            <EmptyState hasFilters={true} />
+          ) : (
+            <div className="mt-8">
+              {Object.entries(groupedEvents).map(([date, dateEvents]) => (
+                <EventDateGroup
+                  key={date}
+                  date={date}
+                  events={dateEvents}
+                  categoryColors={categoryColors}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </EventTabs>
     </div>
   );
 }
