@@ -6,11 +6,12 @@ import { NavItems } from "@/components/nav/nav-items";
 import { UserMenu } from "@/components/nav/user-menu";
 import { SearchBar } from "@/components/nav/search-bar";
 
-export function MainNav() {
+export function MainNav({ children }: { children?: React.ReactNode }) {
   return (
     <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-6">
+          {children}
           <Link to="/" className="flex items-center space-x-2">
             <span className="font-serif text-2xl font-bold text-primary">JNS</span>
           </Link>

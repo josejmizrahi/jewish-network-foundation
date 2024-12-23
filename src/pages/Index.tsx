@@ -1,5 +1,5 @@
 import { MainNav } from "@/components/layout/MainNav";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -23,7 +23,9 @@ export default function Index() {
         <div className="min-h-screen flex w-full">
           <AppSidebar />
           <div className="flex-1">
-            <MainNav />
+            <MainNav>
+              <SidebarTrigger className="mr-2" />
+            </MainNav>
             <SidebarInset>
               <div className="flex-1 space-y-4 p-8 pt-6">
                 <div className="flex items-center justify-between space-y-2">
