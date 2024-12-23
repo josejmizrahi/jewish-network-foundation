@@ -22,9 +22,9 @@ interface ProfileData {
   email: string | null;
 }
 
-interface VerificationRequestWithProfile extends VerificationRequest {
+type VerificationRequestWithProfile = VerificationRequest & {
   profiles: ProfileData;
-}
+};
 
 export function VerificationManagement() {
   const { toast } = useToast();
@@ -47,7 +47,7 @@ export function VerificationManagement() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data as VerificationRequestWithProfile[];
+      return data as unknown as VerificationRequestWithProfile[];
     },
   });
 

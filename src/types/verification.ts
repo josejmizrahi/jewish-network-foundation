@@ -15,11 +15,11 @@ export interface VerificationRequest {
   id: string;
   user_id: string;
   status: "pending" | "approved" | "rejected";
-  submitted_at: string;
+  submitted_at: string | null;
   reviewed_at: string | null;
   reviewer_notes: string | null;
-  documents: string[];
-  criteria_met: string[];
-  created_at: string;
-  updated_at: string;
+  documents: string[] | null;
+  criteria_met: Record<string, any> | null;
+  created_at: string | null;
+  updated_at: string | null;
 }
