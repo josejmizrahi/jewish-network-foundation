@@ -4,6 +4,19 @@ import { AppSidebar } from "@/components/layout/AppSidebar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "react-router-dom";
+import { Separator } from "@/components/ui/separator";
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DashboardStats } from "@/components/dashboard/DashboardStats";
+import { DashboardChart } from "@/components/dashboard/DashboardChart";
+import { DashboardActivity } from "@/components/dashboard/DashboardActivity";
 
 export default function Index() {
   const { user } = useAuth();
@@ -141,3 +154,4 @@ export default function Index() {
     </div>
   );
 }
+
