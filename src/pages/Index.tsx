@@ -1,17 +1,9 @@
 import { MainNav } from "@/components/layout/MainNav";
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "react-router-dom";
-import {
-  Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function Index() {
@@ -23,101 +15,97 @@ export default function Index() {
         <div className="min-h-screen flex w-full bg-background">
           <AppSidebar />
           <div className="flex-1 flex flex-col">
-            <MainNav>
-              <SidebarTrigger className="mr-2" />
-            </MainNav>
-            <SidebarInset>
-              <div className="flex-1 space-y-4 p-8 pt-6">
-                <div className="flex items-center justify-between space-y-2">
-                  <h2 className="text-3xl font-bold tracking-tight">Welcome back, {user.user_metadata.full_name || 'User'}</h2>
-                  <div className="flex items-center space-x-2">
-                    <Button asChild>
-                      <Link to="/profile">View Profile</Link>
-                    </Button>
-                  </div>
+            <MainNav />
+            <main className="flex-1 space-y-4 p-8 pt-6">
+              <div className="flex items-center justify-between space-y-2">
+                <h2 className="text-3xl font-bold tracking-tight">Welcome back, {user.user_metadata.full_name || 'User'}</h2>
+                <div className="flex items-center space-x-2">
+                  <Button asChild>
+                    <Link to="/profile">View Profile</Link>
+                  </Button>
                 </div>
+              </div>
 
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Profile Completion</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">
-                        {user.user_metadata.profile_completed ? '100%' : '80%'}
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        Complete your profile to unlock all features
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Community Status</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">
-                        {user.user_metadata.role || 'Member'}
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        Your current membership level
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Activity Points</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">
-                        {user.user_metadata.points || '0'}
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        Points earned through participation
-                      </p>
-                    </CardContent>
-                  </Card>
-                </div>
-
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <Card>
                   <CardHeader>
-                    <CardTitle>About Us</CardTitle>
+                    <CardTitle>Profile Completion</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-muted-foreground">
-                      Building the Digital Jewish Nation - Join a global community dedicated to preserving 
-                      and advancing Jewish culture, values, and innovation in the digital age.
-                    </p>
-                    <div className="mt-4 space-y-4">
-                      <div className="flex items-center">
-                        <div className="ml-4 space-y-1">
-                          <p className="text-sm font-medium leading-none">Community</p>
-                          <p className="text-sm text-muted-foreground">
-                            Connect with Jews worldwide
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="ml-4 space-y-1">
-                          <p className="text-sm font-medium leading-none">Identity</p>
-                          <p className="text-sm text-muted-foreground">
-                            Preserve Jewish identity
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="ml-4 space-y-1">
-                          <p className="text-sm font-medium leading-none">Innovation</p>
-                          <p className="text-sm text-muted-foreground">
-                            Build the future of Jewish life
-                          </p>
-                        </div>
-                      </div>
+                    <div className="text-2xl font-bold">
+                      {user.user_metadata.profile_completed ? '100%' : '80%'}
                     </div>
+                    <p className="text-xs text-muted-foreground">
+                      Complete your profile to unlock all features
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Community Status</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {user.user_metadata.role || 'Member'}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Your current membership level
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Activity Points</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {user.user_metadata.points || '0'}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Points earned through participation
+                    </p>
                   </CardContent>
                 </Card>
               </div>
-            </SidebarInset>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>About Us</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    Building the Digital Jewish Nation - Join a global community dedicated to preserving 
+                    and advancing Jewish culture, values, and innovation in the digital age.
+                  </p>
+                  <div className="mt-4 space-y-4">
+                    <div className="flex items-center">
+                      <div className="ml-4 space-y-1">
+                        <p className="text-sm font-medium leading-none">Community</p>
+                        <p className="text-sm text-muted-foreground">
+                          Connect with Jews worldwide
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="ml-4 space-y-1">
+                        <p className="text-sm font-medium leading-none">Identity</p>
+                        <p className="text-sm text-muted-foreground">
+                          Preserve Jewish identity
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="ml-4 space-y-1">
+                        <p className="text-sm font-medium leading-none">Innovation</p>
+                        <p className="text-sm text-muted-foreground">
+                          Build the future of Jewish life
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </main>
           </div>
         </div>
       </SidebarProvider>

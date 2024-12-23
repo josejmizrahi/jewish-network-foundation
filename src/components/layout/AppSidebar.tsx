@@ -1,5 +1,3 @@
-"use client"
-
 import * as React from "react"
 import {
   BookOpen,
@@ -17,7 +15,6 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarRail,
 } from "@/components/ui/sidebar"
 import { useAuth } from "@/hooks/useAuth"
 import { useLocation } from "react-router-dom"
@@ -90,7 +87,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarFooter className="border-t p-2">
         <NavUser user={userData} />
       </SidebarFooter>
-      <SidebarRail />
     </Sidebar>
   )
 }
