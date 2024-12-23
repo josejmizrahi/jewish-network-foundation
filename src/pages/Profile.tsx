@@ -92,7 +92,7 @@ export default function Profile() {
           <AppSidebar />
           <div className="flex-1">
             <MainNav>
-              <SidebarTrigger />
+              <SidebarTrigger className="mr-2" />
             </MainNav>
             <SidebarInset>
               <div className="container mx-auto px-4 py-8">
@@ -111,7 +111,7 @@ export default function Profile() {
         <AppSidebar />
         <div className="flex-1">
           <MainNav>
-            <SidebarTrigger />
+            <SidebarTrigger className="mr-2" />
           </MainNav>
           <SidebarInset>
             <div className="container mx-auto px-4 py-8">
