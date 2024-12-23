@@ -19,7 +19,8 @@ interface EventAttendeesProps {
 }
 
 interface Attendee {
-  event_attendees_id: string;
+  user_id: string;
+  event_id: string;
   user: {
     id: string;
     full_name: string;
@@ -37,7 +38,8 @@ export function EventAttendees({ eventId, isOrganizer }: EventAttendeesProps) {
       const { data, error } = await supabase
         .from('event_attendees')
         .select(`
-          event_attendees_id:id,
+          event_id,
+          user_id,
           status,
           created_at,
           user:profiles(id, full_name, avatar_url)
@@ -46,17 +48,18 @@ export function EventAttendees({ eventId, isOrganizer }: EventAttendeesProps) {
         .order('created_at', { ascending: true });
 
       if (error) throw error;
-      return data as unknown as Attendee[];
+      return data as Attendee[];
     },
     enabled: isOrganizer,
   });
 
-  const handleRemoveAttendee = async (attendeeId: string) => {
+  const handleRemoveAttendee = async (userId: string) => {
     try {
       const { error } = await supabase
         .from('event_attendees')
         .delete()
-        .eq('id', attendeeId);
+        .eq('event_id', eventId)
+        .eq('user_id', userId);
 
       if (error) throw error;
 
@@ -99,7 +102,7 @@ export function EventAttendees({ eventId, isOrganizer }: EventAttendeesProps) {
       <ScrollArea className="h-[200px] rounded-md border">
         <div className="p-4 space-y-4">
           {attendees?.map((attendee) => (
-            <div key={attendee.event_attendees_id} className="flex items-center justify-between">
+            <div key={`${attendee.event_id}-${attendee.user_id}`} className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Avatar>
                   <AvatarImage src={attendee.user.avatar_url} />
@@ -122,7 +125,7 @@ export function EventAttendees({ eventId, isOrganizer }: EventAttendeesProps) {
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem 
                       className="text-destructive"
-                      onClick={() => handleRemoveAttendee(attendee.event_attendees_id)}
+                      onClick={() => handleRemoveAttendee(attendee.user_id)}
                     >
                       <UserX className="h-4 w-4 mr-2" />
                       Remove Attendee
