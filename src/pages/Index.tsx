@@ -8,6 +8,7 @@ import { DashboardStats } from "@/components/dashboard/DashboardStats";
 import { DashboardChart } from "@/components/dashboard/DashboardChart";
 import { DashboardEvents } from "@/components/dashboard/DashboardEvents";
 import { DashboardActivity } from "@/components/dashboard/DashboardActivity";
+import { motion } from "framer-motion";
 
 export default function Index() {
   const { user } = useAuth();
@@ -22,24 +23,48 @@ export default function Index() {
               <SidebarTrigger className="mr-2" />
             </MainNav>
             <SidebarInset>
-              <div className="flex-1 space-y-4 p-8 pt-6">
-                <div className="flex items-center justify-between space-y-2">
-                  <h2 className="text-3xl font-bold tracking-tight">Welcome back, {user.user_metadata.full_name || 'User'}</h2>
+              <div className="flex-1 space-y-6 p-4 md:p-8 pt-6">
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="flex flex-col md:flex-row md:items-center justify-between space-y-4 md:space-y-0"
+                >
+                  <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
+                    Welcome back, {user.user_metadata.full_name || 'User'}
+                  </h2>
                   <div className="flex items-center space-x-2">
-                    <Button asChild>
+                    <Button asChild size="lg">
                       <Link to="/profile">View Profile</Link>
                     </Button>
                   </div>
-                </div>
+                </motion.div>
 
-                <DashboardStats />
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  <DashboardStats />
+                </motion.div>
 
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
+                  className="grid gap-6 md:grid-cols-2 lg:grid-cols-7"
+                >
                   <DashboardChart />
                   <DashboardEvents />
-                </div>
+                </motion.div>
 
-                <DashboardActivity user={user} />
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.6 }}
+                >
+                  <DashboardActivity user={user} />
+                </motion.div>
               </div>
             </SidebarInset>
           </div>
@@ -52,38 +77,66 @@ export default function Index() {
     <div className="min-h-screen bg-background">
       <MainNav />
       
-      <div className="relative isolate px-6 pt-14 lg:px-8">
-        <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
-              Building the Digital Jewish Nation
-            </h1>
-            <p className="mt-6 text-lg leading-8 text-muted-foreground">
-              Join a global community dedicated to preserving and advancing Jewish culture, 
-              values, and innovation in the digital age.
-            </p>
-            <div className="mt-10 flex items-center justify-center gap-x-6">
-              <Button asChild size="lg">
-                <Link to="/login">Join Now</Link>
-              </Button>
-              <Button variant="outline" size="lg">
-                <Link to="/about">Learn More</Link>
-              </Button>
-            </div>
+      <div className="relative isolate">
+        {/* Background gradient */}
+        <div className="absolute inset-x-0 top-0 -z-10 h-[500px] overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-primary/10 via-background/50 to-background" />
+        </div>
+        
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="py-20 sm:py-32 lg:py-40">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7 }}
+              className="text-center"
+            >
+              <h1 className="text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
+                Building the Digital
+                <span className="block text-primary">Jewish Nation</span>
+              </h1>
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.7, delay: 0.3 }}
+                className="mt-6 text-lg leading-8 text-muted-foreground max-w-2xl mx-auto"
+              >
+                Join a global community dedicated to preserving and advancing Jewish culture, 
+                values, and innovation in the digital age.
+              </motion.p>
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.7, delay: 0.6 }}
+                className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6"
+              >
+                <Button asChild size="lg" className="w-full sm:w-auto">
+                  <Link to="/login">Join Now</Link>
+                </Button>
+                <Button variant="outline" size="lg" className="w-full sm:w-auto">
+                  <Link to="/about">Learn More</Link>
+                </Button>
+              </motion.div>
+            </motion.div>
           </div>
         </div>
-      </div>
 
-      <div className="mx-auto max-w-7xl px-6 lg:px-8 py-24 sm:py-32">
-        <div className="mx-auto max-w-2xl lg:text-center">
-          <h2 className="text-base font-semibold leading-7 text-primary">Our Community</h2>
-          <p className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
-            Everything you need to connect and grow
-          </p>
-          <p className="mt-6 text-lg leading-8 text-muted-foreground">
-            Access resources, join study groups, participate in events, and connect with 
-            like-minded individuals from around the world.
-          </p>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.9 }}
+            className="mx-auto max-w-2xl lg:text-center"
+          >
+            <h2 className="text-base font-semibold leading-7 text-primary">Our Community</h2>
+            <p className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
+              Everything you need to connect and grow
+            </p>
+            <p className="mt-6 text-lg leading-8 text-muted-foreground">
+              Access resources, join study groups, participate in events, and connect with 
+              like-minded individuals from around the world.
+            </p>
+          </motion.div>
         </div>
       </div>
     </div>
