@@ -6,12 +6,12 @@ import { EventDetail } from "@/components/events/EventDetail";
 export default function EventDetailPage() {
   return (
     <SidebarProvider defaultOpen>
-      <div className="min-h-screen flex w-full">
+      <div className="min-h-screen flex w-full overflow-x-hidden">
         <AppSidebar />
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <MainNav />
           <SidebarInset>
-            <div className="container mx-auto px-4 py-4 md:py-8">
+            <div className="container max-w-full px-4 py-4 md:py-8">
               <EventDetail />
             </div>
           </SidebarInset>

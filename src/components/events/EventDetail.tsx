@@ -101,7 +101,7 @@ export function EventDetail() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-6 max-w-4xl mx-auto">
         <Skeleton className="h-[200px] md:h-[400px] w-full rounded-lg" />
         <div className="space-y-2">
           <Skeleton className="h-8 w-1/3" />
@@ -113,7 +113,7 @@ export function EventDetail() {
 
   if (!event) {
     return (
-      <Card className="p-4 md:p-6">
+      <Card className="p-4 md:p-6 max-w-4xl mx-auto">
         <p className="text-center text-muted-foreground">Event not found</p>
       </Card>
     );
@@ -122,7 +122,7 @@ export function EventDetail() {
   const isOrganizer = user?.id === event.organizer_id;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-4 md:space-y-8">
+    <div className="max-w-4xl mx-auto space-y-4 md:space-y-8 px-0">
       <EventHeader
         title={event.title}
         description={event.description}
