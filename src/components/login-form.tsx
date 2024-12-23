@@ -7,23 +7,57 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Auth } from "@supabase/auth-ui-react"
 import { ThemeSupa } from "@supabase/auth-ui-shared"
 import { supabase } from "@/integrations/supabase/client"
+import { Loader2 } from "lucide-react"
+import { useState } from "react"
+import { useToast } from "@/components/ui/use-toast"
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
+  const [loading, setLoading] = useState(false)
+  const { toast } = useToast()
+
+  // Handle auth state changes
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN') {
+      toast({
+        title: "Welcome back!",
+        description: "You have successfully signed in.",
+      })
+    } else if (event === 'SIGNED_OUT') {
+      toast({
+        title: "Signed out",
+        description: "You have been signed out successfully.",
+      })
+    } else if (event === 'USER_UPDATED') {
+      toast({
+        title: "Profile updated",
+        description: "Your profile has been updated successfully.",
+      })
+    } else if (event === 'USER_DELETED') {
+      toast({
+        title: "Account deleted",
+        description: "Your account has been deleted successfully.",
+      })
+    } else if (event === 'PASSWORD_RECOVERY') {
+      toast({
+        title: "Password recovery email sent",
+        description: "Check your email for the password reset link.",
+      })
+    }
+  })
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Welcome back</CardTitle>
+          <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
           <CardDescription>
-            Login with your Apple or Google account
+            Sign in to your account to continue
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -42,6 +76,10 @@ export function LoginForm({
                   fontSize: '0.875rem',
                   backgroundColor: 'var(--primary)',
                   color: 'var(--primary-foreground)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
                 },
                 input: {
                   borderRadius: 'var(--radius)',
@@ -59,10 +97,17 @@ export function LoginForm({
                 message: {
                   fontSize: '0.875rem',
                   color: 'var(--muted-foreground)',
+                  padding: '0.5rem',
+                  borderRadius: 'var(--radius)',
+                  backgroundColor: 'var(--accent)',
+                  marginBottom: '1rem',
                 },
                 label: {
                   fontSize: '0.875rem',
                   color: 'var(--foreground)',
+                },
+                loader: {
+                  color: 'var(--primary)',
                 },
               },
               variables: {
@@ -75,7 +120,17 @@ export function LoginForm({
               },
             }}
             theme="light"
-            providers={["google", "apple"]}
+            providers={["google", "apple", "github"]}
+            redirectTo={window.location.origin}
+            onlyThirdPartyProviders={true}
+            localization={{
+              variables: {
+                sign_in: {
+                  social_provider_text: "Continue with {{provider}}",
+                  divider_text: "or",
+                },
+              },
+            }}
           />
         </CardContent>
       </Card>
