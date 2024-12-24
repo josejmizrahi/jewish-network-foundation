@@ -10,6 +10,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Event } from "./detail/types";
 import { EventBreadcrumb } from "./detail/EventBreadcrumb";
+import { EventRegistrationCard } from "./detail/registration/EventRegistrationCard";
 
 export function EventDetail() {
   const { id } = useParams();
@@ -33,7 +34,6 @@ export function EventDetail() {
       if (!data) throw new Error('Event not found');
       return data as Event;
     },
-    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   });
 
   const { data: isRegistered } = useQuery({
@@ -50,7 +50,6 @@ export function EventDetail() {
       if (error) throw error;
       return !!data;
     },
-    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   });
 
   const handleCancelEvent = async () => {
@@ -79,7 +78,7 @@ export function EventDetail() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6 animate-fade-in">
+      <div className="space-y-6">
         <Skeleton className="h-4 w-32" />
         <Skeleton className="h-[200px] md:h-[400px] w-full rounded-lg" />
         <div className="space-y-2">
@@ -129,6 +128,17 @@ export function EventDetail() {
           event={event}
         />
       )}
+      
+      <EventRegistrationCard
+        eventId={event.id}
+        isRegistered={!!isRegistered}
+        status={event.status}
+        user={user}
+        currentAttendees={event.current_attendees}
+        maxCapacity={event.max_capacity}
+        waitlistEnabled={event.waitlist_enabled}
+        isPrivate={event.is_private}
+      />
     </div>
   );
 }

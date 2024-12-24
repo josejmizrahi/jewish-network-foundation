@@ -13,6 +13,7 @@ interface EventRegistrationCardProps {
   currentAttendees: number;
   maxCapacity: number | null;
   waitlistEnabled: boolean;
+  isPrivate: boolean;  // Add isPrivate prop
 }
 
 export function EventRegistrationCard({
@@ -23,6 +24,7 @@ export function EventRegistrationCard({
   currentAttendees,
   maxCapacity,
   waitlistEnabled,
+  isPrivate,  // Add isPrivate to props
 }: EventRegistrationCardProps) {
   // Check if user is invited
   const { data: invitation } = useQuery({
@@ -42,6 +44,11 @@ export function EventRegistrationCard({
     },
     enabled: !!user && !!eventId,
   });
+
+  // If the event is private and the user has no invitation, don't show anything
+  if (isPrivate && !invitation && !isRegistered) {
+    return null;
+  }
 
   return (
     <Card className="p-6">
@@ -69,7 +76,7 @@ export function EventRegistrationCard({
             />
           </div>
         </div>
-      ) : (
+      ) : !isPrivate && (
         <EventRegistration
           eventId={eventId}
           isRegistered={isRegistered}
