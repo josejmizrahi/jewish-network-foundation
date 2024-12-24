@@ -14,7 +14,10 @@ export function useEvents() {
         `)
         .order('start_time', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching events:", error);
+        throw error;
+      }
       return (data || []) as Event[];
     },
   });
@@ -26,6 +29,8 @@ export function useEventInvitations() {
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return [];
+
+      console.log("Fetching invitations for user:", user.id);
 
       const { data, error } = await supabase
         .from('event_invitations')
@@ -65,6 +70,8 @@ export function useEventInvitations() {
         console.error("Error fetching invitations:", error);
         throw error;
       }
+
+      console.log("Fetched invitations:", data);
 
       // Transform the data to match the Event type with invitation details
       return data.map(invitation => ({

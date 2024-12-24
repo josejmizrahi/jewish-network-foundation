@@ -23,6 +23,9 @@ export function EventsList() {
     error: invitationsError 
   } = useEventInvitations();
 
+  console.log("Events data:", events);
+  console.log("Invitations data:", invitations);
+
   if (eventsLoading || invitationsLoading) {
     return <LoadingSkeleton />;
   }
