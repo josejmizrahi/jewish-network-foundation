@@ -13,6 +13,8 @@ export type Database = {
         Row: {
           created_at: string | null
           event_id: string
+          last_notification_sent_at: string | null
+          notification_status: string | null
           registration_type: string | null
           status: string | null
           user_id: string
@@ -21,6 +23,8 @@ export type Database = {
         Insert: {
           created_at?: string | null
           event_id: string
+          last_notification_sent_at?: string | null
+          notification_status?: string | null
           registration_type?: string | null
           status?: string | null
           user_id: string
@@ -29,6 +33,8 @@ export type Database = {
         Update: {
           created_at?: string | null
           event_id?: string
+          last_notification_sent_at?: string | null
+          notification_status?: string | null
           registration_type?: string | null
           status?: string | null
           user_id?: string
@@ -51,8 +57,60 @@ export type Database = {
           },
         ]
       }
+      event_invitation_batches: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          email_template: string | null
+          event_id: string | null
+          failed_invitations: number | null
+          id: string
+          sent_invitations: number | null
+          status: string | null
+          total_invitations: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          email_template?: string | null
+          event_id?: string | null
+          failed_invitations?: number | null
+          id?: string
+          sent_invitations?: number | null
+          status?: string | null
+          total_invitations?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          email_template?: string | null
+          event_id?: string | null
+          failed_invitations?: number | null
+          id?: string
+          sent_invitations?: number | null
+          status?: string | null
+          total_invitations?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_invitation_batches_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_invitation_batches_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_invitations: {
         Row: {
+          batch_id: string | null
           created_at: string | null
           email_sent: boolean | null
           email_sent_at: string | null
@@ -68,6 +126,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          batch_id?: string | null
           created_at?: string | null
           email_sent?: boolean | null
           email_sent_at?: string | null
@@ -83,6 +142,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          batch_id?: string | null
           created_at?: string | null
           email_sent?: boolean | null
           email_sent_at?: string | null
@@ -98,6 +158,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "event_invitations_batch_id_fkey"
+            columns: ["batch_id"]
+            isOneToOne: false
+            referencedRelation: "event_invitation_batches"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "event_invitations_event_id_fkey"
             columns: ["event_id"]
@@ -136,6 +203,7 @@ export type Database = {
           location: string | null
           max_capacity: number | null
           meeting_url: string | null
+          notification_preferences: Json | null
           organizer_id: string
           start_time: string
           status: string | null
@@ -159,6 +227,7 @@ export type Database = {
           location?: string | null
           max_capacity?: number | null
           meeting_url?: string | null
+          notification_preferences?: Json | null
           organizer_id: string
           start_time: string
           status?: string | null
@@ -182,6 +251,7 @@ export type Database = {
           location?: string | null
           max_capacity?: number | null
           meeting_url?: string | null
+          notification_preferences?: Json | null
           organizer_id?: string
           start_time?: string
           status?: string | null

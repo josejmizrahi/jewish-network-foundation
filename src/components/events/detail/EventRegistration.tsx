@@ -6,6 +6,7 @@ import { User } from "@supabase/auth-helpers-react";
 import { Card } from "@/components/ui/card";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useState } from "react";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
 
 interface EventRegistrationProps {
   eventId: string;
@@ -30,8 +31,20 @@ export function EventRegistration({
   const queryClient = useQueryClient();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
-  const isFull = maxCapacity !== null && currentAttendees >= maxCapacity;
-  const canJoinWaitlist = isFull && waitlistEnabled && !isRegistered;
+  const sendNotification = async (userId: string, type: string, status?: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('send-status-notification', {
+        body: { eventId, userId, type, status }
+      });
+
+      if (error) throw error;
+      return data;
+    } catch (error: any) {
+      console.error('Failed to send notification:', error);
+      // Don't throw the error - we don't want to block the registration process
+      // if notification fails
+    }
+  };
 
   const handleRegister = async () => {
     if (!user) {
@@ -46,7 +59,6 @@ export function EventRegistration({
     try {
       const registrationType = isFull && waitlistEnabled ? 'waitlist' : 'registered';
       
-      // Get current waitlist position if joining waitlist
       let waitlistPosition = null;
       if (registrationType === 'waitlist') {
         const { data: waitlistCount } = await supabase
@@ -69,6 +81,9 @@ export function EventRegistration({
         });
 
       if (error) throw error;
+
+      // Send notification
+      await sendNotification(user.id, 'registration_update', registrationType);
 
       toast({
         title: registrationType === 'waitlist' ? "Added to waitlist" : "Registration successful",
