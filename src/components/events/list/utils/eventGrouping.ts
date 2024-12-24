@@ -28,7 +28,10 @@ export const filterEvents = (
     const matchesTags = selectedTags.length === 0 || 
       selectedTags.every(tag => event.tags?.includes(tag));
 
-    return matchesSearch && matchesCategory && matchesTimeFilter && matchesTags;
+    // Only show public events unless the user is the organizer or has been invited
+    const isAccessible = !event.is_private;
+
+    return matchesSearch && matchesCategory && matchesTimeFilter && matchesTags && isAccessible;
   });
 };
 
