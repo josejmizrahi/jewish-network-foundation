@@ -37,7 +37,8 @@ export function useEvents() {
             avatar_url
           )
         `)
-        .order('start_time', { ascending: true });
+        .order('start_time', { ascending: true })
+        .limit(50); // Limit initial load to 50 events
 
       if (error) {
         console.error("Error fetching events:", error);
@@ -49,8 +50,10 @@ export function useEvents() {
         category: (event.category || 'other') as EventCategory
       })) as Event[];
     },
-    retry: 2,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 2, // Data stays fresh for 2 minutes
+    gcTime: 1000 * 60 * 5, // Keep unused data in cache for 5 minutes
+    refetchOnWindowFocus: false, // Don't refetch when window regains focus
+    refetchOnMount: false, // Don't refetch on component mount if data is fresh
   });
 }
 
@@ -95,7 +98,8 @@ export function useEventInvitations() {
           )
         `)
         .eq('invitee_id', user.id)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(20); // Limit initial load to 20 invitations
 
       if (error) {
         console.error("Error fetching invitations:", error);
@@ -113,7 +117,9 @@ export function useEventInvitations() {
           last_viewed_at: invitation.last_viewed_at
         })) as Event[];
     },
-    retry: 2,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 2, // Data stays fresh for 2 minutes
+    gcTime: 1000 * 60 * 5, // Keep unused data in cache for 5 minutes
+    refetchOnWindowFocus: false, // Don't refetch when window regains focus
+    refetchOnMount: false, // Don't refetch on component mount if data is fresh
   });
 }
