@@ -41,13 +41,18 @@ export function EventHeader({
   const handleShare = async () => {
     const shareUrl = `${window.location.origin}/events/${eventId}`;
     const shareData = {
-      title,
+      title: `Join me at ${title}`,
       text: description || '',
       url: shareUrl,
+      files: coverImage ? [
+        new File([await fetch(coverImage).then(r => r.blob())], 'event-cover.jpg', {
+          type: 'image/jpeg'
+        })
+      ] : undefined
     };
 
     try {
-      if (navigator.share) {
+      if (navigator.share && navigator.canShare(shareData)) {
         await navigator.share(shareData);
       } else {
         await navigator.clipboard.writeText(shareUrl);
