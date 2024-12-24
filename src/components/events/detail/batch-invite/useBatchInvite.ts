@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import type { BatchInviteFormValues } from "./BatchInviteForm";
+import type { BatchInviteFormValues } from "./types";
 
 export function useBatchInvite(eventId: string) {
   const [isSubmitting, setIsSubmitting] = useState(false);

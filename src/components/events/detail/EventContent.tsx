@@ -1,7 +1,7 @@
 import { Event } from "./types";
 import { EventInfo } from "./EventInfo";
 import { EventOrganizer } from "./EventOrganizer";
-import { EventRegistration } from "./EventRegistration";
+import { EventRegistrationCard } from "./registration/EventRegistrationCard";
 import { EventManagementTabs } from "./EventManagementTabs";
 import { User } from "@supabase/supabase-js";
 
@@ -41,7 +41,7 @@ export function EventContent({ event, isOrganizer, isRegistered, user }: EventCo
 
       <div className="order-first md:order-none">
         <div className="md:sticky md:top-6">
-          <EventRegistration
+          <EventRegistrationCard
             eventId={event.id}
             isRegistered={isRegistered}
             status={event.status}
