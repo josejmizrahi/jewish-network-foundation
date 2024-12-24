@@ -18,15 +18,15 @@ export default function Index() {
       <SidebarProvider defaultOpen>
         <div className="min-h-screen flex w-full bg-background">
           <AppSidebar />
-          <div className="flex-1 flex flex-col">
+          <div className="flex-1 flex flex-col min-w-0">
             <MainNav>
               <SidebarTrigger className="mr-2" />
             </MainNav>
             <SidebarInset>
-              <div className="flex-1 space-y-6 p-4 md:p-8 pt-6">
+              <div className="flex-1 space-y-8 p-8 pt-6 max-w-7xl mx-auto w-full">
                 <DashboardHero userName={user.user_metadata.full_name} />
                 <DashboardMetrics />
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+                <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-7">
                   <DashboardChart />
                   <DashboardEvents />
                 </div>
@@ -46,10 +46,10 @@ export default function Index() {
         <div className="absolute inset-x-0 top-0 -z-10 h-[500px] overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-primary/10 via-background/50 to-background" />
         </div>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
           <HomeHero />
         </div>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24">
           <HomeFeatures />
         </div>
       </div>

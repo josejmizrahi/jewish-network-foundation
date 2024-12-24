@@ -11,20 +11,18 @@ export default function Events() {
 
   return (
     <SidebarProvider defaultOpen>
-      <div className="min-h-screen flex w-full bg-background text-foreground overflow-x-hidden">
+      <div className="min-h-screen flex w-full bg-background text-foreground">
         <AppSidebar />
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 flex flex-col min-w-0">
           <MainNav />
           <SidebarInset>
-            <div className="container max-w-full px-4 py-4 md:py-8">
-              <div className="space-y-4 md:space-y-8">
-                <EventsHeader onCreateEvent={() => setIsCreateDialogOpen(true)} />
-                <EventsList />
-                <CreateEventDialog 
-                  open={isCreateDialogOpen} 
-                  onOpenChange={setIsCreateDialogOpen} 
-                />
-              </div>
+            <div className="flex-1 space-y-8 p-8 max-w-7xl mx-auto w-full">
+              <EventsHeader onCreateEvent={() => setIsCreateDialogOpen(true)} />
+              <EventsList />
+              <CreateEventDialog 
+                open={isCreateDialogOpen} 
+                onOpenChange={setIsCreateDialogOpen} 
+              />
             </div>
           </SidebarInset>
         </div>
