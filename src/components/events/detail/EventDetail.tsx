@@ -11,7 +11,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Event } from "@/components/events/detail/types";
 import { EventBreadcrumb } from "@/components/events/detail/EventBreadcrumb";
-import { EventRegistrationCard } from "@/components/events/detail/registration/EventRegistrationCard";
 
 export function EventDetail() {
   const { id } = useParams();
@@ -34,22 +33,6 @@ export function EventDetail() {
       if (error) throw error;
       if (!data) throw new Error('Event not found');
       return data as Event;
-    },
-  });
-
-  const { data: isRegistered } = useQuery({
-    queryKey: ['event-registration', id],
-    queryFn: async () => {
-      if (!user) return false;
-      const { data, error } = await supabase
-        .from('event_attendees')
-        .select('*')
-        .eq('event_id', id)
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      if (error) throw error;
-      return !!data;
     },
   });
 
@@ -120,7 +103,7 @@ export function EventDetail() {
       <EventContent
         event={event}
         isOrganizer={isOrganizer}
-        isRegistered={!!isRegistered}
+        isRegistered={false}
         user={user}
       />
 
@@ -132,16 +115,14 @@ export function EventDetail() {
         />
       )}
       
-      <EventRegistrationCard
-        eventId={event.id}
-        isRegistered={!!isRegistered}
-        status={event.status}
-        user={user}
-        currentAttendees={event.current_attendees}
-        maxCapacity={event.max_capacity}
-        waitlistEnabled={event.waitlist_enabled}
-        isPrivate={event.is_private}
-      />
+      {event.luma_id && (
+        <div 
+          className="w-full h-[600px] border rounded-lg overflow-hidden"
+          dangerouslySetInnerHTML={{
+            __html: `<iframe src="https://lu.ma/embed-checkout/${event.luma_id}" width="100%" height="100%" frameborder="0" style="border: 0; background: transparent;"></iframe>`
+          }}
+        />
+      )}
     </div>
   );
 }
