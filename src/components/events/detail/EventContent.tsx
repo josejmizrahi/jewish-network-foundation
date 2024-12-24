@@ -1,10 +1,8 @@
 import { Event } from "./types";
 import { EventInfo } from "./EventInfo";
 import { EventOrganizer } from "./EventOrganizer";
-import { EventAttendees } from "./EventAttendees";
-import { InviteMembers } from "./InviteMembers";
-import { InvitationsList } from "./InvitationsList";
 import { EventRegistration } from "./EventRegistration";
+import { EventManagementTabs } from "./EventManagementTabs";
 import { User } from "@supabase/supabase-js";
 
 interface EventContentProps {
@@ -37,11 +35,7 @@ export function EventContent({ event, isOrganizer, isRegistered, user }: EventCo
         )}
 
         {isOrganizer && (
-          <>
-            <InviteMembers eventId={event.id} isOrganizer={isOrganizer} />
-            <InvitationsList eventId={event.id} isOrganizer={isOrganizer} />
-            <EventAttendees eventId={event.id} isOrganizer={isOrganizer} />
-          </>
+          <EventManagementTabs eventId={event.id} isOrganizer={isOrganizer} />
         )}
       </div>
 
