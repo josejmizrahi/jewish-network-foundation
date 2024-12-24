@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { SubEventIcon } from "./types";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Calendar, MapPin, Users } from "lucide-react";
 
 interface EventContentProps {
   event: Event;
@@ -39,9 +40,13 @@ export function EventContent({ event, isOrganizer, isRegistered, user }: EventCo
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Event Info */}
-      <div className="rounded-lg border bg-card p-6">
+      <div className="rounded-xl border bg-background/50 backdrop-blur supports-[backdrop-filter]:bg-background/50 p-6 shadow-sm">
+        <div className="flex items-center gap-2 mb-4">
+          <Calendar className="h-5 w-5 text-primary" />
+          <h2 className="text-lg font-semibold">Event Details</h2>
+        </div>
         <EventInfo
           startTime={event.start_time}
           endTime={event.end_time}
@@ -56,28 +61,38 @@ export function EventContent({ event, isOrganizer, isRegistered, user }: EventCo
       </div>
 
       {/* Registration Card */}
-      <div className={isMobile ? "" : "sticky top-6"}>
-        <EventRegistrationCard
-          eventId={event.id}
-          isRegistered={isRegistered}
-          status={event.status}
-          user={user}
-          currentAttendees={event.current_attendees}
-          maxCapacity={event.max_capacity}
-          waitlistEnabled={event.waitlist_enabled}
-        />
+      <div className={isMobile ? "" : "sticky top-6 z-10"}>
+        <div className="rounded-xl border bg-background/50 backdrop-blur supports-[backdrop-filter]:bg-background/50 shadow-sm">
+          <EventRegistrationCard
+            eventId={event.id}
+            isRegistered={isRegistered}
+            status={event.status}
+            user={user}
+            currentAttendees={event.current_attendees}
+            maxCapacity={event.max_capacity}
+            waitlistEnabled={event.waitlist_enabled}
+          />
+        </div>
       </div>
 
       {/* Timeline */}
       {subEvents.length > 0 && (
-        <div className="rounded-lg border bg-card p-6">
+        <div className="rounded-xl border bg-background/50 backdrop-blur supports-[backdrop-filter]:bg-background/50 p-6 shadow-sm">
+          <div className="flex items-center gap-2 mb-4">
+            <Calendar className="h-5 w-5 text-primary" />
+            <h2 className="text-lg font-semibold">Event Timeline</h2>
+          </div>
           <EventTimeline subEvents={subEvents} />
         </div>
       )}
 
       {/* Organizer */}
       {event.organizer && (
-        <div className="rounded-lg border bg-card p-6">
+        <div className="rounded-xl border bg-background/50 backdrop-blur supports-[backdrop-filter]:bg-background/50 p-6 shadow-sm">
+          <div className="flex items-center gap-2 mb-4">
+            <Users className="h-5 w-5 text-primary" />
+            <h2 className="text-lg font-semibold">Event Organizer</h2>
+          </div>
           <EventOrganizer 
             organizerName={event.organizer.full_name}
             organizerAvatar={event.organizer.avatar_url}
@@ -87,7 +102,7 @@ export function EventContent({ event, isOrganizer, isRegistered, user }: EventCo
 
       {/* Management Tabs */}
       {isOrganizer && (
-        <div className="rounded-lg border bg-card p-6">
+        <div className="rounded-xl border bg-background/50 backdrop-blur supports-[backdrop-filter]:bg-background/50 p-6 shadow-sm">
           <EventManagementTabs 
             eventId={event.id} 
             isOrganizer={isOrganizer}
@@ -99,8 +114,11 @@ export function EventContent({ event, isOrganizer, isRegistered, user }: EventCo
 
       {/* Map Section */}
       {!event.is_online && event.location && (
-        <div className="rounded-lg border bg-card p-6">
-          <h2 className="text-lg font-semibold mb-4">Location</h2>
+        <div className="rounded-xl border bg-background/50 backdrop-blur supports-[backdrop-filter]:bg-background/50 p-6 shadow-sm">
+          <div className="flex items-center gap-2 mb-4">
+            <MapPin className="h-5 w-5 text-primary" />
+            <h2 className="text-lg font-semibold">Location</h2>
+          </div>
           <EventInfo
             startTime={event.start_time}
             endTime={event.end_time}
