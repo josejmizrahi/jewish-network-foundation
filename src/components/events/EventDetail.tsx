@@ -102,7 +102,7 @@ export function EventDetail() {
   const isOrganizer = user?.id === event.organizer_id;
 
   return (
-    <div className="space-y-6 md:space-y-8 animate-fade-in">
+    <div className="space-y-6 md:space-y-8">
       <EventBreadcrumb eventTitle={event.title} />
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
@@ -126,7 +126,7 @@ export function EventDetail() {
           />
         </div>
 
-        <div className={isMobile ? "" : "sticky top-6"}>
+        <div className={isMobile ? "" : "sticky-container"}>
           <div className="rounded-xl border bg-background/50 backdrop-blur supports-[backdrop-filter]:bg-background/50 shadow-sm transition-all duration-300 hover:shadow-md">
             <EventRegistrationCard
               eventId={event.id}
