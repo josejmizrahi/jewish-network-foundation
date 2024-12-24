@@ -11,8 +11,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { EventFormFields } from "./EventFormFields";
 import { eventFormSchema, type EventFormValues } from "./schemas/eventFormSchema";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { format } from "date-fns";
-import { toZonedTime, fromZonedTime } from "date-fns-tz";
+import { fromZonedTime } from "date-fns-tz";
+import { useNavigate } from "react-router-dom";
 
 interface CreateEventDialogProps {
   open: boolean;
@@ -23,6 +23,7 @@ export function CreateEventDialog({ open, onOpenChange }: CreateEventDialogProps
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   const form = useForm<EventFormValues>({
@@ -71,9 +72,11 @@ export function CreateEventDialog({ open, onOpenChange }: CreateEventDialogProps
         timezone: data.timezone || userTimezone,
       };
 
-      const { error } = await supabase
+      const { data: newEvent, error } = await supabase
         .from('events')
-        .insert(formattedData);
+        .insert(formattedData)
+        .select()
+        .single();
 
       if (error) throw error;
 
@@ -84,6 +87,13 @@ export function CreateEventDialog({ open, onOpenChange }: CreateEventDialogProps
       
       onOpenChange(false);
       form.reset();
+
+      // If it's a private event, navigate to the event details page
+      if (data.is_private && newEvent) {
+        navigate(`/events/${newEvent.id}`, { 
+          state: { showInviteDialog: true }  // Pass state to automatically open invite dialog
+        });
+      }
     } catch (error: any) {
       toast({
         title: "Error",
