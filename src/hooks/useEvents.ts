@@ -37,7 +37,6 @@ export function useEvents() {
             avatar_url
           )
         `)
-        .or(`is_private.eq.false,organizer_id.eq.${user.id}`)
         .order('start_time', { ascending: true });
 
       if (error) {
