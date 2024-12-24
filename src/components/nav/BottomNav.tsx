@@ -22,38 +22,38 @@ export function BottomNav() {
           <Link
             to="/"
             className={cn(
-              "flex flex-col items-center justify-center flex-1 h-full px-2 gap-1",
+              "flex flex-col items-center justify-center flex-1 h-full px-2 gap-0.5 transition-colors",
               isActive("/") ? "text-primary" : "text-muted-foreground"
             )}
           >
             <Home className="h-5 w-5" />
-            <span className="text-xs">Home</span>
+            <span className="text-[10px] font-medium">Home</span>
           </Link>
           <Link
             to="/events"
             className={cn(
-              "flex flex-col items-center justify-center flex-1 h-full px-2 gap-1",
+              "flex flex-col items-center justify-center flex-1 h-full px-2 gap-0.5 transition-colors",
               isActive("/events") ? "text-primary" : "text-muted-foreground"
             )}
           >
             <Calendar className="h-5 w-5" />
-            <span className="text-xs">Events</span>
+            <span className="text-[10px] font-medium">Events</span>
           </Link>
           <Link
             to="/profile"
             className={cn(
-              "flex flex-col items-center justify-center flex-1 h-full px-2 gap-1",
+              "flex flex-col items-center justify-center flex-1 h-full px-2 gap-0.5 transition-colors",
               isActive("/profile") ? "text-primary" : "text-muted-foreground"
             )}
           >
             <User className="h-5 w-5" />
-            <span className="text-xs">Profile</span>
+            <span className="text-[10px] font-medium">Profile</span>
           </Link>
           <Sheet>
             <SheetTrigger asChild>
-              <button className="flex flex-col items-center justify-center flex-1 h-full px-2 gap-1 text-muted-foreground">
+              <button className="flex flex-col items-center justify-center flex-1 h-full px-2 gap-0.5 text-muted-foreground transition-colors">
                 <Menu className="h-5 w-5" />
-                <span className="text-xs">Menu</span>
+                <span className="text-[10px] font-medium">Menu</span>
               </button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] sm:w-[400px]">
