@@ -54,28 +54,46 @@ export type Database = {
       event_invitations: {
         Row: {
           created_at: string | null
+          email_sent: boolean | null
+          email_sent_at: string | null
           event_id: string
+          expiration_date: string | null
           id: string
           invitee_id: string
           inviter_id: string
+          last_viewed_at: string | null
+          reminder_sent_at: string | null
+          response_notes: string | null
           status: string
           updated_at: string | null
         }
         Insert: {
           created_at?: string | null
+          email_sent?: boolean | null
+          email_sent_at?: string | null
           event_id: string
+          expiration_date?: string | null
           id?: string
           invitee_id: string
           inviter_id: string
+          last_viewed_at?: string | null
+          reminder_sent_at?: string | null
+          response_notes?: string | null
           status?: string
           updated_at?: string | null
         }
         Update: {
           created_at?: string | null
+          email_sent?: boolean | null
+          email_sent_at?: string | null
           event_id?: string
+          expiration_date?: string | null
           id?: string
           invitee_id?: string
           inviter_id?: string
+          last_viewed_at?: string | null
+          reminder_sent_at?: string | null
+          response_notes?: string | null
           status?: string
           updated_at?: string | null
         }

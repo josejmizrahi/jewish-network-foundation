@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { format, isValid, parseISO } from "date-fns";
-import { Clock, Mail, MoreHorizontal, UserX } from "lucide-react";
+import { Clock, Mail, MoreHorizontal, UserX, Calendar, Eye } from "lucide-react";
 
 interface InvitationItemProps {
   invitation: {
@@ -22,6 +22,10 @@ interface InvitationItemProps {
     };
     status: string;
     created_at: string;
+    last_viewed_at?: string;
+    expiration_date?: string;
+    email_sent: boolean;
+    email_sent_at?: string;
   };
   onRemove: (invitationId: string) => void;
 }
@@ -33,6 +37,8 @@ export function InvitationItem({ invitation, onRemove }: InvitationItemProps) {
         return 'bg-green-500/20 text-green-500';
       case 'rejected':
         return 'bg-red-500/20 text-red-500';
+      case 'expired':
+        return 'bg-gray-500/20 text-gray-500';
       default:
         return 'bg-yellow-500/20 text-yellow-500';
     }
@@ -67,13 +73,33 @@ export function InvitationItem({ invitation, onRemove }: InvitationItemProps) {
             <span>
               Sent {formatDate(invitation.created_at)}
             </span>
-            {invitation.invitee.email_notifications && (
+            {invitation.email_sent && (
               <Tooltip>
                 <TooltipTrigger>
                   <Mail className="h-3 w-3" />
                 </TooltipTrigger>
                 <TooltipContent>
-                  Email notifications enabled
+                  Email sent {invitation.email_sent_at ? formatDate(invitation.email_sent_at) : ''}
+                </TooltipContent>
+              </Tooltip>
+            )}
+            {invitation.last_viewed_at && (
+              <Tooltip>
+                <TooltipTrigger>
+                  <Eye className="h-3 w-3" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  Last viewed {formatDate(invitation.last_viewed_at)}
+                </TooltipContent>
+              </Tooltip>
+            )}
+            {invitation.expiration_date && (
+              <Tooltip>
+                <TooltipTrigger>
+                  <Calendar className="h-3 w-3" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  Expires {formatDate(invitation.expiration_date)}
                 </TooltipContent>
               </Tooltip>
             )}
