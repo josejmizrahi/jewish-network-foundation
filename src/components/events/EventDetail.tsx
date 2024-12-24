@@ -5,38 +5,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { EditEventDialog } from "./EditEventDialog";
 import { EventHeader } from "./detail/EventHeader";
-import { EventInfo } from "./detail/EventInfo";
-import { EventOrganizer } from "./detail/EventOrganizer";
-import { EventAttendees } from "./detail/EventAttendees";
-import { EventRegistration } from "./detail/EventRegistration";
+import { EventContent } from "./detail/EventContent";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
-import { InviteMembers } from "./detail/InviteMembers";
-import { InvitationsList } from "./detail/InvitationsList";
-
-interface Event {
-  id: string;
-  title: string;
-  description: string | null;
-  start_time: string;
-  end_time: string;
-  location: string | null;
-  is_online: boolean;
-  meeting_url: string | null;
-  max_capacity: number | null;
-  current_attendees: number;
-  status: string;
-  is_private: boolean;
-  timezone: string;
-  organizer_id: string;
-  cover_image: string | null;
-  waitlist_enabled: boolean;
-  organizer: {
-    full_name: string;
-    avatar_url: string;
-  } | null;
-}
+import { Event } from "./detail/types";
 
 export function EventDetail() {
   const { id } = useParams();
@@ -136,49 +109,12 @@ export function EventDetail() {
         coverImage={event.cover_image}
       />
 
-      <div className="grid gap-4 md:gap-8 md:grid-cols-3">
-        <div className="md:col-span-2 space-y-4 md:space-y-8">
-          <EventInfo
-            startTime={event.start_time}
-            endTime={event.end_time}
-            isOnline={event.is_online}
-            meetingUrl={event.meeting_url}
-            location={event.location}
-            maxCapacity={event.max_capacity}
-            currentAttendees={event.current_attendees}
-            isRegistered={!!isRegistered}
-          />
-
-          {event.organizer && (
-            <EventOrganizer 
-              organizerName={event.organizer.full_name}
-              organizerAvatar={event.organizer.avatar_url}
-            />
-          )}
-
-          {isOrganizer && (
-            <>
-              <InviteMembers eventId={event.id} isOrganizer={isOrganizer} />
-              <InvitationsList eventId={event.id} isOrganizer={isOrganizer} />
-              <EventAttendees eventId={event.id} isOrganizer={isOrganizer} />
-            </>
-          )}
-        </div>
-
-        <div className="order-first md:order-none">
-          <div className="md:sticky md:top-6">
-            <EventRegistration
-              eventId={event.id}
-              isRegistered={!!isRegistered}
-              status={event.status}
-              user={user}
-              currentAttendees={event.current_attendees}
-              maxCapacity={event.max_capacity}
-              waitlistEnabled={event.waitlist_enabled}
-            />
-          </div>
-        </div>
-      </div>
+      <EventContent
+        event={event}
+        isOrganizer={isOrganizer}
+        isRegistered={!!isRegistered}
+        user={user}
+      />
 
       {isOrganizer && (
         <EditEventDialog
