@@ -3,6 +3,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { InvitationItem } from "./InvitationItem";
+import { Loader2 } from "lucide-react";
 
 interface EventInvitationsListProps {
   eventId: string;
@@ -11,7 +12,8 @@ interface EventInvitationsListProps {
 
 export function EventInvitationsList({ eventId, isOrganizer }: EventInvitationsListProps) {
   const { toast } = useToast();
-  const { data: invitations, isLoading } = useQuery({
+  
+  const { data: invitations, isLoading, refetch } = useQuery({
     queryKey: ['event-invitations', eventId],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -21,10 +23,15 @@ export function EventInvitationsList({ eventId, isOrganizer }: EventInvitationsL
           event_id,
           status,
           created_at,
-          invitee:profiles!event_invitations_invitee_id_fkey(id, full_name, avatar_url)
+          invitee:profiles!event_invitations_invitee_id_fkey(
+            id, 
+            full_name, 
+            avatar_url,
+            email_notifications
+          )
         `)
         .eq('event_id', eventId)
-        .order('created_at', { ascending: true });
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
       return data;
@@ -43,8 +50,10 @@ export function EventInvitationsList({ eventId, isOrganizer }: EventInvitationsL
 
       toast({
         title: "Invitation cancelled",
-        description: "The invitation has been cancelled.",
+        description: "The invitation has been cancelled successfully.",
       });
+      
+      refetch();
     } catch (error: any) {
       toast({
         title: "Error",
@@ -57,17 +66,20 @@ export function EventInvitationsList({ eventId, isOrganizer }: EventInvitationsL
   if (!isOrganizer) return null;
 
   if (isLoading) {
-    return <div className="animate-pulse space-y-2">
-      {[...Array(3)].map((_, i) => (
-        <div key={i} className="h-12 bg-muted rounded" />
-      ))}
-    </div>;
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
   }
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">Invitations</h3>
+        <span className="text-sm text-muted-foreground">
+          {invitations?.length || 0} invitation{invitations?.length !== 1 ? 's' : ''}
+        </span>
       </div>
       <ScrollArea className="h-[400px] rounded-md border">
         <div className="p-4 space-y-6">
@@ -80,7 +92,9 @@ export function EventInvitationsList({ eventId, isOrganizer }: EventInvitationsL
           ))}
 
           {!invitations?.length && (
-            <p className="text-center text-muted-foreground">No invitations sent yet</p>
+            <p className="text-center text-muted-foreground py-8">
+              No invitations sent yet
+            </p>
           )}
         </div>
       </ScrollArea>

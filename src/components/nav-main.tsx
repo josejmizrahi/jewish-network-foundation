@@ -18,13 +18,15 @@ import { Link, useLocation } from "react-router-dom"
 
 interface NavMainProps {
   items: {
-    title: string
-    url: string
-    icon: LucideIcon
-    isActive?: boolean
+    title: string;
+    url: string;
+    icon: LucideIcon;
+    isActive?: boolean;
+    badge?: number;
     items?: {
-      title: string
-      url: string
+      title: string;
+      url: string;
+      badge?: number;
     }[]
   }[]
 }
@@ -55,6 +57,11 @@ export function NavMain({ items }: NavMainProps) {
                       <Link to={item.url} className="flex items-center gap-2 w-full group-data-[collapsible=icon]:justify-center">
                         <item.icon className="h-4 w-4 transition-transform duration-200 group-data-[collapsible=icon]:mx-auto" />
                         <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
+                        {item.badge && (
+                          <Badge variant="secondary" className="ml-auto mr-2">
+                            {item.badge}
+                          </Badge>
+                        )}
                         <ChevronRight className="ml-auto h-4 w-4 shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-90 group-data-[collapsible=icon]:hidden" />
                       </Link>
                     </SidebarMenuButton>
@@ -71,7 +78,12 @@ export function NavMain({ items }: NavMainProps) {
                               isActive={location.pathname === subItem.url}
                               className="transition-colors duration-200 hover:bg-accent/80"
                             >
-                              {subItem.title}
+                              <span>{subItem.title}</span>
+                              {subItem.badge && (
+                                <Badge variant="secondary" className="ml-auto">
+                                  {subItem.badge}
+                                </Badge>
+                              )}
                             </SidebarMenuSubButton>
                           </Link>
                         </SidebarMenuSubItem>
@@ -91,6 +103,11 @@ export function NavMain({ items }: NavMainProps) {
                   >
                     <item.icon className="h-4 w-4 transition-transform duration-200 group-data-[collapsible=icon]:mx-auto" />
                     <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
+                    {item.badge && (
+                      <Badge variant="secondary" className="ml-auto">
+                        {item.badge}
+                      </Badge>
+                    )}
                   </Link>
                 </SidebarMenuButton>
               )}

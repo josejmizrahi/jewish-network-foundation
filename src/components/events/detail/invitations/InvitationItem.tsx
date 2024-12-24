@@ -7,7 +7,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, UserX } from "lucide-react";
+import { format } from "date-fns";
+import { MoreHorizontal, UserX, Mail, Clock } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface InvitationItemProps {
   invitation: {
@@ -16,15 +18,28 @@ interface InvitationItemProps {
     invitee: {
       full_name: string;
       avatar_url: string;
+      email_notifications: boolean;
     };
     status: string;
+    created_at: string;
   };
   onRemove: (invitationId: string) => void;
 }
 
 export function InvitationItem({ invitation, onRemove }: InvitationItemProps) {
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'accepted':
+        return 'bg-green-500/20 text-green-500';
+      case 'rejected':
+        return 'bg-red-500/20 text-red-500';
+      default:
+        return 'bg-yellow-500/20 text-yellow-500';
+    }
+  };
+
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between group hover:bg-accent/50 p-2 rounded-lg transition-colors">
       <div className="flex items-center gap-3">
         <Avatar>
           <AvatarImage src={invitation.invitee.avatar_url} />
@@ -32,19 +47,33 @@ export function InvitationItem({ invitation, onRemove }: InvitationItemProps) {
             {invitation.invitee.full_name.charAt(0)}
           </AvatarFallback>
         </Avatar>
-        <span>{invitation.invitee.full_name}</span>
+        <div className="flex flex-col">
+          <span className="font-medium">{invitation.invitee.full_name}</span>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Clock className="h-3 w-3" />
+            <span>
+              Sent {format(new Date(invitation.created_at), 'MMM d, yyyy')}
+            </span>
+            {invitation.invitee.email_notifications && (
+              <Tooltip>
+                <TooltipTrigger>
+                  <Mail className="h-3 w-3" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  Email notifications enabled
+                </TooltipContent>
+              </Tooltip>
+            )}
+          </div>
+        </div>
       </div>
       <div className="flex items-center gap-2">
-        <Badge variant={
-          invitation.status === 'accepted' ? 'default' :
-          invitation.status === 'rejected' ? 'destructive' :
-          'secondary'
-        }>
-          {invitation.status}
+        <Badge className={getStatusColor(invitation.status)}>
+          {invitation.status.charAt(0).toUpperCase() + invitation.status.slice(1)}
         </Badge>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100">
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
