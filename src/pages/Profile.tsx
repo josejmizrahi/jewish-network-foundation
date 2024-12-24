@@ -18,6 +18,7 @@ export default function Profile() {
   const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [editedProfile, setEditedProfile] = useState<Profile | null>(null);
   const { toast } = useToast();
 
   const { data: profile, isLoading, refetch } = useQuery({
@@ -41,18 +42,21 @@ export default function Profile() {
     enabled: !!user,
   });
 
-  const handleUpdateProfile = async (updatedProfile: Profile) => {
+  const handleUpdateProfile = async () => {
+    if (!editedProfile) return;
+    
     try {
       setUpdating(true);
       const { error } = await supabase
         .from('profiles')
-        .update(updatedProfile)
+        .update(editedProfile)
         .eq('id', user?.id);
 
       if (error) throw error;
 
       await refetch(); // Refresh the profile data
       setIsEditing(false); // Close the form after successful update
+      setEditedProfile(null); // Clear the edited profile
       toast({
         title: "Success",
         description: "Profile updated successfully",
@@ -68,6 +72,12 @@ export default function Profile() {
     }
   };
 
+  // Handle starting edit mode
+  const handleStartEditing = () => {
+    setEditedProfile(profile); // Initialize edited profile with current profile
+    setIsEditing(true);
+  };
+
   if (isLoading || !profile) {
     return <div>Loading...</div>;
   }
@@ -81,10 +91,10 @@ export default function Profile() {
           <SidebarInset>
             <div className="container max-w-4xl mx-auto px-4 py-8">
               <div className="space-y-8">
-                <ProfileHeader profile={profile} />
+                <ProfileHeader profile={editedProfile || profile} />
                 {!isEditing ? (
                   <Button
-                    onClick={() => setIsEditing(true)}
+                    onClick={handleStartEditing}
                     variant="outline"
                     className="w-full"
                   >
@@ -93,10 +103,10 @@ export default function Profile() {
                   </Button>
                 ) : (
                   <ProfileForm 
-                    profile={profile}
+                    profile={editedProfile || profile}
                     updating={updating}
-                    onUpdateProfile={() => handleUpdateProfile(profile)}
-                    onProfileChange={(updatedProfile) => handleUpdateProfile(updatedProfile)}
+                    onUpdateProfile={handleUpdateProfile}
+                    onProfileChange={setEditedProfile}
                   />
                 )}
               </div>
