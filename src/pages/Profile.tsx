@@ -12,12 +12,15 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { isVerificationStatus } from "@/types/verification";
 import type { Profile } from "@/types/profile";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function Profile() {
   const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
+  const [updating, setUpdating] = useState(false);
+  const { toast } = useToast();
 
-  const { data: profile, isLoading } = useQuery({
+  const { data: profile, isLoading, refetch } = useQuery({
     queryKey: ['profile', user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -39,13 +42,30 @@ export default function Profile() {
   });
 
   const handleUpdateProfile = async (updatedProfile: Profile) => {
-    const { error } = await supabase
-      .from('profiles')
-      .update(updatedProfile)
-      .eq('id', user?.id);
+    try {
+      setUpdating(true);
+      const { error } = await supabase
+        .from('profiles')
+        .update(updatedProfile)
+        .eq('id', user?.id);
 
-    if (error) throw error;
-    setIsEditing(false); // Close the form after successful update
+      if (error) throw error;
+
+      await refetch(); // Refresh the profile data
+      setIsEditing(false); // Close the form after successful update
+      toast({
+        title: "Success",
+        description: "Profile updated successfully",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update profile",
+        variant: "destructive",
+      });
+    } finally {
+      setUpdating(false);
+    }
   };
 
   if (isLoading || !profile) {
@@ -74,7 +94,7 @@ export default function Profile() {
                 ) : (
                   <ProfileForm 
                     profile={profile}
-                    updating={false}
+                    updating={updating}
                     onUpdateProfile={() => handleUpdateProfile(profile)}
                     onProfileChange={(updatedProfile) => handleUpdateProfile(updatedProfile)}
                   />
