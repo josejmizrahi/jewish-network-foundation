@@ -9,6 +9,9 @@ import { DashboardChart } from "@/components/dashboard/DashboardChart";
 import { DashboardEvents } from "@/components/dashboard/DashboardEvents";
 import { DashboardActivity } from "@/components/dashboard/DashboardActivity";
 import { motion } from "framer-motion";
+import { Calendar, Users, Share2, MapPin } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export default function Index() {
   const { user } = useAuth();
@@ -35,7 +38,7 @@ export default function Index() {
                   </h2>
                   <div className="flex items-center space-x-2">
                     <Button asChild size="lg">
-                      <Link to="/profile">View Profile</Link>
+                      <Link to="/events">View All Events</Link>
                     </Button>
                   </div>
                 </motion.div>
@@ -121,21 +124,59 @@ export default function Index() {
           </div>
         </div>
 
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
+        {/* New Feature Showcase Section */}
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.9 }}
-            className="mx-auto max-w-2xl lg:text-center"
+            className="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
           >
-            <h2 className="text-base font-semibold leading-7 text-primary">Our Community</h2>
-            <p className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
-              Everything you need to connect and grow
-            </p>
-            <p className="mt-6 text-lg leading-8 text-muted-foreground">
-              Access resources, join study groups, participate in events, and connect with 
-              like-minded individuals from around the world.
-            </p>
+            <Card className="relative overflow-hidden">
+              <CardContent className="p-6 space-y-4">
+                <Calendar className="h-12 w-12 text-primary" />
+                <h3 className="text-xl font-semibold">Community Events</h3>
+                <p className="text-muted-foreground">
+                  Create and join events, from study sessions to social gatherings. 
+                  Connect with your community in person or online.
+                </p>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <MapPin className="h-4 w-4" />
+                  <span>In-person & Virtual Events</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="relative overflow-hidden">
+              <CardContent className="p-6 space-y-4">
+                <Share2 className="h-12 w-12 text-primary" />
+                <h3 className="text-xl font-semibold">Easy Sharing</h3>
+                <p className="text-muted-foreground">
+                  Share events with friends and family across any platform. 
+                  Invite others to join and grow our community together.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant="secondary">WhatsApp</Badge>
+                  <Badge variant="secondary">Email</Badge>
+                  <Badge variant="secondary">Social Media</Badge>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="relative overflow-hidden">
+              <CardContent className="p-6 space-y-4">
+                <Users className="h-12 w-12 text-primary" />
+                <h3 className="text-xl font-semibold">Private Events</h3>
+                <p className="text-muted-foreground">
+                  Create private events for select groups. Manage invitations 
+                  and RSVPs with our intuitive event management system.
+                </p>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Users className="h-4 w-4" />
+                  <span>Invitation-only Access</span>
+                </div>
+              </CardContent>
+            </Card>
           </motion.div>
         </div>
       </div>
