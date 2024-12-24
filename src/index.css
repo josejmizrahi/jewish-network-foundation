@@ -72,12 +72,15 @@
   }
   body {
     @apply bg-background text-foreground;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
 @layer utilities {
   .animate-fade-in {
-    animation: fadeIn 0.2s ease-out forwards;
+    animation: fadeIn 0.15s ease-out forwards;
     opacity: 0;
     will-change: opacity, transform;
     backface-visibility: hidden;
@@ -86,7 +89,7 @@
   }
 
   .animate-slide-in {
-    animation: slideIn 0.15s ease-out forwards;
+    animation: slideIn 0.1s ease-out forwards;
     transform: translateY(10px);
     opacity: 0;
     will-change: transform, opacity;

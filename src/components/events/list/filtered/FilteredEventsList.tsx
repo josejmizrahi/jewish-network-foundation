@@ -3,6 +3,7 @@ import { EmptyState } from "../EmptyState";
 import { EventDateGroup } from "../EventDateGroup";
 import { categoryColors } from "../types";
 import { filterEvents, groupEventsByDate } from "../utils/eventGrouping";
+import { memo } from "react";
 
 interface FilteredEventsListProps {
   events: Event[];
@@ -13,7 +14,7 @@ interface FilteredEventsListProps {
   hasFilters: boolean;
 }
 
-export function FilteredEventsList({
+export const FilteredEventsList = memo(function FilteredEventsList({
   events,
   search,
   category,
@@ -40,8 +41,14 @@ export function FilteredEventsList({
   }
 
   return (
-    <div className="mt-8 space-y-8">
-      {Object.entries(groupedEvents).map(([date, dateEvents], index) => (
+    <div 
+      className="mt-8 space-y-8" 
+      style={{ 
+        contentVisibility: 'auto',
+        containIntrinsicSize: 'auto 500px'
+      }}
+    >
+      {Object.entries(groupedEvents).map(([date, dateEvents]) => (
         <div 
           key={date}
           className="transform-gpu"
@@ -60,4 +67,4 @@ export function FilteredEventsList({
       ))}
     </div>
   );
-}
+});

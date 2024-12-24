@@ -7,13 +7,14 @@ import { Event } from "./types";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { memo } from "react";
 
 interface EventCardProps {
   event: Event;
   categoryColors: Record<string, string>;
 }
 
-export function EventCard({ event, categoryColors }: EventCardProps) {
+export const EventCard = memo(function EventCard({ event, categoryColors }: EventCardProps) {
   const { toast } = useToast();
 
   const handleShare = async (e: React.MouseEvent) => {
@@ -105,8 +106,8 @@ export function EventCard({ event, categoryColors }: EventCardProps) {
   };
 
   return (
-    <Link to={`/events/${event.id}`}>
-      <div className="group relative bg-card hover:bg-accent transition-colors rounded-xl p-4">
+    <Link to={`/events/${event.id}`} className="block transform-gpu">
+      <div className="group relative bg-card hover:bg-accent transition-colors rounded-xl p-4 will-change-transform">
         <div className="flex flex-col sm:flex-row gap-4">
           {event.cover_image ? (
             <div className="w-full sm:w-48 h-32 sm:h-48 flex-shrink-0">
@@ -114,6 +115,8 @@ export function EventCard({ event, categoryColors }: EventCardProps) {
                 src={event.cover_image}
                 alt={event.title}
                 className="w-full h-full object-cover rounded-lg"
+                loading="lazy"
+                decoding="async"
               />
             </div>
           ) : (
@@ -184,4 +187,4 @@ export function EventCard({ event, categoryColors }: EventCardProps) {
       </div>
     </Link>
   );
-}
+});
