@@ -60,6 +60,19 @@ export function EventContent({ event, isOrganizer, isRegistered, user }: EventCo
             </div>
           </Card>
 
+          {/* Registration Card - Before timeline */}
+          <div className={isMobile ? "" : "sticky top-6"}>
+            <EventRegistrationCard
+              eventId={event.id}
+              isRegistered={isRegistered}
+              status={event.status}
+              user={user}
+              currentAttendees={event.current_attendees}
+              maxCapacity={event.max_capacity}
+              waitlistEnabled={event.waitlist_enabled}
+            />
+          </div>
+
           {subEvents.length > 0 && (
             <Card className="p-6">
               <EventTimeline subEvents={subEvents} />
@@ -75,19 +88,6 @@ export function EventContent({ event, isOrganizer, isRegistered, user }: EventCo
             </Card>
           )}
         </div>
-      </div>
-
-      {/* Registration Card - After event details */}
-      <div className={isMobile ? "" : "sticky top-6"}>
-        <EventRegistrationCard
-          eventId={event.id}
-          isRegistered={isRegistered}
-          status={event.status}
-          user={user}
-          currentAttendees={event.current_attendees}
-          maxCapacity={event.max_capacity}
-          waitlistEnabled={event.waitlist_enabled}
-        />
       </div>
 
       {/* Management Tabs */}
