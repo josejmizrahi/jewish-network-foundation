@@ -12,6 +12,7 @@ import { Event } from "./detail/types";
 import { EventBreadcrumb } from "./detail/EventBreadcrumb";
 import { EventRegistrationCard } from "./detail/registration/EventRegistrationCard";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { EventMetaTags } from "./detail/EventMetaTags";
 
 export function EventDetail() {
   const { id } = useParams();
@@ -100,9 +101,17 @@ export function EventDetail() {
   }
 
   const isOrganizer = user?.id === event.organizer_id;
+  const eventUrl = `${window.location.origin}/events/${event.id}`;
 
   return (
     <div className="space-y-6 md:space-y-8">
+      <EventMetaTags
+        title={event.title}
+        description={event.description}
+        coverImage={event.cover_image}
+        url={eventUrl}
+      />
+      
       <EventBreadcrumb eventTitle={event.title} />
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
