@@ -4,6 +4,7 @@ export interface Event {
   description: string | null;
   start_time: string;
   end_time: string;
+  timezone: string;
   location: string | null;
   is_online: boolean;
   meeting_url: string | null;
@@ -15,9 +16,11 @@ export interface Event {
   category: string;
   category_color: string;
   tags: string[];
+  organizer_id: string;
+  waitlist_enabled: boolean;
   organizer: {
     full_name: string;
-    avatar_url: string;
+    avatar_url: string | null;
   } | null;
   invitation_id?: string;
   invitation_status?: string;
