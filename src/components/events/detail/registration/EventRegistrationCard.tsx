@@ -1,10 +1,9 @@
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { useState } from "react";
 import { User } from "@supabase/auth-helpers-react";
-import { useEventRegistration } from "./useEventRegistration";
-import { RegistrationStatus } from "./RegistrationStatus";
+import { InvitationActions } from "../../list/InvitationActions";
+import { EventRegistration } from "./EventRegistration";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 interface EventRegistrationCardProps {
   eventId: string;
@@ -16,81 +15,71 @@ interface EventRegistrationCardProps {
   waitlistEnabled: boolean;
 }
 
-export function EventRegistrationCard({ 
-  eventId, 
-  isRegistered, 
+export function EventRegistrationCard({
+  eventId,
+  isRegistered,
   status,
   user,
   currentAttendees,
   maxCapacity,
-  waitlistEnabled
+  waitlistEnabled,
 }: EventRegistrationCardProps) {
-  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  // Check if user is invited
+  const { data: invitation } = useQuery({
+    queryKey: ['event-invitation', eventId, user?.id],
+    queryFn: async () => {
+      if (!user) return null;
+      
+      const { data, error } = await supabase
+        .from('event_invitations')
+        .select('*')
+        .eq('event_id', eventId)
+        .eq('invitee_id', user.id)
+        .maybeSingle();
 
-  const {
-    isFull,
-    canJoinWaitlist,
-    handleRegister,
-    handleCancelRegistration,
-  } = useEventRegistration({
-    eventId,
-    userId: user?.id,
-    maxCapacity,
-    currentAttendees,
-    waitlistEnabled,
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user && !!eventId,
   });
-
-  const getButtonText = () => {
-    if (status === 'cancelled') return "Event Cancelled";
-    if (isRegistered) return "Cancel Registration";
-    if (canJoinWaitlist) return "Join Waitlist";
-    if (isFull && !waitlistEnabled) return "Event Full";
-    return "Register Now";
-  };
 
   return (
     <Card className="p-6">
-      <div className="flex flex-col items-center text-center space-y-4">
-        <RegistrationStatus
-          status={status}
-          isRegistered={isRegistered}
-          canJoinWaitlist={canJoinWaitlist}
-          isFull={isFull}
-        />
-        
-        {maxCapacity && (
-          <p className="text-sm text-muted-foreground">
-            {currentAttendees} / {maxCapacity} spots filled
+      {invitation ? (
+        <div className="flex flex-col items-center text-center space-y-4">
+          <h3 className="text-xl font-semibold">
+            {status === 'cancelled' 
+              ? "This event has been cancelled"
+              : "You're invited!"}
+          </h3>
+          <p className="text-muted-foreground">
+            {status === 'cancelled'
+              ? "The organizer has cancelled this event."
+              : "Would you like to attend this event?"}
           </p>
-        )}
-        
-        <Button
-          className="w-full rounded-full"
-          size="lg"
-          onClick={isRegistered ? () => setIsConfirmOpen(true) : handleRegister}
-          disabled={!user || status === 'cancelled' || (isFull && !waitlistEnabled && !isRegistered)}
-          variant={isRegistered ? "destructive" : "default"}
-        >
-          {getButtonText()}
-        </Button>
-      </div>
-
-      <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Cancel Registration</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to cancel your registration? If there's a waitlist, your spot will be given to the next person in line.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Keep Registration</AlertDialogCancel>
-            <AlertDialogAction onClick={handleCancelRegistration}>
-              Cancel Registration
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+          {maxCapacity && (
+            <p className="text-sm text-muted-foreground">
+              {currentAttendees} / {maxCapacity} spots filled
+            </p>
+          )}
+          <div className="w-full">
+            <InvitationActions
+              invitationId={invitation.id}
+              status={invitation.status}
+            />
+          </div>
+        </div>
+      ) : (
+        <EventRegistration
+          eventId={eventId}
+          isRegistered={isRegistered}
+          status={status}
+          user={user}
+          currentAttendees={currentAttendees}
+          maxCapacity={maxCapacity}
+          waitlistEnabled={waitlistEnabled}
+        />
+      )}
     </Card>
   );
 }

@@ -1,19 +1,32 @@
 import { Event } from "../detail/types";
 import { format } from "date-fns";
 import { Calendar, MapPin, Users, Video, Clock } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { InvitationActions } from "./InvitationActions";
 import { Badge } from "@/components/ui/badge";
 
 interface InvitationCardProps {
-  event: Event;
+  event: Event & {
+    invitation_id?: string;
+    invitation_status?: string;
+    invitation_created_at?: string;
+  };
   invitationId: string;
   invitationStatus: string;
 }
 
 export function InvitationCard({ event, invitationId, invitationStatus }: InvitationCardProps) {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/events/${event.id}`);
+  };
+
   return (
-    <div className="group relative bg-card hover:bg-accent transition-colors rounded-xl p-4">
+    <div 
+      className="group relative bg-card hover:bg-accent transition-colors rounded-xl p-4 cursor-pointer"
+      onClick={handleClick}
+    >
       <div className="flex gap-4">
         {event.cover_image ? (
           <div className="w-24 h-24 flex-shrink-0">
@@ -30,11 +43,9 @@ export function InvitationCard({ event, invitationId, invitationStatus }: Invita
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <Link to={`/events/${event.id}`}>
-                <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
-                  {event.title}
-                </h3>
-              </Link>
+              <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+                {event.title}
+              </h3>
               {event.description && (
                 <p className="text-muted-foreground text-sm mt-1 line-clamp-2">
                   {event.description}
@@ -50,10 +61,12 @@ export function InvitationCard({ event, invitationId, invitationStatus }: Invita
                 </Badge>
               </div>
             </div>
-            <InvitationActions 
-              invitationId={invitationId}
-              status={invitationStatus}
-            />
+            <div onClick={(e) => e.stopPropagation()}>
+              <InvitationActions 
+                invitationId={invitationId}
+                status={invitationStatus}
+              />
+            </div>
           </div>
           
           <div className="flex flex-wrap gap-4 mt-3 text-sm text-muted-foreground">
