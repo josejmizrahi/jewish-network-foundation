@@ -2,6 +2,7 @@ import { MainNav } from "@/components/layout/MainNav";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { EventDetail } from "@/components/events/EventDetail";
+import { BottomNav } from "@/components/nav/BottomNav";
 
 export default function EventDetailPage() {
   return (
@@ -15,6 +16,7 @@ export default function EventDetailPage() {
               <EventDetail />
             </div>
           </SidebarInset>
+          <BottomNav />
         </div>
       </div>
     </SidebarProvider>
