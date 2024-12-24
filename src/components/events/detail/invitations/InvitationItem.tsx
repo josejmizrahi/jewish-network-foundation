@@ -44,7 +44,9 @@ export function InvitationItem({ invitation, onRemove }: InvitationItemProps) {
     }
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return 'N/A';
+    
     try {
       const date = parseISO(dateString);
       if (!isValid(date)) {
@@ -79,7 +81,7 @@ export function InvitationItem({ invitation, onRemove }: InvitationItemProps) {
                   <Mail className="h-3 w-3" />
                 </TooltipTrigger>
                 <TooltipContent>
-                  Email sent {invitation.email_sent_at ? formatDate(invitation.email_sent_at) : ''}
+                  Email sent {formatDate(invitation.email_sent_at)}
                 </TooltipContent>
               </Tooltip>
             )}

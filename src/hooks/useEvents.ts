@@ -34,6 +34,10 @@ export function useEventInvitations() {
         .select(`
           id,
           status,
+          created_at,
+          last_viewed_at,
+          email_sent,
+          email_sent_at,
           event:events!inner(
             *,
             organizer:profiles!events_organizer_id_fkey(
@@ -42,8 +46,7 @@ export function useEventInvitations() {
             )
           )
         `)
-        .eq('invitee_id', user.id)
-        .eq('status', 'pending');
+        .eq('invitee_id', user.id);
 
       if (error) {
         console.error("Error fetching invitations:", error);
