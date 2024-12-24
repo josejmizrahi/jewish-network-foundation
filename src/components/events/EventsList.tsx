@@ -3,7 +3,7 @@ import { LoadingSkeleton } from "./list/LoadingSkeleton";
 import { EmptyState } from "./list/EmptyState";
 import { EventTabs } from "./list/EventTabs";
 import { EventContent } from "./list/EventContent";
-import { useEvents, useEventInvitations } from "@/hooks/useEvents";
+import { useEventsList, useEventInvitations } from "@/hooks/useEventQueries";
 import { useAuth } from "@/hooks/useAuth";
 
 export function EventsList() {
@@ -18,7 +18,7 @@ export function EventsList() {
     data: events = [], 
     isLoading: eventsLoading, 
     error: eventsError 
-  } = useEvents();
+  } = useEventsList();
 
   const { 
     data: invitations = [], 
