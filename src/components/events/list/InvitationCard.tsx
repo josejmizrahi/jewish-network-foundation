@@ -1,8 +1,9 @@
 import { Event } from "../detail/types";
 import { format } from "date-fns";
-import { Calendar, MapPin, Users, Video } from "lucide-react";
+import { Calendar, MapPin, Users, Video, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { InvitationActions } from "./InvitationActions";
+import { Badge } from "@/components/ui/badge";
 
 interface InvitationCardProps {
   event: Event;
@@ -39,6 +40,15 @@ export function InvitationCard({ event, invitationId, invitationStatus }: Invita
                   {event.description}
                 </p>
               )}
+              <div className="mt-2">
+                <Badge variant={
+                  invitationStatus === 'accepted' ? 'default' :
+                  invitationStatus === 'rejected' ? 'destructive' :
+                  'secondary'
+                }>
+                  {invitationStatus.charAt(0).toUpperCase() + invitationStatus.slice(1)}
+                </Badge>
+              </div>
             </div>
             <InvitationActions 
               invitationId={invitationId}
@@ -72,6 +82,12 @@ export function InvitationCard({ event, invitationId, invitationStatus }: Invita
                 </span>
               </div>
             )}
+            <div className="flex items-center gap-1.5">
+              <Clock className="h-4 w-4" />
+              <span>
+                Invited {format(new Date(event.invitation_created_at || ''), "PP")}
+              </span>
+            </div>
           </div>
         </div>
       </div>

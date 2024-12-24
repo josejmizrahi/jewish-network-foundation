@@ -49,7 +49,7 @@ export function EventsList() {
       <EventTabs
         activeTab={activeTab}
         onTabChange={setActiveTab}
-        invitationsCount={invitations.length}
+        invitationsCount={invitations.filter(inv => inv.invitation_status === 'pending').length}
       >
         <EventContent
           events={currentEvents}

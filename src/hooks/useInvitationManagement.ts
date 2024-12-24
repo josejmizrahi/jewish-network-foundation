@@ -26,12 +26,15 @@ export function useInvitationManagement() {
       // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ['event-invitations'] });
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['events'] });
     } catch (error: any) {
+      console.error('Error handling invitation response:', error);
       toast({
         title: "Error",
         description: error.message || "Failed to update invitation status.",
         variant: "destructive",
       });
+      throw error;
     }
   };
 

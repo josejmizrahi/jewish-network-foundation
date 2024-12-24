@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useInvitationManagement } from "@/hooks/useInvitationManagement";
-import { CheckCircle, XCircle } from "lucide-react";
+import { CheckCircle, XCircle, Loader2 } from "lucide-react";
+import { useState } from "react";
 
 interface InvitationActionsProps {
   invitationId: string;
@@ -8,7 +9,17 @@ interface InvitationActionsProps {
 }
 
 export function InvitationActions({ invitationId, status }: InvitationActionsProps) {
+  const [isLoading, setIsLoading] = useState(false);
   const { handleInvitationResponse } = useInvitationManagement();
+
+  const handleResponse = async (newStatus: 'accepted' | 'rejected') => {
+    setIsLoading(true);
+    try {
+      await handleInvitationResponse(invitationId, newStatus);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   if (status !== 'pending') {
     return (
@@ -25,9 +36,18 @@ export function InvitationActions({ invitationId, status }: InvitationActionsPro
         ) : (
           <>
             <XCircle className="h-4 w-4 mr-2" />
-            Rejected
+            Declined
           </>
         )}
+      </Button>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <Button variant="outline" size="sm" disabled>
+        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+        Processing...
       </Button>
     );
   }
@@ -37,7 +57,7 @@ export function InvitationActions({ invitationId, status }: InvitationActionsPro
       <Button
         variant="default"
         size="sm"
-        onClick={() => handleInvitationResponse(invitationId, 'accepted')}
+        onClick={() => handleResponse('accepted')}
       >
         <CheckCircle className="h-4 w-4 mr-2" />
         Accept
@@ -45,10 +65,10 @@ export function InvitationActions({ invitationId, status }: InvitationActionsPro
       <Button
         variant="destructive"
         size="sm"
-        onClick={() => handleInvitationResponse(invitationId, 'rejected')}
+        onClick={() => handleResponse('rejected')}
       >
         <XCircle className="h-4 w-4 mr-2" />
-        Reject
+        Decline
       </Button>
     </div>
   );

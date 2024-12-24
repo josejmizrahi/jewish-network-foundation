@@ -6,12 +6,19 @@ export function useEvents() {
   return useQuery({
     queryKey: ['events'],
     queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return [];
+
       const { data, error } = await supabase
         .from('events')
         .select(`
           *,
-          organizer:profiles!events_organizer_id_fkey(full_name, avatar_url)
+          organizer:profiles!events_organizer_id_fkey(
+            full_name, 
+            avatar_url
+          )
         `)
+        .or(`is_private.eq.false,organizer_id.eq.${user.id}`)
         .order('start_time', { ascending: true });
 
       if (error) {
@@ -37,6 +44,8 @@ export function useEventInvitations() {
         .select(`
           id,
           status,
+          created_at,
+          last_viewed_at,
           event:events!inner(
             id,
             title,
@@ -77,7 +86,9 @@ export function useEventInvitations() {
       return data.map(invitation => ({
         ...invitation.event,
         invitation_id: invitation.id,
-        invitation_status: invitation.status
+        invitation_status: invitation.status,
+        last_viewed_at: invitation.last_viewed_at,
+        invitation_created_at: invitation.created_at
       })) as Event[];
     },
   });
