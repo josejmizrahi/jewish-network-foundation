@@ -18,12 +18,16 @@ interface DateTimePickerProps {
   date: Date
   setDate: (date: Date) => void
   disabled?: (date: Date) => boolean
+  min?: Date
+  max?: Date
 }
 
 export function DateTimePicker({
   date,
   setDate,
   disabled,
+  min,
+  max,
 }: DateTimePickerProps) {
   const minuteRef = React.useRef<HTMLInputElement>(null)
   const hourRef = React.useRef<HTMLInputElement>(null)
@@ -84,6 +88,13 @@ export function DateTimePicker({
     }
   }
 
+  const isDateDisabled = (date: Date) => {
+    if (disabled?.(date)) return true
+    if (min && date < min) return true
+    if (max && date > max) return true
+    return false
+  }
+
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
@@ -103,7 +114,7 @@ export function DateTimePicker({
           mode="single"
           selected={selectedDate}
           onSelect={handleSelect}
-          disabled={disabled}
+          disabled={isDateDisabled}
           initialFocus
         />
         <div className="border-t border-border p-3 space-y-2">
