@@ -1,11 +1,15 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { InvitationItem } from "./InvitationItem";
-import { Loader2 } from "lucide-react";
+import { Loader2, UserPlus, Users } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { BatchInviteDialog } from "../batch-invite/BatchInviteDialog";
+import { InviteMembers } from "../InviteMembers";
 
 interface EventInvitationsListProps {
   eventId: string;
@@ -14,6 +18,8 @@ interface EventInvitationsListProps {
 
 export function EventInvitationsList({ eventId, isOrganizer }: EventInvitationsListProps) {
   const { toast } = useToast();
+  const [isBatchInviteOpen, setIsBatchInviteOpen] = useState(false);
+  const [isInviteMembersOpen, setIsInviteMembersOpen] = useState(false);
   
   const { 
     data: invitations, 
@@ -91,9 +97,24 @@ export function EventInvitationsList({ eventId, isOrganizer }: EventInvitationsL
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">Invitations</h3>
-        <span className="text-sm text-muted-foreground">
-          {invitations?.length || 0} invitation{invitations?.length !== 1 ? 's' : ''}
-        </span>
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setIsInviteMembersOpen(true)}
+          >
+            <UserPlus className="h-4 w-4 mr-2" />
+            Invite Member
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setIsBatchInviteOpen(true)}
+          >
+            <Users className="h-4 w-4 mr-2" />
+            Batch Invite
+          </Button>
+        </div>
       </div>
 
       {isLoading ? (
@@ -119,6 +140,17 @@ export function EventInvitationsList({ eventId, isOrganizer }: EventInvitationsL
           </div>
         </ScrollArea>
       )}
+
+      <BatchInviteDialog
+        eventId={eventId}
+        open={isBatchInviteOpen}
+        onOpenChange={setIsBatchInviteOpen}
+      />
+
+      <InviteMembers
+        eventId={eventId}
+        isOrganizer={isOrganizer}
+      />
     </div>
   );
 }
