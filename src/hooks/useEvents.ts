@@ -46,7 +46,7 @@ export function useEventInvitations() {
           status,
           created_at,
           last_viewed_at,
-          event:events!inner(
+          event:events(
             id,
             title,
             description,
