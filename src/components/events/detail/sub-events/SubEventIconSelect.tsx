@@ -15,7 +15,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { SubEventIcon } from "./types";
-import { iconComponents } from "./iconMapping";
+import { iconComponents, isValidIcon } from "./iconMapping";
 
 interface SubEventIconSelectProps {
   value?: SubEventIcon;
@@ -25,11 +25,11 @@ interface SubEventIconSelectProps {
 export function SubEventIconSelect({ value = "Calendar", onChange }: SubEventIconSelectProps) {
   const [open, setOpen] = React.useState(false);
   
-  // Get all available icons from the mapping
-  const icons = Object.keys(iconComponents) as SubEventIcon[];
+  // Get all available icons from the mapping and ensure they're valid
+  const icons = Object.keys(iconComponents).filter(isValidIcon);
   
   // Ensure we have a valid initial value
-  const selectedIcon = value && iconComponents[value] ? value : "Calendar";
+  const selectedIcon = value && isValidIcon(value) ? value : "Calendar";
   const IconComponent = iconComponents[selectedIcon];
 
   return (
@@ -60,7 +60,7 @@ export function SubEventIconSelect({ value = "Calendar", onChange }: SubEventIco
                   key={icon}
                   value={icon}
                   onSelect={() => {
-                    onChange(icon);
+                    onChange(icon as SubEventIcon);
                     setOpen(false);
                   }}
                 >

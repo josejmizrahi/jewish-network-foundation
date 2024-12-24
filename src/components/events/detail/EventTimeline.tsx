@@ -1,42 +1,18 @@
 import { format } from "date-fns";
 import { MapPin, Video } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Calendar, Clock, Music, Users, Utensils, Book, Presentation } from "lucide-react";
-import { SubEventIcon } from "./sub-events/SubEventIconSelect";
-
-interface SubEvent {
-  id: string;
-  title: string;
-  description: string | null;
-  start_time: string;
-  end_time: string;
-  location: string | null;
-  is_online: boolean;
-  meeting_url: string | null;
-  icon?: SubEventIcon;
-}
+import { SubEvent } from "./sub-events/types";
+import { iconComponents } from "./sub-events/iconMapping";
 
 interface EventTimelineProps {
   subEvents: SubEvent[];
 }
 
-const iconComponents = {
-  Calendar,
-  Clock,
-  Video,
-  MapPin,
-  Music,
-  Users,
-  Utensils,
-  Book,
-  Presentation,
-};
-
 export function EventTimeline({ subEvents }: EventTimelineProps) {
   if (!subEvents.length) return null;
 
-  const getIconComponent = (iconName: SubEventIcon = 'Calendar') => {
-    return iconComponents[iconName] || Calendar;
+  const getIconComponent = (iconName: string = 'Calendar') => {
+    return iconComponents[iconName as keyof typeof iconComponents] || iconComponents.Calendar;
   };
 
   return (

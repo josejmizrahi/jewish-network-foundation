@@ -12,3 +12,8 @@ export const iconComponents = {
   Book,
   Presentation,
 } as const;
+
+// Helper function to validate icon names
+export const isValidIcon = (icon: string): icon is SubEventIcon => {
+  return icon in iconComponents;
+};
