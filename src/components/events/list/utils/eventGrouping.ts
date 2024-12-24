@@ -22,7 +22,7 @@ export const filterEvents = (
     const now = new Date();
     const eventDate = parseISO(event.start_time);
     const matchesTimeFilter = timeFilter === "all" || 
-      (timeFilter === "upcoming" && isAfter(eventDate, now)) ||
+      (timeFilter === "upcoming" && isAfter(eventDate, now) && event.status !== 'cancelled') ||
       (timeFilter === "past" && isBefore(eventDate, now));
 
     const matchesTags = selectedTags.length === 0 || 
