@@ -33,4 +33,6 @@ export interface Event {
     full_name: string;
     avatar_url: string | null;
   } | null;
+  invitation_status?: string; // Added this field
+  attendees?: Array<{ user_id: string }>;
 }

@@ -5,6 +5,7 @@ import { EventTabs } from "./list/EventTabs";
 import { EventContent } from "./list/EventContent";
 import { useEventsList, useEventInvitations } from "@/hooks/useEventQueries";
 import { useAuth } from "@/hooks/useAuth";
+import { Event, EventCategory } from "./detail/types";
 
 export function EventsList() {
   const [search, setSearch] = useState("");
@@ -15,16 +16,27 @@ export function EventsList() {
   const { user } = useAuth();
 
   const { 
-    data: events = [], 
+    data: eventsData = [], 
     isLoading: eventsLoading, 
     error: eventsError 
   } = useEventsList();
 
   const { 
-    data: invitations = [], 
+    data: invitationsData = [], 
     isLoading: invitationsLoading, 
     error: invitationsError 
   } = useEventInvitations();
+
+  // Type assertion to ensure category is of type EventCategory
+  const events = eventsData.map(event => ({
+    ...event,
+    category: (event.category || 'other') as EventCategory
+  })) as Event[];
+
+  const invitations = invitationsData.map(invitation => ({
+    ...invitation,
+    category: (invitation.category || 'other') as EventCategory
+  })) as Event[];
 
   if (eventsLoading || invitationsLoading) {
     return <LoadingSkeleton />;
