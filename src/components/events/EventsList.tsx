@@ -34,11 +34,14 @@ export function EventsList() {
     category_color: event.category_color || 'gray'
   })) as Event[];
 
+  // Map invitations to Event type with proper type checking and defaults
   const invitations = invitationsData.map(invitation => {
+    // Ensure we have an event object, even if empty
     const eventData = invitation.event || {};
-    const organizer = eventData.organizer || {};
-    
-    return {
+    // Ensure we have an organizer object, even if empty
+    const organizerData = eventData.organizer || {};
+
+    const defaultEvent: Event = {
       id: eventData.id || invitation.event_id || '',
       title: eventData.title || '',
       description: eventData.description || null,
@@ -46,25 +49,27 @@ export function EventsList() {
       end_time: eventData.end_time || new Date().toISOString(),
       timezone: eventData.timezone || 'UTC',
       location: eventData.location || null,
-      is_online: eventData.is_online || false,
+      is_online: Boolean(eventData.is_online),
       meeting_url: eventData.meeting_url || null,
       max_capacity: eventData.max_capacity || null,
       current_attendees: eventData.current_attendees || 0,
       status: eventData.status || 'draft',
-      is_private: eventData.is_private || false,
+      is_private: Boolean(eventData.is_private),
       cover_image: eventData.cover_image || null,
       organizer_id: eventData.organizer_id || '',
       category: (eventData.category || 'other') as EventCategory,
       category_color: eventData.category_color || 'gray',
-      tags: eventData.tags || [],
-      waitlist_enabled: eventData.waitlist_enabled || false,
+      tags: Array.isArray(eventData.tags) ? eventData.tags : [],
+      waitlist_enabled: Boolean(eventData.waitlist_enabled),
       invitation_id: invitation.id,
       invitation_status: invitation.status,
       organizer: {
-        full_name: organizer.full_name || '',
-        avatar_url: organizer.avatar_url || null
+        full_name: organizerData.full_name || '',
+        avatar_url: organizerData.avatar_url || null
       }
-    } as Event;
+    };
+
+    return defaultEvent;
   });
 
   if (eventsLoading || invitationsLoading) {
