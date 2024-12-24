@@ -25,6 +25,7 @@ export function EventsList() {
 
   console.log("Events data:", events);
   console.log("Invitations data:", invitations);
+  console.log("Active tab:", activeTab);
 
   if (eventsLoading || invitationsLoading) {
     return <LoadingSkeleton />;
