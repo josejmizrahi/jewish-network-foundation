@@ -20,11 +20,11 @@ export function EventManagementTabs({ eventId, isOrganizer }: EventManagementTab
       </TabsList>
       
       <TabsContent value="attendees">
-        <EventAttendeesList eventId={eventId} />
+        <EventAttendeesList eventId={eventId} isOrganizer={isOrganizer} />
       </TabsContent>
       
       <TabsContent value="invitations">
-        <EventInvitationsList eventId={eventId} />
+        <EventInvitationsList eventId={eventId} isOrganizer={isOrganizer} />
       </TabsContent>
 
       <TabsContent value="sub-events">

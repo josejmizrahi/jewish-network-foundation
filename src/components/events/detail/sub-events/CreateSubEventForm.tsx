@@ -27,10 +27,9 @@ type SubEventFormValues = z.infer<typeof subEventSchema>;
 
 interface CreateSubEventFormProps {
   eventId: string;
-  onSuccess?: () => void;
 }
 
-export function CreateSubEventForm({ eventId, onSuccess }: CreateSubEventFormProps) {
+export function CreateSubEventForm({ eventId }: CreateSubEventFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -48,8 +47,8 @@ export function CreateSubEventForm({ eventId, onSuccess }: CreateSubEventFormPro
     },
   });
 
-  const onSubmit = async (data: SubEventFormValues) => {
-    if (data.end_time <= data.start_time) {
+  const onSubmit = async (values: SubEventFormValues) => {
+    if (values.end_time <= values.start_time) {
       toast({
         title: "Invalid time range",
         description: "End time must be after start time",
@@ -63,10 +62,14 @@ export function CreateSubEventForm({ eventId, onSuccess }: CreateSubEventFormPro
       const { error } = await supabase
         .from('sub_events')
         .insert({
-          ...data,
           event_id: eventId,
-          start_time: data.start_time.toISOString(),
-          end_time: data.end_time.toISOString(),
+          title: values.title,
+          description: values.description,
+          start_time: values.start_time.toISOString(),
+          end_time: values.end_time.toISOString(),
+          location: values.location,
+          is_online: values.is_online,
+          meeting_url: values.meeting_url,
         });
 
       if (error) throw error;
@@ -78,7 +81,6 @@ export function CreateSubEventForm({ eventId, onSuccess }: CreateSubEventFormPro
 
       form.reset();
       queryClient.invalidateQueries({ queryKey: ['sub-events', eventId] });
-      onSuccess?.();
     } catch (error: any) {
       toast({
         title: "Error",
