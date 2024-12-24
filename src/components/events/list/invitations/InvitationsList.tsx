@@ -11,7 +11,10 @@ interface InvitationsListProps {
 function InvitationsListComponent({ events }: InvitationsListProps) {
   if (events.length === 0) {
     return (
-      <EmptyState message="You have no invitations at this time." />
+      <EmptyState 
+        message="You have no invitations at this time." 
+        hasFilters={false}
+      />
     );
   }
 
