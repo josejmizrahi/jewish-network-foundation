@@ -40,14 +40,23 @@ export function FilteredEventsList({
   }
 
   return (
-    <div className="mt-8">
-      {Object.entries(groupedEvents).map(([date, dateEvents]) => (
-        <EventDateGroup
+    <div className="mt-8 space-y-8">
+      {Object.entries(groupedEvents).map(([date, dateEvents], index) => (
+        <div 
           key={date}
-          date={date}
-          events={dateEvents}
-          categoryColors={categoryColors}
-        />
+          className="transform-gpu"
+          style={{
+            willChange: 'transform',
+            contentVisibility: 'auto',
+            containIntrinsicSize: '0 500px'
+          }}
+        >
+          <EventDateGroup
+            date={date}
+            events={dateEvents}
+            categoryColors={categoryColors}
+          />
+        </div>
       ))}
     </div>
   );
