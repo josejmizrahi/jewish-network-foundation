@@ -11,12 +11,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Event } from "./detail/types";
 import { EventBreadcrumb } from "./detail/EventBreadcrumb";
 import { EventRegistrationCard } from "./detail/registration/EventRegistrationCard";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function EventDetail() {
   const { id } = useParams();
   const { user } = useAuth();
   const { toast } = useToast();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const { data: event, isLoading } = useQuery({
     queryKey: ['events', id],
@@ -78,7 +80,7 @@ export function EventDetail() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-6 animate-fade-in">
         <Skeleton className="h-4 w-32" />
         <Skeleton className="h-[200px] md:h-[400px] w-full rounded-lg" />
         <div className="space-y-2">
@@ -91,7 +93,7 @@ export function EventDetail() {
 
   if (!event) {
     return (
-      <div className="p-4 text-center text-muted-foreground">
+      <div className="p-4 text-center text-muted-foreground animate-fade-in">
         Event not found
       </div>
     );
@@ -100,26 +102,45 @@ export function EventDetail() {
   const isOrganizer = user?.id === event.organizer_id;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 md:space-y-8 animate-fade-in">
       <EventBreadcrumb eventTitle={event.title} />
       
-      <EventHeader
-        title={event.title}
-        description={event.description}
-        isPrivate={event.is_private}
-        isOrganizer={isOrganizer}
-        onEdit={() => setIsEditDialogOpen(true)}
-        onCancel={handleCancelEvent}
-        status={event.status}
-        coverImage={event.cover_image}
-      />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+        <div className="lg:col-span-2 space-y-6 md:space-y-8">
+          <EventHeader
+            title={event.title}
+            description={event.description}
+            isPrivate={event.is_private}
+            isOrganizer={isOrganizer}
+            onEdit={() => setIsEditDialogOpen(true)}
+            onCancel={handleCancelEvent}
+            status={event.status}
+            coverImage={event.cover_image}
+          />
 
-      <EventContent
-        event={event}
-        isOrganizer={isOrganizer}
-        isRegistered={!!isRegistered}
-        user={user}
-      />
+          <EventContent
+            event={event}
+            isOrganizer={isOrganizer}
+            isRegistered={!!isRegistered}
+            user={user}
+          />
+        </div>
+
+        <div className={isMobile ? "" : "sticky top-6"}>
+          <div className="rounded-xl border bg-background/50 backdrop-blur supports-[backdrop-filter]:bg-background/50 shadow-sm transition-all duration-300 hover:shadow-md">
+            <EventRegistrationCard
+              eventId={event.id}
+              isRegistered={!!isRegistered}
+              status={event.status}
+              user={user}
+              currentAttendees={event.current_attendees}
+              maxCapacity={event.max_capacity}
+              waitlistEnabled={event.waitlist_enabled}
+              isPrivate={event.is_private}
+            />
+          </div>
+        </div>
+      </div>
 
       {isOrganizer && (
         <EditEventDialog
@@ -128,17 +149,6 @@ export function EventDetail() {
           event={event}
         />
       )}
-      
-      <EventRegistrationCard
-        eventId={event.id}
-        isRegistered={!!isRegistered}
-        status={event.status}
-        user={user}
-        currentAttendees={event.current_attendees}
-        maxCapacity={event.max_capacity}
-        waitlistEnabled={event.waitlist_enabled}
-        isPrivate={event.is_private}
-      />
     </div>
   );
 }
