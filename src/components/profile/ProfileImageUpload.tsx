@@ -47,9 +47,9 @@ export function ProfileImageUpload({ avatarUrl, fullName, userId, onUploadComple
       const fileName = `${userId}-${Math.random()}.${fileExt}`;
       const filePath = `${userId}/${fileName}`;
 
-      // Check file size (max 2MB)
-      if (file.size > 2 * 1024 * 1024) {
-        throw new Error('File size must be less than 2MB');
+      // Check file size (max 2.5MB)
+      if (file.size > 2.5 * 1024 * 1024) {
+        throw new Error('File size must be less than 2.5MB');
       }
 
       // Check file type
@@ -136,7 +136,7 @@ export function ProfileImageUpload({ avatarUrl, fullName, userId, onUploadComple
             Selected file: {selectedFile.name} ({formatFileSize(selectedFile.size)})
           </p>
         )}
-        <p className="text-xs text-muted-foreground">Maximum file size: 2MB</p>
+        <p className="text-xs text-muted-foreground">Maximum file size: 2.5MB</p>
       </div>
     </div>
   );
