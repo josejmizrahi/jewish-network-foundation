@@ -41,8 +41,8 @@ export function EventContent({ event, isOrganizer, isRegistered, user }: EventCo
 
   return (
     <div className="space-y-6">
-      {/* Mobile Registration Card */}
-      {isMobile && (
+      {/* Registration Card - Always at the top for both mobile and desktop */}
+      <div className={isMobile ? "" : "sticky top-6"}>
         <EventRegistrationCard
           eventId={event.id}
           isRegistered={isRegistered}
@@ -52,9 +52,9 @@ export function EventContent({ event, isOrganizer, isRegistered, user }: EventCo
           maxCapacity={event.max_capacity}
           waitlistEnabled={event.waitlist_enabled}
         />
-      )}
+      </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2">
         {/* Main Content */}
         <div className="md:col-span-2 space-y-6">
           <Card className="p-6">
@@ -88,23 +88,6 @@ export function EventContent({ event, isOrganizer, isRegistered, user }: EventCo
             </Card>
           )}
         </div>
-
-        {/* Desktop Registration Card */}
-        {!isMobile && (
-          <div>
-            <div className="sticky top-6">
-              <EventRegistrationCard
-                eventId={event.id}
-                isRegistered={isRegistered}
-                status={event.status}
-                user={user}
-                currentAttendees={event.current_attendees}
-                maxCapacity={event.max_capacity}
-                waitlistEnabled={event.waitlist_enabled}
-              />
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Management Tabs */}
