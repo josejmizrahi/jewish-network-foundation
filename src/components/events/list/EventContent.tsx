@@ -8,6 +8,8 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import { Check, X } from "lucide-react";
 
 interface EventContentProps {
   events: Event[];
@@ -35,7 +37,6 @@ export function EventContent({
   const { user } = useAuth();
 
   useEffect(() => {
-    // Extract unique tags from all events
     const tags = new Set<string>();
     events.forEach(event => {
       event.tags?.forEach(tag => tags.add(tag));
@@ -43,69 +44,27 @@ export function EventContent({
     setAvailableTags(Array.from(tags));
   }, [events]);
 
-  useEffect(() => {
-    if (!user) return;
-
-    // Subscribe to invitation updates
-    const channel = supabase
-      .channel('invitation-notifications')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'event_invitations',
-          filter: `invitee_id=eq.${user.id}`,
-        },
-        (payload: any) => {
-          handleNewInvitation(payload.new);
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [user]);
-
-  const handleNewInvitation = async (invitation: any) => {
-    // Fetch event details
-    const { data: event } = await supabase
-      .from('events')
-      .select('title, organizer:profiles!events_organizer_id_fkey(full_name)')
-      .eq('id', invitation.event_id)
-      .single();
-
-    if (!event) return;
-
-    // Show interactive toast notification
-    toast(`New Event Invitation: ${event.title}`, {
-      description: `${event.organizer.full_name} has invited you to an event`,
-      action: {
-        label: "View",
-        onClick: () => handleViewInvitation(invitation.id),
-      },
-      duration: 10000,
-    });
-  };
-
-  const handleViewInvitation = async (invitationId: string) => {
-    // Update last_viewed_at timestamp
-    await supabase
-      .from('event_invitations')
-      .update({ last_viewed_at: new Date().toISOString() })
-      .eq('id', invitationId);
-
-    // Navigate to events tab with invitations filter
-    window.location.href = '/events?tab=invitations';
-  };
-
   const handleTagSelect = (tag: string) => {
     setSelectedTags(prev => 
       prev.includes(tag) 
         ? prev.filter(t => t !== tag)
         : [...prev, tag]
     );
+  };
+
+  const handleInvitationResponse = async (invitationId: string, status: 'accepted' | 'rejected') => {
+    try {
+      const { error } = await supabase
+        .from('event_invitations')
+        .update({ status })
+        .eq('id', invitationId);
+
+      if (error) throw error;
+
+      toast.success(`Invitation ${status} successfully`);
+    } catch (error: any) {
+      toast.error(`Failed to ${status} invitation: ${error.message}`);
+    }
   };
 
   const filteredEvents = filterEvents(events, search, category, timeFilter, selectedTags);
@@ -139,14 +98,40 @@ export function EventContent({
           />
         </div>
       ) : (
-        <div className="mt-8">
-          {Object.entries(groupedEvents).map(([date, dateEvents]) => (
-            <EventDateGroup
-              key={date}
-              date={date}
-              events={dateEvents}
-              categoryColors={categoryColors}
-            />
+        <div className="mt-8 space-y-6">
+          {events.map((event) => (
+            <div key={event.id} className="bg-card hover:bg-accent transition-colors rounded-xl p-4">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold">{event.title}</h3>
+                  {event.description && (
+                    <p className="text-muted-foreground mt-1">{event.description}</p>
+                  )}
+                </div>
+                {event.invitation_id && (
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-green-500 hover:text-green-600"
+                      onClick={() => handleInvitationResponse(event.invitation_id!, 'accepted')}
+                    >
+                      <Check className="w-4 h-4 mr-1" />
+                      Accept
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-destructive hover:text-destructive/90"
+                      onClick={() => handleInvitationResponse(event.invitation_id!, 'rejected')}
+                    >
+                      <X className="w-4 h-4 mr-1" />
+                      Reject
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
           ))}
         </div>
       )}
