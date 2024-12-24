@@ -23,11 +23,16 @@ export function EventsList() {
     error: invitationsError 
   } = useEventInvitations();
 
+  console.log("Events:", events);
+  console.log("Invitations:", invitations);
+
   if (eventsLoading || invitationsLoading) {
     return <LoadingSkeleton />;
   }
 
   if (eventsError || invitationsError) {
+    console.error("Events error:", eventsError);
+    console.error("Invitations error:", invitationsError);
     return (
       <div className="text-center py-12 bg-card rounded-xl">
         <p className="text-destructive">Error loading events. Please try again later.</p>

@@ -27,6 +27,8 @@ export function useEventInvitations() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return [];
 
+      console.log("Fetching invitations for user:", user.id);
+
       const { data: invitationData, error } = await supabase
         .from('event_invitations')
         .select(`
@@ -40,16 +42,24 @@ export function useEventInvitations() {
         .eq('invitee_id', user.id)
         .eq('status', 'pending');
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching invitations:", error);
+        throw error;
+      }
+
+      console.log("Raw invitation data:", invitationData);
 
       // Filter out any null events and map to the expected Event type
-      return (invitationData || [])
+      const processedInvitations = (invitationData || [])
         .filter(inv => inv.event)
         .map(inv => ({
           ...inv.event,
           invitation_id: inv.id,
           invitation_status: inv.status
-        })) as Event[];
+        }));
+
+      console.log("Processed invitations:", processedInvitations);
+      return processedInvitations as Event[];
     },
   });
 }
