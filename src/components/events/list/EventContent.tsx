@@ -37,11 +37,6 @@ export function EventContent({
   const [availableTags, setAvailableTags] = useState<string[]>([]);
 
   useEffect(() => {
-    console.log("Current events in EventContent:", events);
-    console.log("Active tab:", activeTab);
-  }, [events, activeTab]);
-
-  useEffect(() => {
     // Extract unique tags from all events
     const tags = new Set<string>();
     events.forEach(event => {

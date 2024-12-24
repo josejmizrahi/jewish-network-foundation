@@ -14,7 +14,7 @@ interface FilteredEventsListProps {
   hasFilters: boolean;
 }
 
-export const FilteredEventsList = memo(function FilteredEventsList({
+function FilteredEventsListComponent({
   events,
   search,
   category,
@@ -67,4 +67,6 @@ export const FilteredEventsList = memo(function FilteredEventsList({
       ))}
     </div>
   );
-});
+}
+
+export const FilteredEventsList = memo(FilteredEventsListComponent);
