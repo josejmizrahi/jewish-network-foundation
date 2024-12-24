@@ -28,10 +28,8 @@ export const filterEvents = (
     const matchesTags = selectedTags.length === 0 || 
       selectedTags.every(tag => event.tags?.includes(tag));
 
-    // Only show public events unless the user is the organizer or has been invited
-    const isAccessible = !event.is_private;
-
-    return matchesSearch && matchesCategory && matchesTimeFilter && matchesTags && isAccessible;
+    // Remove the isAccessible check since RLS policies handle this
+    return matchesSearch && matchesCategory && matchesTimeFilter && matchesTags;
   });
 };
 
