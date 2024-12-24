@@ -9,6 +9,7 @@ import { DashboardMetrics } from "@/components/dashboard/DashboardMetrics";
 import { DashboardHero } from "@/components/dashboard/DashboardHero";
 import { HomeHero } from "@/components/home/HomeHero";
 import { HomeFeatures } from "@/components/home/HomeFeatures";
+import { BottomNav } from "@/components/nav/BottomNav";
 
 export default function Index() {
   const { user } = useAuth();
@@ -33,6 +34,7 @@ export default function Index() {
                 <DashboardActivity user={user} />
               </div>
             </SidebarInset>
+            <BottomNav />
           </div>
         </div>
       </SidebarProvider>
