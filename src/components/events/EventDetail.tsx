@@ -27,9 +27,10 @@ export function EventDetail() {
           organizer:profiles!events_organizer_id_fkey(full_name, avatar_url)
         `)
         .eq('id', id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
+      if (!data) throw new Error('Event not found');
       return data as Event;
     },
   });

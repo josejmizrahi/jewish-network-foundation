@@ -14,6 +14,7 @@ export interface Event {
   is_private: boolean;
   category: string;
   category_color: string;
+  tags: string[];
   organizer: {
     full_name: string;
     avatar_url: string;

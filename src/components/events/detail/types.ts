@@ -1,9 +1,22 @@
+export type EventCategory = 
+  | "conference"
+  | "workshop"
+  | "meetup"
+  | "social"
+  | "sports"
+  | "entertainment"
+  | "education"
+  | "business"
+  | "charity"
+  | "other";
+
 export interface Event {
   id: string;
   title: string;
   description: string | null;
   start_time: string;
   end_time: string;
+  timezone: string;
   location: string | null;
   is_online: boolean;
   meeting_url: string | null;
@@ -11,12 +24,11 @@ export interface Event {
   current_attendees: number;
   status: string;
   is_private: boolean;
-  timezone: string;
-  organizer_id: string;
   cover_image: string | null;
-  waitlist_enabled: boolean;
-  category: "conference" | "workshop" | "meetup" | "social" | "sports" | "entertainment" | "education" | "business" | "charity" | "other";
+  organizer_id: string;
+  category: EventCategory;
   tags: string[];
+  waitlist_enabled: boolean;
   organizer: {
     full_name: string;
     avatar_url: string;
