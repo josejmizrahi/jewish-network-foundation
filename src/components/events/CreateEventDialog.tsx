@@ -12,7 +12,7 @@ import { EventFormFields } from "./EventFormFields";
 import { eventFormSchema, type EventFormValues } from "./schemas/eventFormSchema";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { format } from "date-fns";
-import { utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
+import { toZonedTime, fromZonedTime } from "date-fns-tz";
 
 interface CreateEventDialogProps {
   open: boolean;
@@ -35,8 +35,9 @@ export function CreateEventDialog({ open, onOpenChange }: CreateEventDialogProps
       timezone: userTimezone,
       is_online: false,
       is_private: false,
-      waitlist_enabled: false,
-      max_capacity: null,
+      max_capacity: undefined,
+      category: "other",
+      tags: [],
     },
   });
 
@@ -56,16 +57,17 @@ export function CreateEventDialog({ open, onOpenChange }: CreateEventDialogProps
     setIsSubmitting(true);
     try {
       // Convert times to UTC for storage
-      const utcStartTime = zonedTimeToUtc(data.start_time, data.timezone);
-      const utcEndTime = zonedTimeToUtc(data.end_time, data.timezone);
+      const utcStartTime = fromZonedTime(data.start_time, data.timezone);
+      const utcEndTime = fromZonedTime(data.end_time, data.timezone);
 
       const formattedData = {
         ...data,
+        title: data.title,
         start_time: utcStartTime.toISOString(),
         end_time: utcEndTime.toISOString(),
         organizer_id: user.id,
         status: 'published',
-        current_attendees: 0, // Initialize with 0
+        current_attendees: 0,
         timezone: data.timezone || userTimezone,
       };
 
