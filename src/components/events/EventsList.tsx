@@ -23,9 +23,6 @@ export function EventsList() {
     error: invitationsError 
   } = useEventInvitations();
 
-  console.log("Events:", events);
-  console.log("Invitations:", invitations);
-
   if (eventsLoading || invitationsLoading) {
     return <LoadingSkeleton />;
   }
@@ -59,6 +56,7 @@ export function EventsList() {
           timeFilter={timeFilter}
           onTimeFilterChange={setTimeFilter}
           showFilters={true}
+          activeTab={activeTab}
         />
       </EventTabs>
     </div>

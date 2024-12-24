@@ -27,49 +27,27 @@ export function useEventInvitations() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return [];
 
-      console.log("Fetching invitations for user:", user.id);
-
-      // First, let's check if the user exists in the invitations table
-      const { count, error: countError } = await supabase
-        .from('event_invitations')
-        .select('*', { count: 'exact', head: true })
-        .eq('invitee_id', user.id);
-
-      console.log("Total invitations found for user:", count);
-
-      if (countError) {
-        console.error("Error checking invitations:", countError);
-        throw countError;
-      }
-
-      const { data: invitationData, error } = await supabase
+      const { data, error } = await supabase
         .from('event_invitations')
         .select(`
           id,
           status,
-          created_at,
-          last_viewed_at,
-          email_sent,
-          email_sent_at,
-          event:events(
+          event:events!inner(
             id,
             title,
             description,
             start_time,
             end_time,
-            timezone,
             location,
             is_online,
             meeting_url,
             max_capacity,
             current_attendees,
             cover_image,
-            organizer_id,
             status,
             is_private,
             category,
             category_color,
-            waitlist_enabled,
             tags,
             organizer:profiles!events_organizer_id_fkey(
               full_name,
@@ -77,24 +55,20 @@ export function useEventInvitations() {
             )
           )
         `)
-        .eq('invitee_id', user.id);
+        .eq('invitee_id', user.id)
+        .order('created_at', { ascending: false });
 
       if (error) {
         console.error("Error fetching invitations:", error);
         throw error;
       }
 
-      console.log("Raw invitation data:", invitationData);
-
-      // Map the nested event data to match the Event type
-      const processedInvitations = (invitationData || []).map(inv => ({
-        ...inv.event,
-        invitation_id: inv.id,
-        invitation_status: inv.status
-      }));
-
-      console.log("Processed invitations:", processedInvitations);
-      return processedInvitations as Event[];
+      // Transform the data to match the Event type with invitation details
+      return data.map(invitation => ({
+        ...invitation.event,
+        invitation_id: invitation.id,
+        invitation_status: invitation.status
+      })) as Event[];
     },
   });
 }

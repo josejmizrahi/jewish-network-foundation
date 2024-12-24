@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { InvitationCard } from "./InvitationCard";
 
 interface EventContentProps {
   events: Event[];
@@ -18,6 +19,7 @@ interface EventContentProps {
   timeFilter: "upcoming" | "past" | "all";
   onTimeFilterChange: (value: "upcoming" | "past" | "all") => void;
   showFilters?: boolean;
+  activeTab: "all" | "invitations";
 }
 
 export function EventContent({
@@ -29,6 +31,7 @@ export function EventContent({
   timeFilter,
   onTimeFilterChange,
   showFilters = true,
+  activeTab,
 }: EventContentProps) {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [availableTags, setAvailableTags] = useState<string[]>([]);
@@ -114,7 +117,7 @@ export function EventContent({
 
   return (
     <div className="mt-6">
-      {showFilters && (
+      {showFilters && activeTab === "all" && (
         <EventFilters
           search={search}
           onSearchChange={onSearchChange}
@@ -127,28 +130,51 @@ export function EventContent({
           availableTags={availableTags}
         />
       )}
-      {Object.keys(groupedEvents).length === 0 ? (
-        <div className="mt-8">
-          <EmptyState 
-            hasFilters={hasFilters} 
-            message={
-              events.length === 0 
-                ? "No events found. Events you create or get invited to will appear here."
-                : "No events match your filters"
-            }
-          />
+
+      {activeTab === "invitations" ? (
+        <div className="space-y-4">
+          {events.length === 0 ? (
+            <EmptyState 
+              hasFilters={false}
+              message="No invitations found"
+            />
+          ) : (
+            events.map((event) => (
+              <InvitationCard
+                key={event.id}
+                event={event}
+                invitationId={event.invitation_id!}
+                invitationStatus={event.invitation_status!}
+              />
+            ))
+          )}
         </div>
       ) : (
-        <div className="mt-8">
-          {Object.entries(groupedEvents).map(([date, dateEvents]) => (
-            <EventDateGroup
-              key={date}
-              date={date}
-              events={dateEvents}
-              categoryColors={categoryColors}
-            />
-          ))}
-        </div>
+        <>
+          {Object.keys(groupedEvents).length === 0 ? (
+            <div className="mt-8">
+              <EmptyState 
+                hasFilters={hasFilters} 
+                message={
+                  events.length === 0 
+                    ? "No events found. Events you create or get invited to will appear here."
+                    : "No events match your filters"
+                }
+              />
+            </div>
+          ) : (
+            <div className="mt-8">
+              {Object.entries(groupedEvents).map(([date, dateEvents]) => (
+                <EventDateGroup
+                  key={date}
+                  date={date}
+                  events={dateEvents}
+                  categoryColors={categoryColors}
+                />
+              ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   );
