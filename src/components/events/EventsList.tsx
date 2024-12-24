@@ -36,19 +36,36 @@ export function EventsList() {
 
   const invitations = invitationsData.map(invitation => {
     const eventData = invitation.event || {};
+    const organizer = eventData.organizer || {};
+    
     return {
-      ...eventData,
+      id: eventData.id || invitation.event_id || '',
+      title: eventData.title || '',
+      description: eventData.description || null,
+      start_time: eventData.start_time || new Date().toISOString(),
+      end_time: eventData.end_time || new Date().toISOString(),
+      timezone: eventData.timezone || 'UTC',
+      location: eventData.location || null,
+      is_online: eventData.is_online || false,
+      meeting_url: eventData.meeting_url || null,
+      max_capacity: eventData.max_capacity || null,
+      current_attendees: eventData.current_attendees || 0,
+      status: eventData.status || 'draft',
+      is_private: eventData.is_private || false,
+      cover_image: eventData.cover_image || null,
+      organizer_id: eventData.organizer_id || '',
       category: (eventData.category || 'other') as EventCategory,
       category_color: eventData.category_color || 'gray',
+      tags: eventData.tags || [],
+      waitlist_enabled: eventData.waitlist_enabled || false,
       invitation_id: invitation.id,
       invitation_status: invitation.status,
-      organizer_id: eventData.organizer_id,
       organizer: {
-        full_name: eventData.organizer?.full_name || '',
-        avatar_url: eventData.organizer?.avatar_url || null
+        full_name: organizer.full_name || '',
+        avatar_url: organizer.avatar_url || null
       }
-    };
-  }) as Event[];
+    } as Event;
+  });
 
   if (eventsLoading || invitationsLoading) {
     return <LoadingSkeleton />;
