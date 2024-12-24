@@ -3,14 +3,14 @@ import { useParams } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { EditEventDialog } from "./EditEventDialog";
-import { EventHeader } from "./detail/EventHeader";
-import { EventContent } from "./detail/EventContent";
+import { EditEventDialog } from "../EditEventDialog";
+import { EventHeader } from "./EventHeader";
+import { EventContent } from "./EventContent";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Event, EventCategory } from "./detail/types";
-import { EventBreadcrumb } from "./detail/EventBreadcrumb";
+import { Event, EventCategory } from "../types";
+import { EventBreadcrumb } from "./EventBreadcrumb";
 
 export function EventDetail() {
   const { id } = useParams();
@@ -33,10 +33,10 @@ export function EventDetail() {
       if (error) throw error;
       if (!data) throw new Error('Event not found');
       
-      // Ensure category is of type EventCategory
       return {
         ...data,
-        category: (data.category || 'other') as EventCategory
+        category: (data.category || 'other') as EventCategory,
+        category_color: data.category_color || 'gray'
       } as Event;
     },
   });

@@ -5,7 +5,7 @@ import { EventTabs } from "./list/EventTabs";
 import { EventContent } from "./list/EventContent";
 import { useEventsList, useEventInvitations } from "@/hooks/useEventQueries";
 import { useAuth } from "@/hooks/useAuth";
-import { Event, EventCategory } from "./detail/types";
+import { Event, EventCategory } from "./types";
 
 export function EventsList() {
   const [search, setSearch] = useState("");
@@ -30,12 +30,16 @@ export function EventsList() {
   // Type assertion to ensure category is of type EventCategory
   const events = eventsData.map(event => ({
     ...event,
-    category: (event.category || 'other') as EventCategory
+    category: (event.category || 'other') as EventCategory,
+    category_color: event.category_color || 'gray'
   })) as Event[];
 
   const invitations = invitationsData.map(invitation => ({
-    ...invitation,
-    category: (invitation.category || 'other') as EventCategory
+    ...invitation.event,
+    category: (invitation.event?.category || 'other') as EventCategory,
+    category_color: invitation.event?.category_color || 'gray',
+    invitation_id: invitation.id,
+    invitation_status: invitation.status
   })) as Event[];
 
   if (eventsLoading || invitationsLoading) {
