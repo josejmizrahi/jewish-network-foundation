@@ -39,7 +39,6 @@ export function EditEventDialog({ open, onOpenChange, event }: EditEventDialogPr
   const handleSubmit = async (data: EventFormValues) => {
     if (!user) return;
     
-    // Validate end time is after start time
     if (data.end_time <= data.start_time) {
       toast({
         title: "Invalid time range",
@@ -55,26 +54,54 @@ export function EditEventDialog({ open, onOpenChange, event }: EditEventDialogPr
       const utcStartTime = fromZonedTime(data.start_time, data.timezone);
       const utcEndTime = fromZonedTime(data.end_time, data.timezone);
 
+      const updatedData = {
+        title: data.title,
+        description: data.description,
+        start_time: utcStartTime.toISOString(),
+        end_time: utcEndTime.toISOString(),
+        timezone: data.timezone,
+        location: data.location,
+        is_online: data.is_online,
+        meeting_url: data.meeting_url,
+        max_capacity: data.max_capacity,
+        is_private: data.is_private,
+        cover_image: data.cover_image,
+        category: data.category,
+        tags: data.tags,
+      };
+
       const { error } = await supabase
         .from('events')
-        .update({
-          title: data.title,
-          description: data.description,
-          start_time: utcStartTime.toISOString(),
-          end_time: utcEndTime.toISOString(),
-          timezone: data.timezone,
-          location: data.location,
-          is_online: data.is_online,
-          meeting_url: data.meeting_url,
-          max_capacity: data.max_capacity,
-          is_private: data.is_private,
-          cover_image: data.cover_image,
-          category: data.category,
-          tags: data.tags,
-        })
+        .update(updatedData)
         .eq('id', event.id);
 
       if (error) throw error;
+
+      // Sync with Luma if event has Luma ID
+      if (event.luma_id) {
+        try {
+          const { error: lumaError } = await supabase.functions.invoke('luma-api', {
+            body: { 
+              action: 'update',
+              eventData: {
+                ...updatedData,
+                luma_id: event.luma_id,
+              }
+            }
+          });
+
+          if (lumaError) {
+            console.error('Failed to sync with Luma:', lumaError);
+            toast({
+              title: "Warning",
+              description: "Event updated but failed to sync with Luma. Please try syncing again later.",
+              variant: "destructive",
+            });
+          }
+        } catch (lumaError) {
+          console.error('Luma sync error:', lumaError);
+        }
+      }
 
       toast({
         title: "Event updated",

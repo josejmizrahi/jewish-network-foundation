@@ -82,7 +82,7 @@ export function CreateEventDialog({ open, onOpenChange }: CreateEventDialogProps
 
       // Sync with Luma
       try {
-        const { error: lumaError } = await supabase.functions.invoke('luma-api', {
+        const { data: lumaData, error: lumaError } = await supabase.functions.invoke('luma-api', {
           body: { 
             action: 'create',
             eventData: {
@@ -92,16 +92,26 @@ export function CreateEventDialog({ open, onOpenChange }: CreateEventDialogProps
           }
         });
 
-        if (lumaError) {
-          console.error('Failed to sync with Luma:', lumaError);
-          toast({
-            title: "Warning",
-            description: "Event created but failed to sync with Luma. Please try syncing again later.",
-            variant: "destructive",
-          });
+        if (lumaError) throw lumaError;
+
+        // Update event with Luma ID
+        if (lumaData?.id) {
+          const { error: updateError } = await supabase
+            .from('events')
+            .update({ luma_id: lumaData.id })
+            .eq('id', newEvent.id);
+
+          if (updateError) {
+            console.error('Failed to update Luma ID:', updateError);
+          }
         }
       } catch (lumaError) {
         console.error('Luma sync error:', lumaError);
+        toast({
+          title: "Warning",
+          description: "Event created but failed to sync with Luma. Please try syncing again later.",
+          variant: "destructive",
+        });
       }
 
       toast({

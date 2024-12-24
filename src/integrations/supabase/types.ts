@@ -202,6 +202,7 @@ export type Database = {
           is_private: boolean | null
           is_shareable: boolean | null
           location: string | null
+          luma_id: string | null
           max_capacity: number | null
           meeting_url: string | null
           notification_preferences: Json | null
@@ -227,6 +228,7 @@ export type Database = {
           is_private?: boolean | null
           is_shareable?: boolean | null
           location?: string | null
+          luma_id?: string | null
           max_capacity?: number | null
           meeting_url?: string | null
           notification_preferences?: Json | null
@@ -252,6 +254,7 @@ export type Database = {
           is_private?: boolean | null
           is_shareable?: boolean | null
           location?: string | null
+          luma_id?: string | null
           max_capacity?: number | null
           meeting_url?: string | null
           notification_preferences?: Json | null

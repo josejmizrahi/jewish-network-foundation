@@ -23,13 +23,40 @@ export function useEventRegistration({
   const isFull = maxCapacity !== null && currentAttendees >= maxCapacity;
   const canJoinWaitlist = isFull && waitlistEnabled;
 
-  const sendNotification = async (userId: string, type: string, status?: string) => {
+  const syncWithLuma = async (userId: string, status: string) => {
     try {
-      await supabase.functions.invoke('send-status-notification', {
-        body: { eventId, userId, type, status }
-      });
+      // Get user email for Luma sync
+      const { data: userData, error: userError } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('id', userId)
+        .single();
+
+      if (userError) throw userError;
+
+      // Get Luma ID for the event
+      const { data: eventData, error: eventError } = await supabase
+        .from('events')
+        .select('luma_id')
+        .eq('id', eventId)
+        .single();
+
+      if (eventError) throw eventError;
+
+      if (eventData?.luma_id) {
+        await supabase.functions.invoke('luma-api', {
+          body: {
+            action: 'sync-rsvp',
+            eventData: {
+              luma_id: eventData.luma_id,
+              user_email: userData.email,
+              status: status
+            }
+          }
+        });
+      }
     } catch (error) {
-      console.error('Failed to send notification:', error);
+      console.error('Failed to sync with Luma:', error);
     }
   };
 
@@ -69,7 +96,10 @@ export function useEventRegistration({
 
       if (error) throw error;
 
-      await sendNotification(userId, 'registration_update', registrationType);
+      // Sync with Luma if registration is successful
+      if (registrationType === 'registered') {
+        await syncWithLuma(userId, 'registered');
+      }
 
       toast({
         title: registrationType === 'waitlist' ? "Added to waitlist" : "Registration successful",
@@ -100,6 +130,9 @@ export function useEventRegistration({
         .eq('user_id', userId);
 
       if (error) throw error;
+
+      // Sync cancellation with Luma
+      await syncWithLuma(userId, 'cancelled');
 
       toast({
         title: "Registration cancelled",
