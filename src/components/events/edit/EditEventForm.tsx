@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { EventFormFields } from "../EventFormFields";
 import { eventFormSchema, type EventFormValues, type EventCategory } from "../schemas/eventFormSchema";
+import { toZonedTime } from "date-fns-tz";
 
 interface EditEventFormProps {
   event: {
@@ -29,14 +30,16 @@ interface EditEventFormProps {
 }
 
 export function EditEventForm({ event, onSubmit, onCancel, isSubmitting }: EditEventFormProps) {
+  const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventFormSchema),
     defaultValues: {
       title: event.title,
       description: event.description || "",
-      start_time: new Date(event.start_time),
-      end_time: new Date(event.end_time),
-      timezone: event.timezone,
+      start_time: toZonedTime(new Date(event.start_time), event.timezone || userTimezone),
+      end_time: toZonedTime(new Date(event.end_time), event.timezone || userTimezone),
+      timezone: event.timezone || userTimezone,
       location: event.location || "",
       is_online: event.is_online,
       meeting_url: event.meeting_url || "",
@@ -48,9 +51,17 @@ export function EditEventForm({ event, onSubmit, onCancel, isSubmitting }: EditE
     },
   });
 
+  const handleSubmit = async (data: EventFormValues) => {
+    try {
+      await onSubmit(data);
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
+  };
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
         <EventFormFields form={form} />
         
         <div className="flex justify-end space-x-4">
