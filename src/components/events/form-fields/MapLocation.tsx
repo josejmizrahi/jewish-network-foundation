@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/popover";
 import { useToast } from "@/components/ui/use-toast";
 import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
+import { supabase } from '@/integrations/supabase/client';
 
 interface MapLocationProps {
   value: string;
@@ -31,8 +32,35 @@ export function MapLocation({ value, onChange }: MapLocationProps) {
   const [isMapOpen, setIsMapOpen] = useState(false);
   const [center, setCenter] = useState(defaultCenter);
   const [markerPosition, setMarkerPosition] = useState<google.maps.LatLngLiteral | null>(null);
+  const [apiKey, setApiKey] = useState<string>('');
   const { toast } = useToast();
   const geocoder = useRef<google.maps.Geocoder | null>(null);
+
+  // Fetch API key from Supabase config
+  useEffect(() => {
+    async function fetchApiKey() {
+      const { data: { GOOGLE_MAPS_API_KEY }, error } = await supabase
+        .from('config')
+        .select('GOOGLE_MAPS_API_KEY')
+        .single();
+      
+      if (error) {
+        console.error('Error fetching Google Maps API key:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load map configuration.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      if (GOOGLE_MAPS_API_KEY) {
+        setApiKey(GOOGLE_MAPS_API_KEY);
+      }
+    }
+    
+    fetchApiKey();
+  }, [toast]);
 
   useEffect(() => {
     if (value && !searchQuery) {
@@ -115,6 +143,21 @@ export function MapLocation({ value, onChange }: MapLocationProps) {
     }
   };
 
+  if (!apiKey) {
+    return (
+      <div className="flex gap-2">
+        <Input
+          placeholder="Loading map..."
+          disabled
+          className="flex-1"
+        />
+        <Button variant="outline" size="icon" disabled>
+          <MapPin className="h-4 w-4" />
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="flex gap-2">
       <div className="relative flex-1">
@@ -136,7 +179,7 @@ export function MapLocation({ value, onChange }: MapLocationProps) {
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[500px] p-0" align="end">
-          <LoadScript googleMapsApiKey={process.env.GOOGLE_MAPS_API_KEY || ''}>
+          <LoadScript googleMapsApiKey={apiKey}>
             <GoogleMap
               mapContainerStyle={mapContainerStyle}
               center={center}
