@@ -27,24 +27,33 @@ export function DateTimePicker({
 }: DateTimePickerProps) {
   const minuteRef = React.useRef<HTMLInputElement>(null)
   const hourRef = React.useRef<HTMLInputElement>(null)
-
   const [selectedDate, setSelectedDate] = React.useState<Date>(date)
   const [hour, setHour] = React.useState<string>(format(date, "HH"))
   const [minute, setMinute] = React.useState<string>(format(date, "mm"))
 
-  // Update the date when the time changes
-  React.useEffect(() => {
-    const newDate = new Date(selectedDate)
-    newDate.setHours(parseInt(hour), parseInt(minute))
-    setDate(newDate)
-  }, [hour, minute, selectedDate, setDate])
-
-  // Update the time inputs when the date changes
+  // Update time inputs when the date prop changes
   React.useEffect(() => {
     setSelectedDate(date)
     setHour(format(date, "HH"))
     setMinute(format(date, "mm"))
   }, [date])
+
+  // Update the parent date when time or selected date changes
+  const updateDate = React.useCallback(() => {
+    const newDate = new Date(selectedDate)
+    newDate.setHours(parseInt(hour), parseInt(minute))
+    setDate(newDate)
+  }, [hour, minute, selectedDate, setDate])
+
+  // Handle calendar date selection
+  const handleSelect = (newDate: Date | undefined) => {
+    if (newDate) {
+      const updatedDate = new Date(newDate)
+      updatedDate.setHours(parseInt(hour), parseInt(minute))
+      setSelectedDate(updatedDate)
+      setDate(updatedDate)
+    }
+  }
 
   const handleTimeChange = (value: string, type: "hour" | "minute") => {
     let numValue = parseInt(value)
@@ -53,14 +62,24 @@ export function DateTimePicker({
     if (type === "hour") {
       if (numValue > 23) numValue = 23
       if (numValue < 0) numValue = 0
-      setHour(numValue.toString().padStart(2, "0"))
+      const newHour = numValue.toString().padStart(2, "0")
+      setHour(newHour)
       if (value.length === 2) minuteRef.current?.focus()
+      
+      const newDate = new Date(selectedDate)
+      newDate.setHours(numValue, parseInt(minute))
+      setDate(newDate)
     }
 
     if (type === "minute") {
       if (numValue > 59) numValue = 59
       if (numValue < 0) numValue = 0
-      setMinute(numValue.toString().padStart(2, "0"))
+      const newMinute = numValue.toString().padStart(2, "0")
+      setMinute(newMinute)
+      
+      const newDate = new Date(selectedDate)
+      newDate.setHours(parseInt(hour), numValue)
+      setDate(newDate)
     }
   }
 
@@ -82,7 +101,7 @@ export function DateTimePicker({
         <Calendar
           mode="single"
           selected={selectedDate}
-          onSelect={setSelectedDate}
+          onSelect={handleSelect}
           disabled={disabled}
           initialFocus
         />
