@@ -2,18 +2,50 @@ import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { EventInvitation } from "@/types/notifications";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface NotificationItemProps {
   notification: EventInvitation;
-  onAccept: (id: string) => Promise<void>;
-  onReject: (id: string) => Promise<void>;
 }
 
-export function NotificationItem({ notification, onAccept, onReject }: NotificationItemProps) {
+export function NotificationItem({ notification }: NotificationItemProps) {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const formatDate = (date: string) => {
     return format(new Date(date), 'PPp');
+  };
+
+  const handleInvitationResponse = async (status: 'accepted' | 'rejected') => {
+    try {
+      const { error } = await supabase
+        .from('event_invitations')
+        .update({ 
+          status,
+          last_viewed_at: new Date().toISOString()
+        })
+        .eq('id', notification.id);
+
+      if (error) throw error;
+
+      toast({
+        title: `Invitation ${status}`,
+        description: `You have ${status} the event invitation.`,
+      });
+
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['event-invitations'] });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update invitation status.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -36,7 +68,7 @@ export function NotificationItem({ notification, onAccept, onReject }: Notificat
           size="sm"
           variant="default"
           className="flex-1"
-          onClick={() => onAccept(notification.id)}
+          onClick={() => handleInvitationResponse('accepted')}
         >
           Accept
         </Button>
@@ -44,7 +76,7 @@ export function NotificationItem({ notification, onAccept, onReject }: Notificat
           size="sm"
           variant="outline"
           className="flex-1"
-          onClick={() => onReject(notification.id)}
+          onClick={() => handleInvitationResponse('rejected')}
         >
           Decline
         </Button>

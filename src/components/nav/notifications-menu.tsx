@@ -70,8 +70,6 @@ export function NotificationsMenu() {
               <NotificationItem
                 key={notification.id}
                 notification={notification}
-                onAccept={(id) => handleInvitationResponse(id, 'accepted')}
-                onReject={(id) => handleInvitationResponse(id, 'rejected')}
               />
             ))
           )}
