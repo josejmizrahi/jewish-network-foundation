@@ -40,9 +40,67 @@ export function EventContent({ event, isOrganizer, isRegistered, user }: EventCo
 
   return (
     <div className="space-y-6">
-      <div className="space-y-6">
-        {/* Event Info */}
-        <div className="bg-card rounded-lg border p-6">
+      {/* Event Info */}
+      <div className="rounded-lg border bg-card p-6">
+        <EventInfo
+          startTime={event.start_time}
+          endTime={event.end_time}
+          isOnline={event.is_online}
+          meetingUrl={event.meeting_url}
+          location={event.location}
+          maxCapacity={event.max_capacity}
+          currentAttendees={event.current_attendees}
+          isRegistered={isRegistered}
+          showMap={false}
+        />
+      </div>
+
+      {/* Registration Card */}
+      <div className={isMobile ? "" : "sticky top-6"}>
+        <EventRegistrationCard
+          eventId={event.id}
+          isRegistered={isRegistered}
+          status={event.status}
+          user={user}
+          currentAttendees={event.current_attendees}
+          maxCapacity={event.max_capacity}
+          waitlistEnabled={event.waitlist_enabled}
+        />
+      </div>
+
+      {/* Timeline */}
+      {subEvents.length > 0 && (
+        <div className="rounded-lg border bg-card p-6">
+          <EventTimeline subEvents={subEvents} />
+        </div>
+      )}
+
+      {/* Organizer */}
+      {event.organizer && (
+        <div className="rounded-lg border bg-card p-6">
+          <EventOrganizer 
+            organizerName={event.organizer.full_name}
+            organizerAvatar={event.organizer.avatar_url}
+          />
+        </div>
+      )}
+
+      {/* Management Tabs */}
+      {isOrganizer && (
+        <div className="rounded-lg border bg-card p-6">
+          <EventManagementTabs 
+            eventId={event.id} 
+            isOrganizer={isOrganizer}
+            eventStartTime={new Date(event.start_time)}
+            eventEndTime={new Date(event.end_time)}
+          />
+        </div>
+      )}
+
+      {/* Map Section */}
+      {!event.is_online && event.location && (
+        <div className="rounded-lg border bg-card p-6">
+          <h2 className="text-lg font-semibold mb-4">Location</h2>
           <EventInfo
             startTime={event.start_time}
             endTime={event.end_time}
@@ -52,71 +110,11 @@ export function EventContent({ event, isOrganizer, isRegistered, user }: EventCo
             maxCapacity={event.max_capacity}
             currentAttendees={event.current_attendees}
             isRegistered={isRegistered}
-            showMap={false}
+            showMap={true}
+            showDetails={false}
           />
         </div>
-
-        {/* Registration Card */}
-        <div className={isMobile ? "" : "sticky top-6"}>
-          <EventRegistrationCard
-            eventId={event.id}
-            isRegistered={isRegistered}
-            status={event.status}
-            user={user}
-            currentAttendees={event.current_attendees}
-            maxCapacity={event.max_capacity}
-            waitlistEnabled={event.waitlist_enabled}
-          />
-        </div>
-
-        {/* Timeline */}
-        {subEvents.length > 0 && (
-          <div className="bg-card rounded-lg border p-6">
-            <EventTimeline subEvents={subEvents} />
-          </div>
-        )}
-
-        {/* Organizer */}
-        {event.organizer && (
-          <div className="bg-card rounded-lg border p-6">
-            <EventOrganizer 
-              organizerName={event.organizer.full_name}
-              organizerAvatar={event.organizer.avatar_url}
-            />
-          </div>
-        )}
-
-        {/* Management Tabs */}
-        {isOrganizer && (
-          <div className="bg-card rounded-lg border p-6">
-            <EventManagementTabs 
-              eventId={event.id} 
-              isOrganizer={isOrganizer}
-              eventStartTime={new Date(event.start_time)}
-              eventEndTime={new Date(event.end_time)}
-            />
-          </div>
-        )}
-
-        {/* Map Section */}
-        {!event.is_online && event.location && (
-          <div className="bg-card rounded-lg border p-6">
-            <h2 className="text-lg font-semibold mb-4">Location</h2>
-            <EventInfo
-              startTime={event.start_time}
-              endTime={event.end_time}
-              isOnline={event.is_online}
-              meetingUrl={event.meeting_url}
-              location={event.location}
-              maxCapacity={event.max_capacity}
-              currentAttendees={event.current_attendees}
-              isRegistered={isRegistered}
-              showMap={true}
-              showDetails={false}
-            />
-          </div>
-        )}
-      </div>
+      )}
     </div>
   );
 }
