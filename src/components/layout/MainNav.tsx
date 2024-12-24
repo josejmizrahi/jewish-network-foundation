@@ -13,8 +13,8 @@ export function MainNav({ children }: { children?: React.ReactNode }) {
   const { user } = useAuth();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container h-14 flex items-center">
+    <header className="sticky top-0 z-50 w-full h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="h-full flex items-center px-6">
         <div className="flex items-center gap-6 md:gap-8">
           {children}
           <Link to="/" className="flex items-center space-x-2">
