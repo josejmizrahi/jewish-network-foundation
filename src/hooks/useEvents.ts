@@ -51,7 +51,7 @@ export function useEventInvitations() {
           last_viewed_at,
           email_sent,
           email_sent_at,
-          event:events(
+          event:events!inner(
             id,
             title,
             description,
