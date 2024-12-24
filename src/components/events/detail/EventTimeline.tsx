@@ -1,7 +1,7 @@
 import { format } from "date-fns";
-import { MapPin, Video, Calendar } from "lucide-react";
+import { MapPin, Video } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import * as LucideIcons from "lucide-react";
+import { Calendar, Clock, Music, Users, Utensils, Book, Presentation } from "lucide-react";
 import { SubEventIcon } from "./sub-events/SubEventIconSelect";
 
 interface SubEvent {
@@ -20,17 +20,23 @@ interface EventTimelineProps {
   subEvents: SubEvent[];
 }
 
+const iconComponents = {
+  Calendar,
+  Clock,
+  Video,
+  MapPin,
+  Music,
+  Users,
+  Utensils,
+  Book,
+  Presentation,
+};
+
 export function EventTimeline({ subEvents }: EventTimelineProps) {
   if (!subEvents.length) return null;
 
-  const getIconComponent = (iconName: string = 'calendar') => {
-    // Convert kebab-case to PascalCase for Lucide icon names
-    const pascalCaseName = iconName
-      .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join('');
-    
-    return (LucideIcons as Record<string, typeof Calendar>)[pascalCaseName] || Calendar;
+  const getIconComponent = (iconName: SubEventIcon = 'Calendar') => {
+    return iconComponents[iconName] || Calendar;
   };
 
   return (

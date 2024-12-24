@@ -17,15 +17,15 @@ import { Button } from "@/components/ui/button";
 import { Calendar, Clock, Video, MapPin, Music, Users, Utensils, Book, Presentation } from "lucide-react";
 
 const icons = [
-  { value: "calendar", label: "Calendar", icon: Calendar },
-  { value: "clock", label: "Clock", icon: Clock },
-  { value: "video", label: "Video Call", icon: Video },
-  { value: "map-pin", label: "Location", icon: MapPin },
-  { value: "music", label: "Music", icon: Music },
-  { value: "users", label: "Meeting", icon: Users },
-  { value: "utensils", label: "Food & Drinks", icon: Utensils },
-  { value: "book", label: "Workshop", icon: Book },
-  { value: "presentation", label: "Presentation", icon: Presentation },
+  { value: "Calendar", label: "Calendar", icon: Calendar },
+  { value: "Clock", label: "Clock", icon: Clock },
+  { value: "Video", label: "Video Call", icon: Video },
+  { value: "MapPin", label: "Location", icon: MapPin },
+  { value: "Music", label: "Music", icon: Music },
+  { value: "Users", label: "Meeting", icon: Users },
+  { value: "Utensils", label: "Food & Drinks", icon: Utensils },
+  { value: "Book", label: "Workshop", icon: Book },
+  { value: "Presentation", label: "Presentation", icon: Presentation },
 ] as const;
 
 export type SubEventIcon = typeof icons[number]["value"];
@@ -65,7 +65,7 @@ export function SubEventIconSelect({ value, onChange }: SubEventIconSelectProps)
                 key={icon.value}
                 value={icon.value}
                 onSelect={() => {
-                  onChange(icon.value as SubEventIcon);
+                  onChange(icon.value);
                   setOpen(false);
                 }}
               >
