@@ -7,6 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQueryClient } from "@tanstack/react-query";
 import { EditEventForm } from "./edit/EditEventForm";
 import type { EventFormValues, EventCategory } from "./schemas/eventFormSchema";
+import { fromZonedTime } from "date-fns-tz";
 
 interface EditEventDialogProps {
   open: boolean;
@@ -38,12 +39,26 @@ export function EditEventDialog({ open, onOpenChange, event }: EditEventDialogPr
   const handleSubmit = async (data: EventFormValues) => {
     if (!user) return;
     
+    // Validate end time is after start time
+    if (data.end_time <= data.start_time) {
+      toast({
+        title: "Invalid time range",
+        description: "End time must be after start time",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsSubmitting(true);
     try {
+      // Convert times to UTC for storage
+      const utcStartTime = fromZonedTime(data.start_time, data.timezone);
+      const utcEndTime = fromZonedTime(data.end_time, data.timezone);
+
       const formattedData = {
         ...data,
-        start_time: data.start_time.toISOString(),
-        end_time: data.end_time.toISOString(),
+        start_time: utcStartTime.toISOString(),
+        end_time: utcEndTime.toISOString(),
         timezone: data.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
       };
 
