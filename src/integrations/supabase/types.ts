@@ -121,6 +121,7 @@ export type Database = {
           organizer_id: string
           start_time: string
           status: string | null
+          tags: string[] | null
           timezone: string
           title: string
           updated_at: string | null
@@ -143,6 +144,7 @@ export type Database = {
           organizer_id: string
           start_time: string
           status?: string | null
+          tags?: string[] | null
           timezone: string
           title: string
           updated_at?: string | null
@@ -165,6 +167,7 @@ export type Database = {
           organizer_id?: string
           start_time?: string
           status?: string | null
+          tags?: string[] | null
           timezone?: string
           title?: string
           updated_at?: string | null

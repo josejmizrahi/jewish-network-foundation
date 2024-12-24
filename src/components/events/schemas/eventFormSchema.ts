@@ -12,6 +12,19 @@ export const eventFormSchema = z.object({
   max_capacity: z.number().int().positive().optional(),
   is_private: z.boolean().default(false),
   cover_image: z.string().optional(),
+  category: z.enum([
+    'conference',
+    'workshop',
+    'meetup',
+    'social',
+    'sports',
+    'entertainment',
+    'education',
+    'business',
+    'charity',
+    'other'
+  ]).default('other'),
+  tags: z.array(z.string()).default([]),
 });
 
 export type EventFormValues = z.infer<typeof eventFormSchema>;

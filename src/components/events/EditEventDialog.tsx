@@ -29,6 +29,8 @@ interface EditEventDialogProps {
     max_capacity: number | null;
     is_private: boolean;
     cover_image: string | null;
+    category: string;
+    tags: string[];
   };
 }
 
@@ -52,6 +54,8 @@ export function EditEventDialog({ open, onOpenChange, event }: EditEventDialogPr
       max_capacity: event.max_capacity || undefined,
       is_private: event.is_private,
       cover_image: event.cover_image || "",
+      category: event.category || "other",
+      tags: event.tags || [],
     },
   });
 
@@ -79,7 +83,6 @@ export function EditEventDialog({ open, onOpenChange, event }: EditEventDialogPr
         description: "Your event has been updated successfully.",
       });
       
-      // Invalidate both queries to refresh the data
       queryClient.invalidateQueries({ queryKey: ['events'] });
       queryClient.invalidateQueries({ queryKey: ['events', event.id] });
       
