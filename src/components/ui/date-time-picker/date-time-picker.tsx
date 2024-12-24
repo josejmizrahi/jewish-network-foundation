@@ -30,6 +30,7 @@ export function DateTimePicker({
   const [selectedDate, setSelectedDate] = React.useState<Date>(date)
   const [hour, setHour] = React.useState<string>(format(date, "HH"))
   const [minute, setMinute] = React.useState<string>(format(date, "mm"))
+  const [isOpen, setIsOpen] = React.useState(false)
 
   // Update time inputs when the date prop changes
   React.useEffect(() => {
@@ -84,7 +85,7 @@ export function DateTimePicker({
   }
 
   return (
-    <Popover>
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <Button
           variant={"outline"}
