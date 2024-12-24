@@ -40,6 +40,7 @@ export function EventsList() {
     );
   }
 
+  // Filter out events based on the active tab
   const currentEvents = activeTab === "all" ? events : invitations;
 
   return (
