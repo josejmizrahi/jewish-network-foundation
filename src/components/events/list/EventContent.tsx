@@ -38,6 +38,11 @@ export function EventContent({
   const { user } = useAuth();
 
   useEffect(() => {
+    console.log("Current events in EventContent:", events);
+    console.log("Active tab:", activeTab);
+  }, [events, activeTab]);
+
+  useEffect(() => {
     // Extract unique tags from all events
     const tags = new Set<string>();
     events.forEach(event => {
@@ -114,6 +119,9 @@ export function EventContent({
   const filteredEvents = filterEvents(events, search, category, timeFilter, selectedTags);
   const groupedEvents = groupEventsByDate(filteredEvents);
   const hasFilters = search !== "" || category !== "all" || timeFilter !== "all" || selectedTags.length > 0;
+
+  console.log("Filtered events:", filteredEvents);
+  console.log("Has filters:", hasFilters);
 
   return (
     <div className="mt-6">
