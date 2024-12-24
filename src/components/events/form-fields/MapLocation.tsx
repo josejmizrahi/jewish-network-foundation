@@ -22,10 +22,11 @@ export function MapLocation({ value, onChange }: MapLocationProps) {
   const marker = useRef<mapboxgl.Marker | null>(null);
   const [searchQuery, setSearchQuery] = useState(value);
   const [isSearching, setIsSearching] = useState(false);
+  const [isMapOpen, setIsMapOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
-    if (!mapContainer.current) return;
+    if (!mapContainer.current || !isMapOpen) return;
 
     // Initialize map
     mapboxgl.accessToken = 'pk.eyJ1IjoibG92YWJsZSIsImEiOiJjbHFwOWd4Y2UwMGJqMmpxdDlocjNqYm95In0.1UtxUkTUxfhgaZtK8Bd9_g';
@@ -34,16 +35,18 @@ export function MapLocation({ value, onChange }: MapLocationProps) {
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/streets-v12',
       center: [0, 0],
-      zoom: 1
+      zoom: 1,
+      minZoom: 1,
     });
 
     // Add navigation controls
     map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
-    // Initialize marker
+    // Initialize marker with custom options
     marker.current = new mapboxgl.Marker({
       draggable: true,
-      color: '#ef4444'
+      color: '#ef4444',
+      scale: 1.2
     });
 
     // Handle marker dragend
@@ -55,16 +58,24 @@ export function MapLocation({ value, onChange }: MapLocationProps) {
     });
 
     // If there's an initial value, search for it
-    if (value) {
+    if (value && !searchQuery) {
       searchLocation(value, false);
     }
+
+    // Add click handler to map
+    map.current.on('click', (e) => {
+      const { lng, lat } = e.lngLat;
+      marker.current?.setLngLat([lng, lat]).addTo(map.current!);
+      fetchLocationName(lng, lat);
+    });
 
     return () => {
       map.current?.remove();
     };
-  }, []);
+  }, [isMapOpen]);
 
   const fetchLocationName = async (lng: number, lat: number) => {
+    setIsSearching(true);
     try {
       const response = await fetch(
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${mapboxgl.accessToken}`
@@ -82,6 +93,8 @@ export function MapLocation({ value, onChange }: MapLocationProps) {
         description: "Failed to fetch location name. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsSearching(false);
     }
   };
 
@@ -102,7 +115,8 @@ export function MapLocation({ value, onChange }: MapLocationProps) {
         map.current.flyTo({
           center: [lng, lat],
           zoom: 14,
-          duration: 2000
+          duration: 2000,
+          essential: true
         });
 
         marker.current?.setLngLat([lng, lat]).addTo(map.current);
@@ -144,14 +158,17 @@ export function MapLocation({ value, onChange }: MapLocationProps) {
           <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />
         )}
       </div>
-      <Popover>
+      <Popover open={isMapOpen} onOpenChange={setIsMapOpen}>
         <PopoverTrigger asChild>
           <Button variant="outline" size="icon">
             <MapPin className="h-4 w-4" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[400px] p-0">
-          <div ref={mapContainer} className="h-[300px] w-full rounded-md" />
+        <PopoverContent className="w-[500px] p-0" align="end">
+          <div ref={mapContainer} className="h-[400px] w-full rounded-md" />
+          <div className="p-3 bg-muted/50 text-xs text-muted-foreground">
+            Click on the map or drag the marker to select a location
+          </div>
         </PopoverContent>
       </Popover>
     </div>
