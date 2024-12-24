@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { UseFormReturn } from "react-hook-form";
 import type { EventFormValues } from "../schemas/eventFormSchema";
+import { MapLocation } from "./MapLocation";
 
 interface EventLocationFieldsProps {
   form: UseFormReturn<EventFormValues>;
@@ -54,7 +55,10 @@ export function EventLocationFields({ form }: EventLocationFieldsProps) {
             <FormItem>
               <FormLabel>Location</FormLabel>
               <FormControl>
-                <Input placeholder="Event location" {...field} />
+                <MapLocation 
+                  value={field.value || ''} 
+                  onChange={field.onChange}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
