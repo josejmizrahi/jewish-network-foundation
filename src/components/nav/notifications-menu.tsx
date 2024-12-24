@@ -14,16 +14,17 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 export function NotificationsMenu() {
   const [unreadCount, setUnreadCount] = useState(0);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const { data: notifications = [], refetch } = useQuery({
     queryKey: ['notifications'],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
       if (!user) return [];
 
       const { data, error } = await supabase
@@ -45,16 +46,21 @@ export function NotificationsMenu() {
         .eq('status', 'pending')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching notifications:', error);
+        return [];
+      }
+
+      console.log('Raw invitation data:', data);
       return data || [];
     },
+    enabled: !!user, // Only run query if user is authenticated
   });
 
   useEffect(() => {
-    // Subscribe to new invitations
-    const { data: { user } } = supabase.auth.getUser();
     if (!user) return;
 
+    // Subscribe to new invitations
     const channel = supabase
       .channel('invitation-notifications')
       .on(
@@ -74,7 +80,7 @@ export function NotificationsMenu() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [refetch]);
+  }, [user, refetch]);
 
   useEffect(() => {
     setUnreadCount(
@@ -109,6 +115,8 @@ export function NotificationsMenu() {
   const handleViewEvent = (eventId: string) => {
     navigate(`/events/${eventId}`);
   };
+
+  if (!user) return null;
 
   return (
     <DropdownMenu>
