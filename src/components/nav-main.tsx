@@ -1,4 +1,4 @@
-import { ChevronRight, type LucideIcon } from "lucide-react"
+import { ChevronRight } from "lucide-react"
 import {
   Collapsible,
   CollapsibleContent,
@@ -16,20 +16,10 @@ import {
 } from "@/components/ui/sidebar"
 import { Badge } from "@/components/ui/badge"
 import { Link, useLocation } from "react-router-dom"
+import { type NavItem } from "@/types/nav"
 
 interface NavMainProps {
-  items: {
-    title: string;
-    url: string;
-    icon: LucideIcon;
-    isActive?: boolean;
-    badge?: number;
-    items?: {
-      title: string;
-      url: string;
-      badge?: number;
-    }[]
-  }[]
+  items: NavItem[];
 }
 
 export function NavMain({ items }: NavMainProps) {
@@ -117,5 +107,5 @@ export function NavMain({ items }: NavMainProps) {
         ))}
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }

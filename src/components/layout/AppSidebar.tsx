@@ -1,21 +1,16 @@
-import * as React from "react";
-import { GalleryVerticalEnd } from "lucide-react";
-import { NavMain } from "@/components/nav-main";
-import { NavUser } from "@/components/nav-user";
-import { TeamSwitcher } from "@/components/team-switcher";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarRail,
-} from "@/components/ui/sidebar";
-import { useAuth } from "@/hooks/useAuth";
-import { useLocation } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { getNavItems } from "./sidebar/NavItems";
-import { isProfile } from "@/types/profile";
+import { Sidebar, SidebarRail } from "@/components/ui/sidebar"
+import { GalleryVerticalEnd } from "lucide-react"
+import { useAuth } from "@/hooks/useAuth"
+import { useLocation } from "react-router-dom"
+import { useQuery } from "@tanstack/react-query"
+import { supabase } from "@/integrations/supabase/client"
+import { getNavItems } from "./sidebar/NavItems"
+import { isProfile } from "@/types/profile"
+import { SidebarHeader } from "./sidebar/SidebarHeader"
+import { SidebarContent } from "./sidebar/SidebarContent"
+import { SidebarFooter } from "./sidebar/SidebarFooter"
+import { type Team } from "@/types/teams"
+import { type UserData } from "@/types/user"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth();
@@ -44,13 +39,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const navItems = getNavItems(user, profile, location.pathname);
 
-  const userData = {
+  const userData: UserData = {
     name: user?.user_metadata?.full_name || "User",
     email: user?.email || "",
     avatar: user?.user_metadata?.avatar_url || "",
   };
 
-  const teams = [
+  const teams: Team[] = [
     {
       name: "JNS",
       logo: GalleryVerticalEnd,
@@ -64,15 +59,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       className="border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm" 
       {...props}
     >
-      <SidebarHeader className="h-16 border-b px-6 flex items-center group-data-[collapsible=icon]:px-2">
-        <TeamSwitcher teams={teams} />
-      </SidebarHeader>
-      <SidebarContent className="flex flex-col flex-grow px-6 py-4 space-y-6 group-data-[collapsible=icon]:px-2">
-        <NavMain items={navItems} />
-      </SidebarContent>
-      <SidebarFooter className="border-t px-6 py-4 group-data-[collapsible=icon]:px-2">
-        <NavUser user={userData} />
-      </SidebarFooter>
+      <SidebarHeader teams={teams} />
+      <SidebarContent items={navItems} />
+      <SidebarFooter user={userData} />
       <SidebarRail className="hover:bg-muted/50 transition-colors duration-200" />
     </Sidebar>
   );
