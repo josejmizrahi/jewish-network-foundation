@@ -29,6 +29,19 @@ export function useEventInvitations() {
 
       console.log("Fetching invitations for user:", user.id);
 
+      // First, let's check if the user exists in the invitations table
+      const { count, error: countError } = await supabase
+        .from('event_invitations')
+        .select('*', { count: 'exact', head: true })
+        .eq('invitee_id', user.id);
+
+      console.log("Total invitations found for user:", count);
+
+      if (countError) {
+        console.error("Error checking invitations:", countError);
+        throw countError;
+      }
+
       const { data: invitationData, error } = await supabase
         .from('event_invitations')
         .select(`
@@ -64,8 +77,7 @@ export function useEventInvitations() {
             )
           )
         `)
-        .eq('invitee_id', user.id)
-        .neq('status', 'rejected');
+        .eq('invitee_id', user.id);
 
       if (error) {
         console.error("Error fetching invitations:", error);
@@ -75,13 +87,11 @@ export function useEventInvitations() {
       console.log("Raw invitation data:", invitationData);
 
       // Map the nested event data to match the Event type
-      const processedInvitations = (invitationData || [])
-        .filter(inv => inv.event) // Only include invitations with valid events
-        .map(inv => ({
-          ...inv.event,
-          invitation_id: inv.id,
-          invitation_status: inv.status
-        }));
+      const processedInvitations = (invitationData || []).map(inv => ({
+        ...inv.event,
+        invitation_id: inv.id,
+        invitation_status: inv.status
+      }));
 
       console.log("Processed invitations:", processedInvitations);
       return processedInvitations as Event[];
