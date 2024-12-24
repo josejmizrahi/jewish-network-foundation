@@ -12,12 +12,12 @@ interface EventFormFieldsProps {
 
 export function EventFormFields({ form }: EventFormFieldsProps) {
   return (
-    <>
+    <div className="space-y-6">
       <EventBasicFields form={form} />
       <EventDateTimeFields form={form} />
       <EventLocationFields form={form} />
       <EventCategoryFields form={form} />
       <EventPrivacyFields form={form} />
-    </>
+    </div>
   );
 }
