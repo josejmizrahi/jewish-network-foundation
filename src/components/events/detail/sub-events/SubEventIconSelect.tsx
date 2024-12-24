@@ -1,6 +1,7 @@
-import { Check } from "lucide-react";
 import * as React from "react";
+import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -13,32 +14,23 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { Calendar, Clock, Video, MapPin, Music, Users, Utensils, Book, Presentation } from "lucide-react";
-
-const icons = [
-  { value: "Calendar", label: "Calendar", icon: Calendar },
-  { value: "Clock", label: "Clock", icon: Clock },
-  { value: "Video", label: "Video Call", icon: Video },
-  { value: "MapPin", label: "Location", icon: MapPin },
-  { value: "Music", label: "Music", icon: Music },
-  { value: "Users", label: "Meeting", icon: Users },
-  { value: "Utensils", label: "Food & Drinks", icon: Utensils },
-  { value: "Book", label: "Workshop", icon: Book },
-  { value: "Presentation", label: "Presentation", icon: Presentation },
-] as const;
-
-export type SubEventIcon = typeof icons[number]["value"];
+import { SubEventIcon } from "./types";
+import { iconComponents } from "./iconMapping";
 
 interface SubEventIconSelectProps {
-  value: SubEventIcon;
+  value?: SubEventIcon;
   onChange: (value: SubEventIcon) => void;
 }
 
-export function SubEventIconSelect({ value, onChange }: SubEventIconSelectProps) {
+export function SubEventIconSelect({ value = "Calendar", onChange }: SubEventIconSelectProps) {
   const [open, setOpen] = React.useState(false);
-  const selectedIcon = icons.find(icon => icon.value === value);
-  const IconComponent = selectedIcon?.icon || Calendar;
+  
+  // Get all available icons from the mapping
+  const icons = Object.keys(iconComponents) as SubEventIcon[];
+  
+  // Ensure we have a valid initial value
+  const selectedIcon = value && iconComponents[value] ? value : "Calendar";
+  const IconComponent = iconComponents[selectedIcon];
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -50,35 +42,38 @@ export function SubEventIconSelect({ value, onChange }: SubEventIconSelectProps)
           className="w-full justify-between"
         >
           <div className="flex items-center gap-2">
-            <IconComponent className="h-4 w-4" />
-            <span>{selectedIcon?.label || "Select icon"}</span>
+            {IconComponent && <IconComponent className="h-4 w-4" />}
+            <span>{selectedIcon}</span>
           </div>
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-full p-0">
         <Command>
-          <CommandInput placeholder="Search icon..." />
+          <CommandInput placeholder="Search icons..." />
           <CommandEmpty>No icon found.</CommandEmpty>
           <CommandGroup>
-            {icons.map((icon) => (
-              <CommandItem
-                key={icon.value}
-                value={icon.value}
-                onSelect={() => {
-                  onChange(icon.value);
-                  setOpen(false);
-                }}
-              >
-                <Check
-                  className={cn(
-                    "mr-2 h-4 w-4",
-                    value === icon.value ? "opacity-100" : "opacity-0"
+            {icons.map((icon) => {
+              const Icon = iconComponents[icon];
+              return (
+                <CommandItem
+                  key={icon}
+                  value={icon}
+                  onSelect={() => {
+                    onChange(icon);
+                    setOpen(false);
+                  }}
+                >
+                  <div className="flex items-center gap-2">
+                    <Icon className="h-4 w-4" />
+                    <span>{icon}</span>
+                  </div>
+                  {selectedIcon === icon && (
+                    <Check className="ml-auto h-4 w-4" />
                   )}
-                />
-                <icon.icon className="mr-2 h-4 w-4" />
-                {icon.label}
-              </CommandItem>
-            ))}
+                </CommandItem>
+              );
+            })}
           </CommandGroup>
         </Command>
       </PopoverContent>
