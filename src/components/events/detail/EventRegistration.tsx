@@ -31,6 +31,10 @@ export function EventRegistration({
   const queryClient = useQueryClient();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
+  // Calculate if event is full and if waitlist is available
+  const isFull = maxCapacity !== null && currentAttendees >= maxCapacity;
+  const canJoinWaitlist = isFull && waitlistEnabled;
+
   const sendNotification = async (userId: string, type: string, status?: string) => {
     try {
       const { data, error } = await supabase.functions.invoke('send-status-notification', {
@@ -41,8 +45,6 @@ export function EventRegistration({
       return data;
     } catch (error: any) {
       console.error('Failed to send notification:', error);
-      // Don't throw the error - we don't want to block the registration process
-      // if notification fails
     }
   };
 
@@ -82,7 +84,6 @@ export function EventRegistration({
 
       if (error) throw error;
 
-      // Send notification
       await sendNotification(user.id, 'registration_update', registrationType);
 
       toast({

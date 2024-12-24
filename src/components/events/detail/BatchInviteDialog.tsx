@@ -40,13 +40,18 @@ export function BatchInviteDialog({ eventId, open, onOpenChange }: BatchInviteDi
     setIsSubmitting(true);
     try {
       const emails = data.emails.split(/[\n,]/).map(email => email.trim()).filter(Boolean);
+      const { data: { user } } = await supabase.auth.getUser();
       
+      if (!user) {
+        throw new Error("User not authenticated");
+      }
+
       // Create batch
       const { data: batch, error: batchError } = await supabase
         .from('event_invitation_batches')
         .insert({
           event_id: eventId,
-          created_by: (await supabase.auth.getUser()).data.user?.id,
+          created_by: user.id,
           email_template: data.message,
           total_invitations: emails.length,
         })
@@ -69,17 +74,17 @@ export function BatchInviteDialog({ eventId, open, onOpenChange }: BatchInviteDi
 
       // Create invitations
       if (existingUserIds.length > 0) {
+        const invitations = existingUserIds.map(userId => ({
+          event_id: eventId,
+          inviter_id: user.id,
+          invitee_id: userId,
+          batch_id: batch.id,
+          expiration_date: expirationDate.toISOString(),
+        }));
+
         const { error: inviteError } = await supabase
           .from('event_invitations')
-          .insert(
-            existingUserIds.map(userId => ({
-              event_id: eventId,
-              inviter_id: (await supabase.auth.getUser()).data.user?.id,
-              invitee_id: userId,
-              batch_id: batch.id,
-              expiration_date: expirationDate.toISOString(),
-            }))
-          );
+          .insert(invitations);
 
         if (inviteError) throw inviteError;
       }
