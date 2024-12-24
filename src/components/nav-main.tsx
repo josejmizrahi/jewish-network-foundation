@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/badge"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { type NavItem } from "@/types/nav"
 import { useQueryClient } from "@tanstack/react-query"
+import { supabase } from "@/integrations/supabase/client"
 
 interface NavMainProps {
   items: NavItem[];
