@@ -17,8 +17,8 @@ export function EventCard({ event, categoryColors }: EventCardProps) {
   const { toast } = useToast();
 
   const handleShare = async (e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent navigation
-    e.stopPropagation(); // Prevent event bubbling
+    e.preventDefault();
+    e.stopPropagation();
 
     const shareData = {
       title: `Join me at ${event.title}`,
@@ -37,7 +37,6 @@ export function EventCard({ event, categoryColors }: EventCardProps) {
         });
       }
     } catch (error) {
-      // If share fails, fallback to clipboard
       try {
         await navigator.clipboard.writeText(shareData.url);
         toast({
@@ -108,9 +107,9 @@ export function EventCard({ event, categoryColors }: EventCardProps) {
   return (
     <Link to={`/events/${event.id}`}>
       <div className="group relative bg-card hover:bg-accent transition-colors rounded-xl p-4">
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
           {event.cover_image ? (
-            <div className="w-24 h-24 flex-shrink-0">
+            <div className="w-full sm:w-24 h-32 sm:h-24 flex-shrink-0">
               <img
                 src={event.cover_image}
                 alt={event.title}
@@ -118,40 +117,41 @@ export function EventCard({ event, categoryColors }: EventCardProps) {
               />
             </div>
           ) : (
-            <div className="w-24 h-24 bg-muted rounded-lg flex-shrink-0" />
+            <div className="w-full sm:w-24 h-32 sm:h-24 bg-muted rounded-lg flex-shrink-0" />
           )}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-4">
-              <div>
+          <div className="flex-1 min-w-0 space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+              <div className="space-y-1">
+                <div className="flex flex-wrap gap-2">
+                  {getStatusBadge()}
+                  <Badge 
+                    variant="secondary"
+                    className={`${categoryColors[event.category] || categoryColors.other}`}
+                  >
+                    <Tag className="w-3 h-3 mr-1" />
+                    {event.category}
+                  </Badge>
+                </div>
                 <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
                   {event.title}
                 </h3>
                 {event.description && (
-                  <p className="text-muted-foreground text-sm mt-1 line-clamp-2">
+                  <p className="text-muted-foreground text-sm line-clamp-2">
                     {event.description}
                   </p>
                 )}
               </div>
-              <div className="flex flex-col items-end gap-2">
-                {getStatusBadge()}
-                <Badge 
-                  variant="secondary"
-                  className={`${categoryColors[event.category] || categoryColors.other}`}
-                >
-                  <Tag className="w-3 h-3 mr-1" />
-                  {event.category}
-                </Badge>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 rounded-full"
-                  onClick={handleShare}
-                >
-                  <Share2 className="h-4 w-4" />
-                </Button>
-              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-full self-end sm:self-start"
+                onClick={handleShare}
+              >
+                <Share2 className="h-4 w-4" />
+              </Button>
             </div>
-            <div className="flex flex-wrap gap-4 mt-3 text-sm text-muted-foreground">
+            
+            <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-1.5">
                 <Calendar className="h-4 w-4" />
                 <span>
@@ -166,7 +166,7 @@ export function EventCard({ event, categoryColors }: EventCardProps) {
               ) : event.location ? (
                 <div className="flex items-center gap-1.5">
                   <MapPin className="h-4 w-4" />
-                  <span>{event.location}</span>
+                  <span className="truncate">{event.location}</span>
                 </div>
               ) : null}
               {event.max_capacity && (
