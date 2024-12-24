@@ -3,15 +3,15 @@ import { useParams } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { EditEventDialog } from "./EditEventDialog";
-import { EventHeader } from "./detail/EventHeader";
-import { EventContent } from "./detail/EventContent";
+import { EditEventDialog } from "@/components/events/EditEventDialog";
+import { EventHeader } from "@/components/events/detail/EventHeader";
+import { EventContent } from "@/components/events/detail/EventContent";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Event } from "./detail/types";
-import { EventBreadcrumb } from "./detail/EventBreadcrumb";
-import { EventRegistrationCard } from "./registration/EventRegistrationCard";
+import { Event } from "@/components/events/detail/types";
+import { EventBreadcrumb } from "@/components/events/detail/EventBreadcrumb";
+import { EventRegistrationCard } from "@/components/events/detail/registration/EventRegistrationCard";
 
 export function EventDetail() {
   const { id } = useParams();

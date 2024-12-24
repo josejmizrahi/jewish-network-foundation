@@ -23,8 +23,14 @@ export interface EventInvitation {
   last_viewed_at: string | null;
   email_sent: boolean;
   email_sent_at: string | null;
-  event: Event;
-  invitee: {
+  event: Event & {
+    organizer: {
+      full_name: string;
+      avatar_url: string | null;
+    };
+  };
+  // Make invitee optional since it's not always returned from the API
+  invitee?: {
     id: string;
     full_name: string;
     avatar_url: string | null;

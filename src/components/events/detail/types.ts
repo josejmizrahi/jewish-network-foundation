@@ -31,6 +31,6 @@ export interface Event {
   waitlist_enabled: boolean;
   organizer: {
     full_name: string;
-    avatar_url: string;
+    avatar_url: string | null;
   } | null;
 }
