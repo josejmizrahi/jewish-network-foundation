@@ -47,7 +47,6 @@ export function EditEventForm({ event, onSubmit, onCancel, isSubmitting }: EditE
       meeting_url: event.meeting_url || "",
       max_capacity: event.max_capacity || undefined,
       is_private: event.is_private,
-      cover_image: event.cover_image || "",
       category: event.category,
       tags: event.tags || [],
     },

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -39,52 +39,40 @@ export function EditEventDialog({ open, onOpenChange, event }: EditEventDialogPr
   const handleSubmit = async (data: EventFormValues) => {
     if (!user) return;
     
-    // Validate end time is after start time
-    if (data.end_time <= data.start_time) {
-      toast({
-        title: "Invalid time range",
-        description: "End time must be after start time",
-        variant: "destructive",
-      });
-      return;
-    }
-    
     setIsSubmitting(true);
     try {
       // Convert times to UTC for storage
       const utcStartTime = fromZonedTime(data.start_time, data.timezone);
       const utcEndTime = fromZonedTime(data.end_time, data.timezone);
 
-      const formattedData = {
-        ...data,
-        start_time: utcStartTime.toISOString(),
-        end_time: utcEndTime.toISOString(),
-        timezone: data.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
-      };
-
       const { error } = await supabase
         .from('events')
-        .update(formattedData)
+        .update({
+          title: data.title,
+          description: data.description,
+          start_time: utcStartTime.toISOString(),
+          end_time: utcEndTime.toISOString(),
+          timezone: data.timezone,
+          location: data.location,
+          is_online: data.is_online,
+          meeting_url: data.meeting_url,
+          max_capacity: data.max_capacity,
+          is_private: data.is_private,
+          category: data.category,
+          tags: data.tags,
+        })
         .eq('id', event.id);
 
       if (error) throw error;
 
-      toast({
-        title: "Event updated",
-        description: "Your event has been updated successfully.",
-      });
-      
-      queryClient.invalidateQueries({ queryKey: ['events'] });
-      queryClient.invalidateQueries({ queryKey: ['events', event.id] });
+      // Invalidate queries to refresh the data
+      await queryClient.invalidateQueries({ queryKey: ['events'] });
+      await queryClient.invalidateQueries({ queryKey: ['events', event.id] });
       
       onOpenChange(false);
     } catch (error: any) {
       console.error('Error updating event:', error);
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update event. Please try again.",
-        variant: "destructive",
-      });
+      throw error;
     } finally {
       setIsSubmitting(false);
     }
