@@ -1,6 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { MapPin, Loader2 } from "lucide-react";
@@ -10,83 +8,58 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useToast } from "@/components/ui/use-toast";
+import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
 
 interface MapLocationProps {
   value: string;
   onChange: (location: string) => void;
 }
 
+const mapContainerStyle = {
+  width: '100%',
+  height: '400px',
+};
+
+const defaultCenter = {
+  lat: 0,
+  lng: 0,
+};
+
 export function MapLocation({ value, onChange }: MapLocationProps) {
-  const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
-  const marker = useRef<mapboxgl.Marker | null>(null);
   const [searchQuery, setSearchQuery] = useState(value);
   const [isSearching, setIsSearching] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false);
+  const [center, setCenter] = useState(defaultCenter);
+  const [markerPosition, setMarkerPosition] = useState<google.maps.LatLngLiteral | null>(null);
   const { toast } = useToast();
+  const geocoder = useRef<google.maps.Geocoder | null>(null);
 
   useEffect(() => {
-    if (!mapContainer.current || !isMapOpen) return;
-
-    // Initialize map
-    mapboxgl.accessToken = 'pk.eyJ1IjoibG92YWJsZSIsImEiOiJjbHFwOWd4Y2UwMGJqMmpxdDlocjNqYm95In0.1UtxUkTUxfhgaZtK8Bd9_g';
-    
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v12',
-      center: [0, 0],
-      zoom: 1,
-      minZoom: 1,
-    });
-
-    // Add navigation controls
-    map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
-
-    // Initialize marker with custom options
-    marker.current = new mapboxgl.Marker({
-      draggable: true,
-      color: '#ef4444',
-      scale: 1.2
-    });
-
-    // Handle marker dragend
-    marker.current.on('dragend', () => {
-      const lngLat = marker.current?.getLngLat();
-      if (lngLat) {
-        fetchLocationName(lngLat.lng, lngLat.lat);
-      }
-    });
-
-    // If there's an initial value, search for it
     if (value && !searchQuery) {
       searchLocation(value, false);
     }
+  }, [value]);
 
-    // Add click handler to map
-    map.current.on('click', (e) => {
-      const { lng, lat } = e.lngLat;
-      marker.current?.setLngLat([lng, lat]).addTo(map.current!);
-      fetchLocationName(lng, lat);
-    });
+  const onMapLoad = useCallback((map: google.maps.Map) => {
+    geocoder.current = new google.maps.Geocoder();
+  }, []);
 
-    return () => {
-      map.current?.remove();
-    };
-  }, [isMapOpen]);
+  const fetchLocationName = async (lat: number, lng: number) => {
+    if (!geocoder.current) return;
 
-  const fetchLocationName = async (lng: number, lat: number) => {
     setIsSearching(true);
     try {
-      const response = await fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${mapboxgl.accessToken}`
-      );
-      const data = await response.json();
-      if (data.features && data.features.length > 0) {
-        const locationName = data.features[0].place_name;
+      const result = await geocoder.current.geocode({
+        location: { lat, lng }
+      });
+
+      if (result.results[0]) {
+        const locationName = result.results[0].formatted_address;
         setSearchQuery(locationName);
         onChange(locationName);
+        setMarkerPosition({ lat, lng });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching location name:', error);
       toast({
         title: "Error",
@@ -99,27 +72,18 @@ export function MapLocation({ value, onChange }: MapLocationProps) {
   };
 
   const searchLocation = async (query: string, updateInput = true) => {
-    if (!query || !map.current) return;
+    if (!query || !geocoder.current) return;
 
     setIsSearching(true);
     try {
-      const response = await fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${mapboxgl.accessToken}`
-      );
-      const data = await response.json();
+      const result = await geocoder.current.geocode({ address: query });
 
-      if (data.features && data.features.length > 0) {
-        const [lng, lat] = data.features[0].center;
-        const locationName = data.features[0].place_name;
+      if (result.results[0]) {
+        const { lat, lng } = result.results[0].geometry.location.toJSON();
+        const locationName = result.results[0].formatted_address;
         
-        map.current.flyTo({
-          center: [lng, lat],
-          zoom: 14,
-          duration: 2000,
-          essential: true
-        });
-
-        marker.current?.setLngLat([lng, lat]).addTo(map.current);
+        setCenter({ lat, lng });
+        setMarkerPosition({ lat, lng });
         
         if (updateInput) {
           setSearchQuery(locationName);
@@ -132,7 +96,7 @@ export function MapLocation({ value, onChange }: MapLocationProps) {
           variant: "destructive",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error searching location:', error);
       toast({
         title: "Error",
@@ -141,6 +105,13 @@ export function MapLocation({ value, onChange }: MapLocationProps) {
       });
     } finally {
       setIsSearching(false);
+    }
+  };
+
+  const handleMapClick = (event: google.maps.MapMouseEvent) => {
+    if (event.latLng) {
+      const { lat, lng } = event.latLng.toJSON();
+      fetchLocationName(lat, lng);
     }
   };
 
@@ -165,7 +136,33 @@ export function MapLocation({ value, onChange }: MapLocationProps) {
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[500px] p-0" align="end">
-          <div ref={mapContainer} className="h-[400px] w-full rounded-md" />
+          <LoadScript googleMapsApiKey={process.env.GOOGLE_MAPS_API_KEY || ''}>
+            <GoogleMap
+              mapContainerStyle={mapContainerStyle}
+              center={center}
+              zoom={markerPosition ? 14 : 1}
+              onClick={handleMapClick}
+              onLoad={onMapLoad}
+              options={{
+                streetViewControl: false,
+                mapTypeControl: false,
+                fullscreenControl: false,
+              }}
+            >
+              {markerPosition && (
+                <Marker
+                  position={markerPosition}
+                  draggable={true}
+                  onDragEnd={(e) => {
+                    if (e.latLng) {
+                      const { lat, lng } = e.latLng.toJSON();
+                      fetchLocationName(lat, lng);
+                    }
+                  }}
+                />
+              )}
+            </GoogleMap>
+          </LoadScript>
           <div className="p-3 bg-muted/50 text-xs text-muted-foreground">
             Click on the map or drag the marker to select a location
           </div>
