@@ -9,7 +9,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { EventFormFields } from "./EventFormFields";
-import { eventFormSchema, type EventFormValues } from "./schemas/eventFormSchema";
+import { eventFormSchema, type EventFormValues, type EventCategory } from "./schemas/eventFormSchema";
 import { useQueryClient } from "@tanstack/react-query";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -29,7 +29,7 @@ interface EditEventDialogProps {
     max_capacity: number | null;
     is_private: boolean;
     cover_image: string | null;
-    category: string;
+    category: EventCategory;
     tags: string[];
   };
 }
@@ -54,7 +54,7 @@ export function EditEventDialog({ open, onOpenChange, event }: EditEventDialogPr
       max_capacity: event.max_capacity || undefined,
       is_private: event.is_private,
       cover_image: event.cover_image || "",
-      category: event.category || "other",
+      category: event.category,
       tags: event.tags || [],
     },
   });

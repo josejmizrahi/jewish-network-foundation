@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-const CATEGORIES = [
+export const CATEGORIES = [
   'conference',
   'workshop',
   'meetup',
@@ -12,6 +12,8 @@ const CATEGORIES = [
   'charity',
   'other'
 ] as const;
+
+export type EventCategory = typeof CATEGORIES[number];
 
 export const eventFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -30,4 +32,3 @@ export const eventFormSchema = z.object({
 });
 
 export type EventFormValues = z.infer<typeof eventFormSchema>;
-export type EventCategory = typeof CATEGORIES[number];

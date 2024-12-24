@@ -28,7 +28,7 @@ const CATEGORIES = [
 
 export function EventCategoryFields({ form }: EventCategoryFieldsProps) {
   const [newTag, setNewTag] = useState("");
-  const tags = form.watch("tags");
+  const tags = form.watch("tags") || []; // Add default empty array
 
   const handleAddTag = (e: React.FormEvent) => {
     e.preventDefault();
