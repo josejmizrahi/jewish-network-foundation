@@ -40,71 +40,9 @@ export function EventContent({ event, isOrganizer, isRegistered, user }: EventCo
 
   return (
     <div className="space-y-6">
-      {/* Main Content */}
-      <div className="grid gap-6 md:grid-cols-2">
-        <div className="md:col-span-2 space-y-6">
-          <div className="p-6 bg-card rounded-lg border shadow-sm">
-            <div className="space-y-6">
-              <EventInfo
-                startTime={event.start_time}
-                endTime={event.end_time}
-                isOnline={event.is_online}
-                meetingUrl={event.meeting_url}
-                location={event.location}
-                maxCapacity={event.max_capacity}
-                currentAttendees={event.current_attendees}
-                isRegistered={isRegistered}
-                showMap={false}
-              />
-            </div>
-          </div>
-
-          {/* Registration Card - Before timeline */}
-          <div className={isMobile ? "" : "sticky top-6"}>
-            <EventRegistrationCard
-              eventId={event.id}
-              isRegistered={isRegistered}
-              status={event.status}
-              user={user}
-              currentAttendees={event.current_attendees}
-              maxCapacity={event.max_capacity}
-              waitlistEnabled={event.waitlist_enabled}
-            />
-          </div>
-
-          {subEvents.length > 0 && (
-            <div className="p-6 bg-card rounded-lg border shadow-sm">
-              <EventTimeline subEvents={subEvents} />
-            </div>
-          )}
-
-          {event.organizer && (
-            <div className="p-6 bg-card rounded-lg border shadow-sm">
-              <EventOrganizer 
-                organizerName={event.organizer.full_name}
-                organizerAvatar={event.organizer.avatar_url}
-              />
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Management Tabs */}
-      {isOrganizer && (
-        <div className="p-6 bg-card rounded-lg border shadow-sm">
-          <EventManagementTabs 
-            eventId={event.id} 
-            isOrganizer={isOrganizer}
-            eventStartTime={new Date(event.start_time)}
-            eventEndTime={new Date(event.end_time)}
-          />
-        </div>
-      )}
-
-      {/* Map Section - Always at the bottom */}
-      {!event.is_online && event.location && (
-        <div className="p-6 bg-card rounded-lg border shadow-sm">
-          <h2 className="text-lg font-semibold mb-4">Location</h2>
+      <div className="space-y-6">
+        {/* Event Info */}
+        <div className="bg-card rounded-lg border p-6">
           <EventInfo
             startTime={event.start_time}
             endTime={event.end_time}
@@ -114,11 +52,71 @@ export function EventContent({ event, isOrganizer, isRegistered, user }: EventCo
             maxCapacity={event.max_capacity}
             currentAttendees={event.current_attendees}
             isRegistered={isRegistered}
-            showMap={true}
-            showDetails={false}
+            showMap={false}
           />
         </div>
-      )}
+
+        {/* Registration Card */}
+        <div className={isMobile ? "" : "sticky top-6"}>
+          <EventRegistrationCard
+            eventId={event.id}
+            isRegistered={isRegistered}
+            status={event.status}
+            user={user}
+            currentAttendees={event.current_attendees}
+            maxCapacity={event.max_capacity}
+            waitlistEnabled={event.waitlist_enabled}
+          />
+        </div>
+
+        {/* Timeline */}
+        {subEvents.length > 0 && (
+          <div className="bg-card rounded-lg border p-6">
+            <EventTimeline subEvents={subEvents} />
+          </div>
+        )}
+
+        {/* Organizer */}
+        {event.organizer && (
+          <div className="bg-card rounded-lg border p-6">
+            <EventOrganizer 
+              organizerName={event.organizer.full_name}
+              organizerAvatar={event.organizer.avatar_url}
+            />
+          </div>
+        )}
+
+        {/* Management Tabs */}
+        {isOrganizer && (
+          <div className="bg-card rounded-lg border p-6">
+            <EventManagementTabs 
+              eventId={event.id} 
+              isOrganizer={isOrganizer}
+              eventStartTime={new Date(event.start_time)}
+              eventEndTime={new Date(event.end_time)}
+            />
+          </div>
+        )}
+
+        {/* Map Section */}
+        {!event.is_online && event.location && (
+          <div className="bg-card rounded-lg border p-6">
+            <h2 className="text-lg font-semibold mb-4">Location</h2>
+            <EventInfo
+              startTime={event.start_time}
+              endTime={event.end_time}
+              isOnline={event.is_online}
+              meetingUrl={event.meeting_url}
+              location={event.location}
+              maxCapacity={event.max_capacity}
+              currentAttendees={event.current_attendees}
+              isRegistered={isRegistered}
+              showMap={true}
+              showDetails={false}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

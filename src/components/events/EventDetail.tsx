@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { EditEventDialog } from "./EditEventDialog";
@@ -78,8 +77,8 @@ export function EventDetail() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6 max-w-4xl mx-auto">
-        <Skeleton className="h-4 w-32" /> {/* Breadcrumb skeleton */}
+      <div className="space-y-6">
+        <Skeleton className="h-4 w-32" />
         <Skeleton className="h-[200px] md:h-[400px] w-full rounded-lg" />
         <div className="space-y-2">
           <Skeleton className="h-8 w-1/3" />
@@ -91,16 +90,16 @@ export function EventDetail() {
 
   if (!event) {
     return (
-      <Card className="p-4 md:p-6 max-w-4xl mx-auto">
-        <p className="text-center text-muted-foreground">Event not found</p>
-      </Card>
+      <div className="p-4 text-center text-muted-foreground">
+        Event not found
+      </div>
     );
   }
 
   const isOrganizer = user?.id === event.organizer_id;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-4 md:space-y-8 px-0">
+    <div className="space-y-6">
       <EventBreadcrumb eventTitle={event.title} />
       
       <EventHeader

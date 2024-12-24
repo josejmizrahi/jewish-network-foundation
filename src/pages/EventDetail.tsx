@@ -12,7 +12,7 @@ export default function EventDetailPage() {
         <div className="flex-1 min-w-0">
           <MainNav />
           <SidebarInset>
-            <div className="container max-w-full px-4 py-4 md:py-8">
+            <div className="container max-w-4xl mx-auto px-4 py-6 md:py-8">
               <EventDetail />
             </div>
           </SidebarInset>
