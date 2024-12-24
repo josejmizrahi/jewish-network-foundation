@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react";
 import { EventFormFields } from "../EventFormFields";
 import { eventFormSchema, type EventFormValues, type EventCategory } from "../schemas/eventFormSchema";
 import { toZonedTime } from "date-fns-tz";
+import { useToast } from "@/hooks/use-toast";
 
 interface EditEventFormProps {
   event: {
@@ -31,6 +32,7 @@ interface EditEventFormProps {
 
 export function EditEventForm({ event, onSubmit, onCancel, isSubmitting }: EditEventFormProps) {
   const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const { toast } = useToast();
   
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventFormSchema),
@@ -53,9 +55,27 @@ export function EditEventForm({ event, onSubmit, onCancel, isSubmitting }: EditE
 
   const handleSubmit = async (data: EventFormValues) => {
     try {
+      if (data.end_time <= data.start_time) {
+        toast({
+          title: "Invalid time range",
+          description: "End time must be after start time",
+          variant: "destructive",
+        });
+        return;
+      }
+
       await onSubmit(data);
+      toast({
+        title: "Success",
+        description: "Event updated successfully",
+      });
     } catch (error) {
       console.error('Error submitting form:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update event. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -69,6 +89,7 @@ export function EditEventForm({ event, onSubmit, onCancel, isSubmitting }: EditE
             type="button"
             variant="outline"
             onClick={onCancel}
+            disabled={isSubmitting}
           >
             Cancel
           </Button>
