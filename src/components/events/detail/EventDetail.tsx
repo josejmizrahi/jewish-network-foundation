@@ -113,6 +113,8 @@ export function EventDetail() {
         onCancel={handleCancelEvent}
         status={event.status}
         coverImage={event.cover_image}
+        eventId={event.id}
+        isShareable={event.is_shareable}
       />
 
       <EventContent
