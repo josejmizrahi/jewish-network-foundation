@@ -39,7 +39,8 @@ export function EventsList() {
     category: (invitation.event?.category || 'other') as EventCategory,
     category_color: invitation.event?.category_color || 'gray',
     invitation_id: invitation.id,
-    invitation_status: invitation.status
+    invitation_status: invitation.status,
+    organizer: invitation.event?.organizer || null // Ensure organizer is included
   })) as Event[];
 
   if (eventsLoading || invitationsLoading) {
