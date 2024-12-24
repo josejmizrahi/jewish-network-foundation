@@ -10,6 +10,7 @@ import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Event } from "./detail/types";
+import { EventBreadcrumb } from "./detail/EventBreadcrumb";
 
 export function EventDetail() {
   const { id } = useParams();
@@ -78,6 +79,7 @@ export function EventDetail() {
   if (isLoading) {
     return (
       <div className="space-y-6 max-w-4xl mx-auto">
+        <Skeleton className="h-4 w-32" /> {/* Breadcrumb skeleton */}
         <Skeleton className="h-[200px] md:h-[400px] w-full rounded-lg" />
         <div className="space-y-2">
           <Skeleton className="h-8 w-1/3" />
@@ -99,6 +101,8 @@ export function EventDetail() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-4 md:space-y-8 px-0">
+      <EventBreadcrumb eventTitle={event.title} />
+      
       <EventHeader
         title={event.title}
         description={event.description}
