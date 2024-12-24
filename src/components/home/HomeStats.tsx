@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { motion } from "framer-motion"; // Add this import
 
 export function HomeStats() {
   const { data: stats } = useQuery({
