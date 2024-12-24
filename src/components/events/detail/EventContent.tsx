@@ -8,7 +8,6 @@ import { User } from "@supabase/supabase-js";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { SubEventIcon } from "./types";
-import { Card } from "@/components/ui/card";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface EventContentProps {
@@ -44,7 +43,7 @@ export function EventContent({ event, isOrganizer, isRegistered, user }: EventCo
       {/* Main Content */}
       <div className="grid gap-6 md:grid-cols-2">
         <div className="md:col-span-2 space-y-6">
-          <Card className="p-6">
+          <div className="p-6 bg-card rounded-lg border shadow-sm">
             <div className="space-y-6">
               <EventInfo
                 startTime={event.start_time}
@@ -58,7 +57,7 @@ export function EventContent({ event, isOrganizer, isRegistered, user }: EventCo
                 showMap={false}
               />
             </div>
-          </Card>
+          </div>
 
           {/* Registration Card - Before timeline */}
           <div className={isMobile ? "" : "sticky top-6"}>
@@ -74,37 +73,37 @@ export function EventContent({ event, isOrganizer, isRegistered, user }: EventCo
           </div>
 
           {subEvents.length > 0 && (
-            <Card className="p-6">
+            <div className="p-6 bg-card rounded-lg border shadow-sm">
               <EventTimeline subEvents={subEvents} />
-            </Card>
+            </div>
           )}
 
           {event.organizer && (
-            <Card className="p-6">
+            <div className="p-6 bg-card rounded-lg border shadow-sm">
               <EventOrganizer 
                 organizerName={event.organizer.full_name}
                 organizerAvatar={event.organizer.avatar_url}
               />
-            </Card>
+            </div>
           )}
         </div>
       </div>
 
       {/* Management Tabs */}
       {isOrganizer && (
-        <Card className="p-6">
+        <div className="p-6 bg-card rounded-lg border shadow-sm">
           <EventManagementTabs 
             eventId={event.id} 
             isOrganizer={isOrganizer}
             eventStartTime={new Date(event.start_time)}
             eventEndTime={new Date(event.end_time)}
           />
-        </Card>
+        </div>
       )}
 
       {/* Map Section - Always at the bottom */}
       {!event.is_online && event.location && (
-        <Card className="p-6">
+        <div className="p-6 bg-card rounded-lg border shadow-sm">
           <h2 className="text-lg font-semibold mb-4">Location</h2>
           <EventInfo
             startTime={event.start_time}
@@ -118,7 +117,7 @@ export function EventContent({ event, isOrganizer, isRegistered, user }: EventCo
             showMap={true}
             showDetails={false}
           />
-        </Card>
+        </div>
       )}
     </div>
   );
