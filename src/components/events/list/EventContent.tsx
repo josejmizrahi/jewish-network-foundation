@@ -1,14 +1,10 @@
 import { Event } from "./types";
-import { EventDateGroup } from "./EventDateGroup";
-import { EmptyState } from "./EmptyState";
-import { filterEvents, groupEventsByDate } from "./utils/eventGrouping";
-import { categoryColors } from "./types";
 import { EventFilters } from "../filters/EventFilters";
+import { FilteredEventsList } from "./filtered/FilteredEventsList";
+import { InvitationsList } from "./invitations/InvitationsList";
+import { EventNotificationHandler } from "./notifications/EventNotificationHandler";
 import { useState, useEffect } from "react";
-import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { InvitationCard } from "./InvitationCard";
 
 interface EventContentProps {
   events: Event[];
@@ -35,7 +31,6 @@ export function EventContent({
 }: EventContentProps) {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [availableTags, setAvailableTags] = useState<string[]>([]);
-  const { user } = useAuth();
 
   useEffect(() => {
     console.log("Current events in EventContent:", events);
@@ -51,63 +46,6 @@ export function EventContent({
     setAvailableTags(Array.from(tags));
   }, [events]);
 
-  useEffect(() => {
-    if (!user) return;
-
-    // Subscribe to invitation updates
-    const channel = supabase
-      .channel('invitation-notifications')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'event_invitations',
-          filter: `invitee_id=eq.${user.id}`,
-        },
-        (payload: any) => {
-          handleNewInvitation(payload.new);
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [user]);
-
-  const handleNewInvitation = async (invitation: any) => {
-    // Fetch event details
-    const { data: event } = await supabase
-      .from('events')
-      .select('title, organizer:profiles!events_organizer_id_fkey(full_name)')
-      .eq('id', invitation.event_id)
-      .single();
-
-    if (!event) return;
-
-    // Show interactive toast notification
-    toast(`New Event Invitation: ${event.title}`, {
-      description: `${event.organizer.full_name} has invited you to an event`,
-      action: {
-        label: "View",
-        onClick: () => handleViewInvitation(invitation.id),
-      },
-      duration: 10000,
-    });
-  };
-
-  const handleViewInvitation = async (invitationId: string) => {
-    // Update last_viewed_at timestamp
-    await supabase
-      .from('event_invitations')
-      .update({ last_viewed_at: new Date().toISOString() })
-      .eq('id', invitationId);
-
-    // Navigate to events tab with invitations filter
-    window.location.href = '/events?tab=invitations';
-  };
-
   const handleTagSelect = (tag: string) => {
     setSelectedTags(prev => 
       prev.includes(tag) 
@@ -116,15 +54,21 @@ export function EventContent({
     );
   };
 
-  const filteredEvents = filterEvents(events, search, category, timeFilter, selectedTags);
-  const groupedEvents = groupEventsByDate(filteredEvents);
-  const hasFilters = search !== "" || category !== "all" || timeFilter !== "all" || selectedTags.length > 0;
+  const handleViewInvitation = async (invitationId: string) => {
+    await supabase
+      .from('event_invitations')
+      .update({ last_viewed_at: new Date().toISOString() })
+      .eq('id', invitationId);
 
-  console.log("Filtered events:", filteredEvents);
-  console.log("Has filters:", hasFilters);
+    window.location.href = '/events?tab=invitations';
+  };
+
+  const hasFilters = search !== "" || category !== "all" || timeFilter !== "all" || selectedTags.length > 0;
 
   return (
     <div className="mt-6">
+      <EventNotificationHandler handleViewInvitation={handleViewInvitation} />
+
       {showFilters && activeTab === "all" && (
         <EventFilters
           search={search}
@@ -140,49 +84,16 @@ export function EventContent({
       )}
 
       {activeTab === "invitations" ? (
-        <div className="space-y-4">
-          {events.length === 0 ? (
-            <EmptyState 
-              hasFilters={false}
-              message="No invitations found"
-            />
-          ) : (
-            events.map((event) => (
-              <InvitationCard
-                key={event.id}
-                event={event}
-                invitationId={event.invitation_id!}
-                invitationStatus={event.invitation_status!}
-              />
-            ))
-          )}
-        </div>
+        <InvitationsList events={events} />
       ) : (
-        <>
-          {Object.keys(groupedEvents).length === 0 ? (
-            <div className="mt-8">
-              <EmptyState 
-                hasFilters={hasFilters} 
-                message={
-                  events.length === 0 
-                    ? "No events found. Events you create or get invited to will appear here."
-                    : "No events match your filters"
-                }
-              />
-            </div>
-          ) : (
-            <div className="mt-8">
-              {Object.entries(groupedEvents).map(([date, dateEvents]) => (
-                <EventDateGroup
-                  key={date}
-                  date={date}
-                  events={dateEvents}
-                  categoryColors={categoryColors}
-                />
-              ))}
-            </div>
-          )}
-        </>
+        <FilteredEventsList
+          events={events}
+          search={search}
+          category={category}
+          timeFilter={timeFilter}
+          selectedTags={selectedTags}
+          hasFilters={hasFilters}
+        />
       )}
     </div>
   );
