@@ -2,7 +2,9 @@ import { Calendar, MapPin, Users, Video, Tag, BadgeCheck, BadgeAlert } from "luc
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { Event } from "./types";
+import { cn } from "@/lib/utils";
 
 interface EventCardProps {
   event: Event;
@@ -29,6 +31,36 @@ export function EventCard({ event, categoryColors }: EventCardProps) {
       default:
         return null;
     }
+  };
+
+  const getCapacityIndicator = () => {
+    if (!event.max_capacity) return null;
+
+    const capacityPercentage = (event.current_attendees / event.max_capacity) * 100;
+    const isAlmostFull = capacityPercentage >= 80;
+    const isFull = capacityPercentage >= 100;
+
+    return (
+      <div className="mt-2 space-y-1">
+        <div className="flex justify-between text-xs text-muted-foreground">
+          <span>{event.current_attendees} / {event.max_capacity} spots filled</span>
+          {isAlmostFull && !isFull && (
+            <span className="text-warning">Almost Full</span>
+          )}
+          {isFull && (
+            <span className="text-destructive">Full</span>
+          )}
+        </div>
+        <Progress 
+          value={capacityPercentage} 
+          className={cn(
+            "h-1",
+            isAlmostFull && !isFull && "bg-warning/20",
+            isFull && "bg-destructive/20"
+          )}
+        />
+      </div>
+    );
   };
 
   return (
@@ -96,6 +128,7 @@ export function EventCard({ event, categoryColors }: EventCardProps) {
                 </div>
               )}
             </div>
+            {getCapacityIndicator()}
           </div>
         </div>
       </div>

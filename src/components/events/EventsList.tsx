@@ -4,12 +4,15 @@ import { EmptyState } from "./list/EmptyState";
 import { EventTabs } from "./list/EventTabs";
 import { EventContent } from "./list/EventContent";
 import { useEvents, useEventInvitations } from "@/hooks/useEvents";
+import { useAuth } from "@/hooks/useAuth";
 
 export function EventsList() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
   const [timeFilter, setTimeFilter] = useState<"upcoming" | "past" | "all">("upcoming");
   const [activeTab, setActiveTab] = useState<"all" | "invitations">("all");
+  const [showMyEvents, setShowMyEvents] = useState(false);
+  const { user } = useAuth();
 
   const { 
     data: events = [], 
@@ -22,10 +25,6 @@ export function EventsList() {
     isLoading: invitationsLoading, 
     error: invitationsError 
   } = useEventInvitations();
-
-  console.log("Events data:", events);
-  console.log("Invitations data:", invitations);
-  console.log("Active tab:", activeTab);
 
   if (eventsLoading || invitationsLoading) {
     return <LoadingSkeleton />;
@@ -41,8 +40,15 @@ export function EventsList() {
     );
   }
 
-  // Filter out events based on the active tab
-  const currentEvents = activeTab === "all" ? events : invitations;
+  // Filter out events based on the active tab and my events filter
+  const currentEvents = activeTab === "all" 
+    ? showMyEvents && user
+      ? events.filter(event => 
+          event.organizer_id === user.id || 
+          event.attendees?.some(attendee => attendee.user_id === user.id)
+        )
+      : events
+    : invitations;
 
   return (
     <div className="space-y-8">
@@ -61,6 +67,8 @@ export function EventsList() {
           onTimeFilterChange={setTimeFilter}
           showFilters={activeTab === "all"}
           activeTab={activeTab}
+          showMyEvents={showMyEvents}
+          onMyEventsChange={setShowMyEvents}
         />
       </EventTabs>
     </div>
