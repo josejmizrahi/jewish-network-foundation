@@ -29,6 +29,19 @@ export function useEventInvitations() {
 
       console.log("Fetching invitations for user:", user.id);
 
+      // First, let's check if the user exists in the invitations table
+      const { count, error: countError } = await supabase
+        .from('event_invitations')
+        .select('*', { count: 'exact', head: true })
+        .eq('invitee_id', user.id);
+
+      console.log("Total invitations found for user:", count);
+
+      if (countError) {
+        console.error("Error checking invitations:", countError);
+        throw countError;
+      }
+
       const { data: invitationData, error } = await supabase
         .from('event_invitations')
         .select(`
@@ -38,8 +51,26 @@ export function useEventInvitations() {
           last_viewed_at,
           email_sent,
           email_sent_at,
-          event:events!inner(
-            *,
+          event:events(
+            id,
+            title,
+            description,
+            start_time,
+            end_time,
+            timezone,
+            location,
+            is_online,
+            meeting_url,
+            max_capacity,
+            current_attendees,
+            cover_image,
+            organizer_id,
+            status,
+            is_private,
+            category,
+            category_color,
+            waitlist_enabled,
+            tags,
             organizer:profiles!events_organizer_id_fkey(
               full_name,
               avatar_url
