@@ -25,9 +25,16 @@ serve(async (req) => {
 
   try {
     const { action, eventData } = await req.json()
+    console.log('Received request:', { action, eventData })
 
     if (!LUMA_API_KEY) {
       throw new Error('LUMA_API_KEY is not set')
+    }
+
+    const headers = {
+      'Authorization': `Bearer ${LUMA_API_KEY}`,
+      'Content-Type': 'application/json',
+      ...corsHeaders,
     }
 
     switch (action) {
@@ -49,16 +56,14 @@ serve(async (req) => {
 
         const createResponse = await fetch(`${LUMA_API_URL}/events`, {
           method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${LUMA_API_KEY}`,
-            'Content-Type': 'application/json',
-            ...corsHeaders,
-          },
+          headers,
           body: JSON.stringify(lumaEvent),
         })
 
         if (!createResponse.ok) {
-          throw new Error(`Failed to create Luma event: ${await createResponse.text()}`)
+          const errorText = await createResponse.text()
+          console.error('Luma API error:', errorText)
+          throw new Error(`Failed to create Luma event: ${errorText}`)
         }
 
         const createdEvent = await createResponse.json()
@@ -86,16 +91,14 @@ serve(async (req) => {
 
         const updateResponse = await fetch(`${LUMA_API_URL}/events/${eventData.luma_id}`, {
           method: 'PATCH',
-          headers: {
-            'Authorization': `Bearer ${LUMA_API_KEY}`,
-            'Content-Type': 'application/json',
-            ...corsHeaders,
-          },
+          headers,
           body: JSON.stringify(lumaEvent),
         })
 
         if (!updateResponse.ok) {
-          throw new Error(`Failed to update Luma event: ${await updateResponse.text()}`)
+          const errorText = await updateResponse.text()
+          console.error('Luma API error:', errorText)
+          throw new Error(`Failed to update Luma event: ${errorText}`)
         }
 
         const updatedEvent = await updateResponse.json()
@@ -110,14 +113,13 @@ serve(async (req) => {
         
         const deleteResponse = await fetch(`${LUMA_API_URL}/events/${eventData.luma_id}`, {
           method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${LUMA_API_KEY}`,
-            ...corsHeaders,
-          },
+          headers,
         })
 
         if (!deleteResponse.ok) {
-          throw new Error(`Failed to delete Luma event: ${await deleteResponse.text()}`)
+          const errorText = await deleteResponse.text()
+          console.error('Luma API error:', errorText)
+          throw new Error(`Failed to delete Luma event: ${errorText}`)
         }
 
         console.log('Deleted Luma event:', eventData.luma_id)
@@ -131,11 +133,7 @@ serve(async (req) => {
         
         const rsvpResponse = await fetch(`${LUMA_API_URL}/events/${eventData.luma_id}/guests`, {
           method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${LUMA_API_KEY}`,
-            'Content-Type': 'application/json',
-            ...corsHeaders,
-          },
+          headers,
           body: JSON.stringify({
             email: eventData.user_email,
             status: eventData.status === 'registered' ? 'going' : 'not_going',
@@ -143,7 +141,9 @@ serve(async (req) => {
         })
 
         if (!rsvpResponse.ok) {
-          throw new Error(`Failed to sync RSVP with Luma: ${await rsvpResponse.text()}`)
+          const errorText = await rsvpResponse.text()
+          console.error('Luma API error:', errorText)
+          throw new Error(`Failed to sync RSVP with Luma: ${errorText}`)
         }
 
         const rsvpResult = await rsvpResponse.json()
@@ -158,9 +158,15 @@ serve(async (req) => {
     }
   } catch (error) {
     console.error('Error:', error)
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 400,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
+    return new Response(
+      JSON.stringify({ 
+        error: error.message,
+        details: error.stack
+      }), 
+      {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    )
   }
 })
