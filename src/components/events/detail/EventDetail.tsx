@@ -3,14 +3,15 @@ import { useParams } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { EditEventDialog } from "../EditEventDialog";
-import { EventHeader } from "./EventHeader";
-import { EventContent } from "./EventContent";
+import { EditEventDialog } from "@/components/events/EditEventDialog";
+import { EventHeader } from "@/components/events/detail/EventHeader";
+import { EventContent } from "@/components/events/detail/EventContent";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Event, EventCategory } from "../types";
-import { EventBreadcrumb } from "./EventBreadcrumb";
+import { Event } from "@/components/events/detail/types";
+import { EventBreadcrumb } from "@/components/events/detail/EventBreadcrumb";
+import { EventRegistrationCard } from "@/components/events/detail/registration/EventRegistrationCard";
 
 export function EventDetail() {
   const { id } = useParams();
@@ -18,7 +19,7 @@ export function EventDetail() {
   const { toast } = useToast();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
-  const { data: eventData, isLoading } = useQuery({
+  const { data: event, isLoading } = useQuery({
     queryKey: ['events', id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -32,12 +33,7 @@ export function EventDetail() {
 
       if (error) throw error;
       if (!data) throw new Error('Event not found');
-      
-      return {
-        ...data,
-        category: (data.category || 'other') as EventCategory,
-        category_color: data.category_color || 'gray'
-      } as Event;
+      return data as Event;
     },
   });
 
@@ -58,13 +54,13 @@ export function EventDetail() {
   });
 
   const handleCancelEvent = async () => {
-    if (!eventData) return;
+    if (!event) return;
     
     try {
       const { error } = await supabase
         .from('events')
         .update({ status: 'cancelled' })
-        .eq('id', eventData.id);
+        .eq('id', event.id);
 
       if (error) throw error;
 
@@ -94,7 +90,7 @@ export function EventDetail() {
     );
   }
 
-  if (!eventData) {
+  if (!event) {
     return (
       <Card className="p-4 md:p-6 max-w-4xl mx-auto">
         <p className="text-center text-muted-foreground">Event not found</p>
@@ -102,25 +98,25 @@ export function EventDetail() {
     );
   }
 
-  const isOrganizer = user?.id === eventData.organizer_id;
+  const isOrganizer = user?.id === event.organizer_id;
 
   return (
     <div className="max-w-4xl mx-auto space-y-4 md:space-y-8 px-0">
-      <EventBreadcrumb eventTitle={eventData.title} />
+      <EventBreadcrumb eventTitle={event.title} />
       
       <EventHeader
-        title={eventData.title}
-        description={eventData.description}
-        isPrivate={eventData.is_private}
+        title={event.title}
+        description={event.description}
+        isPrivate={event.is_private}
         isOrganizer={isOrganizer}
         onEdit={() => setIsEditDialogOpen(true)}
         onCancel={handleCancelEvent}
-        status={eventData.status}
-        coverImage={eventData.cover_image}
+        status={event.status}
+        coverImage={event.cover_image}
       />
 
       <EventContent
-        event={eventData}
+        event={event}
         isOrganizer={isOrganizer}
         isRegistered={!!isRegistered}
         user={user}
@@ -130,9 +126,19 @@ export function EventDetail() {
         <EditEventDialog
           open={isEditDialogOpen}
           onOpenChange={setIsEditDialogOpen}
-          event={eventData}
+          event={event}
         />
       )}
+      
+      <EventRegistrationCard
+        eventId={event.id}
+        isRegistered={!!isRegistered}
+        status={event.status}
+        user={user}
+        currentAttendees={event.current_attendees}
+        maxCapacity={event.max_capacity}
+        waitlistEnabled={event.waitlist_enabled}
+      />
     </div>
   );
 }

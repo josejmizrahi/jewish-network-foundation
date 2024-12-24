@@ -3,9 +3,8 @@ import { LoadingSkeleton } from "./list/LoadingSkeleton";
 import { EmptyState } from "./list/EmptyState";
 import { EventTabs } from "./list/EventTabs";
 import { EventContent } from "./list/EventContent";
-import { useEventsList, useEventInvitations } from "@/hooks/useEventQueries";
+import { useEvents, useEventInvitations } from "@/hooks/useEvents";
 import { useAuth } from "@/hooks/useAuth";
-import { Event, EventCategory } from "./types";
 
 export function EventsList() {
   const [search, setSearch] = useState("");
@@ -16,61 +15,16 @@ export function EventsList() {
   const { user } = useAuth();
 
   const { 
-    data: eventsData = [], 
+    data: events = [], 
     isLoading: eventsLoading, 
     error: eventsError 
-  } = useEventsList();
+  } = useEvents();
 
   const { 
-    data: invitationsData = [], 
+    data: invitations = [], 
     isLoading: invitationsLoading, 
     error: invitationsError 
   } = useEventInvitations();
-
-  // Type assertion to ensure category is of type EventCategory
-  const events = eventsData.map(event => ({
-    ...event,
-    category: (event.category || 'other') as EventCategory,
-    category_color: event.category_color || 'gray'
-  })) as Event[];
-
-  // Map invitations to Event type with proper type checking and defaults
-  const invitations = invitationsData.map(invitation => {
-    // Ensure we have an event object, even if empty
-    const eventData = invitation.event || {};
-    // Ensure we have an organizer object, even if empty
-    const organizerData = eventData.organizer || {};
-
-    const defaultEvent: Event = {
-      id: eventData.id || invitation.event_id || '',
-      title: eventData.title || '',
-      description: eventData.description || null,
-      start_time: eventData.start_time || new Date().toISOString(),
-      end_time: eventData.end_time || new Date().toISOString(),
-      timezone: eventData.timezone || 'UTC',
-      location: eventData.location || null,
-      is_online: Boolean(eventData.is_online),
-      meeting_url: eventData.meeting_url || null,
-      max_capacity: eventData.max_capacity || null,
-      current_attendees: eventData.current_attendees || 0,
-      status: eventData.status || 'draft',
-      is_private: Boolean(eventData.is_private),
-      cover_image: eventData.cover_image || null,
-      organizer_id: eventData.organizer_id || '',
-      category: (eventData.category || 'other') as EventCategory,
-      category_color: eventData.category_color || 'gray',
-      tags: Array.isArray(eventData.tags) ? eventData.tags : [],
-      waitlist_enabled: Boolean(eventData.waitlist_enabled),
-      invitation_id: invitation.id,
-      invitation_status: invitation.status,
-      organizer: {
-        full_name: organizerData.full_name || '',
-        avatar_url: organizerData.avatar_url || null
-      }
-    };
-
-    return defaultEvent;
-  });
 
   if (eventsLoading || invitationsLoading) {
     return <LoadingSkeleton />;
