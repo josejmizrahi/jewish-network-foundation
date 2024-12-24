@@ -1,6 +1,8 @@
 import { format } from "date-fns";
-import { Clock, MapPin, Video } from "lucide-react";
+import { MapPin, Video } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import * as Icons from "lucide-react";
+import { SubEventIcon } from "./sub-events/SubEventIconSelect";
 
 interface SubEvent {
   id: string;
@@ -11,6 +13,7 @@ interface SubEvent {
   location: string | null;
   is_online: boolean;
   meeting_url: string | null;
+  icon?: SubEventIcon;
 }
 
 interface EventTimelineProps {
@@ -29,42 +32,50 @@ export function EventTimeline({ subEvents }: EventTimelineProps) {
         
         {/* Timeline events */}
         <div className="space-y-8">
-          {subEvents.map((subEvent, index) => (
-            <div key={subEvent.id} className="relative flex gap-4">
-              {/* Timeline dot */}
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center relative z-10">
-                <Clock className="w-5 h-5 text-primary" />
-              </div>
-              
-              {/* Event content */}
-              <div className="flex-1 space-y-2">
-                <h3 className="font-medium">{subEvent.title}</h3>
-                <div className="text-sm text-muted-foreground">
-                  {format(new Date(subEvent.start_time), "h:mm a")} - {format(new Date(subEvent.end_time), "h:mm a")}
+          {subEvents.map((subEvent) => {
+            // Dynamically get the icon component
+            const IconComponent = subEvent.icon ? 
+              (Icons as Record<string, Icons.LucideIcon>)[subEvent.icon.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('')] || 
+              Icons.Calendar : 
+              Icons.Calendar;
+
+            return (
+              <div key={subEvent.id} className="relative flex gap-4">
+                {/* Timeline dot */}
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center relative z-10">
+                  <IconComponent className="w-5 h-5 text-primary" />
                 </div>
                 
-                {subEvent.description && (
-                  <p className="text-sm text-muted-foreground">{subEvent.description}</p>
-                )}
-                
-                {(subEvent.location || subEvent.is_online) && (
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    {subEvent.is_online ? (
-                      <>
-                        <Video className="w-4 h-4" />
-                        <span>Online Event</span>
-                      </>
-                    ) : subEvent.location ? (
-                      <>
-                        <MapPin className="w-4 h-4" />
-                        <span>{subEvent.location}</span>
-                      </>
-                    ) : null}
+                {/* Event content */}
+                <div className="flex-1 space-y-2">
+                  <h3 className="font-medium">{subEvent.title}</h3>
+                  <div className="text-sm text-muted-foreground">
+                    {format(new Date(subEvent.start_time), "h:mm a")} - {format(new Date(subEvent.end_time), "h:mm a")}
                   </div>
-                )}
+                  
+                  {subEvent.description && (
+                    <p className="text-sm text-muted-foreground">{subEvent.description}</p>
+                  )}
+                  
+                  {(subEvent.location || subEvent.is_online) && (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      {subEvent.is_online ? (
+                        <>
+                          <Video className="w-4 h-4" />
+                          <span>Online Event</span>
+                        </>
+                      ) : subEvent.location ? (
+                        <>
+                          <MapPin className="w-4 h-4" />
+                          <span>{subEvent.location}</span>
+                        </>
+                      ) : null}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </Card>
