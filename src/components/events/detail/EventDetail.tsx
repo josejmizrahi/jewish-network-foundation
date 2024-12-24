@@ -79,14 +79,14 @@ export function EventDetail() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6 max-w-4xl mx-auto">
+      <Card className="p-4 md:p-6 max-w-4xl mx-auto">
         <Skeleton className="h-4 w-32" /> {/* Breadcrumb skeleton */}
         <Skeleton className="h-[200px] md:h-[400px] w-full rounded-lg" />
         <div className="space-y-2">
           <Skeleton className="h-8 w-1/3" />
           <Skeleton className="h-4 w-1/2" />
         </div>
-      </div>
+      </Card>
     );
   }
 
@@ -138,6 +138,7 @@ export function EventDetail() {
         currentAttendees={event.current_attendees}
         maxCapacity={event.max_capacity}
         waitlistEnabled={event.waitlist_enabled}
+        isPrivate={event.is_private}
       />
     </div>
   );
