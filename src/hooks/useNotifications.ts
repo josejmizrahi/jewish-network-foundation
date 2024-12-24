@@ -1,13 +1,17 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
-import { useToast } from "@/components/ui/use-toast";
 import { EventInvitation } from "@/types/notifications";
+import { useEffect } from "react";
+import useSound from "use-sound";
+
+// Import notification sound
+const notificationSound = "/notification.mp3";
 
 export function useNotifications() {
   const { user } = useAuth();
-  const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [playSound] = useSound(notificationSound);
 
   const {
     data: notifications = [],
@@ -45,39 +49,55 @@ export function useNotifications() {
     enabled: !!user,
   });
 
-  const handleInvitationResponse = async (invitationId: string, status: 'accepted' | 'rejected') => {
-    try {
+  // Subscribe to real-time notifications
+  useEffect(() => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel('invitation-notifications')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'event_invitations',
+          filter: `invitee_id=eq.${user.id}`,
+        },
+        (payload) => {
+          // Play sound for new notifications
+          playSound();
+          // Invalidate the notifications query to refresh the data
+          queryClient.invalidateQueries({ queryKey: ['notifications'] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user, queryClient, playSound]);
+
+  const { mutate: markAllAsRead } = useMutation({
+    mutationFn: async () => {
+      if (!user || !notifications.length) return;
+
       const { error } = await supabase
         .from('event_invitations')
-        .update({ 
-          status,
-          last_viewed_at: new Date().toISOString()
-        })
-        .eq('id', invitationId);
+        .update({ last_viewed_at: new Date().toISOString() })
+        .eq('invitee_id', user.id)
+        .eq('status', 'pending');
 
       if (error) throw error;
-
-      toast({
-        title: `Invitation ${status}`,
-        description: `You have ${status} the event invitation.`,
-      });
-
-      // Invalidate queries to refresh data
+    },
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
-      queryClient.invalidateQueries({ queryKey: ['event-invitations'] });
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update invitation status.",
-        variant: "destructive",
-      });
-    }
-  };
+    },
+  });
 
   return {
     notifications,
     isLoading,
     error,
-    handleInvitationResponse,
+    markAllAsRead,
   };
 }

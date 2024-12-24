@@ -4,20 +4,21 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/hooks/useAuth";
 import { useNotifications } from "@/hooks/useNotifications";
 import { NotificationItem } from "./notification-item";
-import { Loader2 } from "lucide-react";
+import { Loader2, Check } from "lucide-react";
 
 export function NotificationsMenu() {
   const { user } = useAuth();
   const { 
     notifications, 
     isLoading, 
-    handleInvitationResponse 
+    markAllAsRead 
   } = useNotifications();
 
   const unreadCount = notifications?.length || 0;
@@ -40,6 +41,21 @@ export function NotificationsMenu() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-80">
+        <div className="flex items-center justify-between p-2">
+          <h4 className="font-medium">Notifications</h4>
+          {unreadCount > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 text-xs"
+              onClick={() => markAllAsRead()}
+            >
+              <Check className="mr-2 h-4 w-4" />
+              Mark all as read
+            </Button>
+          )}
+        </div>
+        <DropdownMenuSeparator />
         <ScrollArea className="h-[400px]">
           {isLoading ? (
             <div className="flex items-center justify-center p-4">
