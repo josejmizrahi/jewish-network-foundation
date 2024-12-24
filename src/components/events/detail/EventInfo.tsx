@@ -1,4 +1,4 @@
-import { Calendar, Clock, MapPin, Users, Video } from "lucide-react";
+import { Calendar, Clock, MapPin, Video } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { EventLocationMap } from "./EventLocationMap";
@@ -9,9 +9,6 @@ interface EventInfoProps {
   isOnline: boolean;
   meetingUrl: string | null;
   location: string | null;
-  maxCapacity: number | null;
-  currentAttendees: number;
-  isRegistered: boolean;
   showMap?: boolean;
   showDetails?: boolean;
 }
@@ -22,9 +19,6 @@ export function EventInfo({
   isOnline,
   meetingUrl,
   location,
-  maxCapacity,
-  currentAttendees,
-  isRegistered,
   showMap = true,
   showDetails = true,
 }: EventInfoProps) {
@@ -57,20 +51,6 @@ export function EventInfo({
               <p className="text-sm text-muted-foreground">Time</p>
             </div>
           </div>
-
-          {maxCapacity && (
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                <Users className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="font-medium">
-                  {currentAttendees} / {maxCapacity} attendees
-                </p>
-                <p className="text-sm text-muted-foreground">Capacity</p>
-              </div>
-            </div>
-          )}
         </div>
 
         <div className="space-y-6">
@@ -81,7 +61,7 @@ export function EventInfo({
               </div>
               <div>
                 <p className="font-medium">Online Event</p>
-                {meetingUrl && isRegistered && (
+                {meetingUrl && (
                   <Button
                     variant="link"
                     className="h-auto p-0 text-primary"
