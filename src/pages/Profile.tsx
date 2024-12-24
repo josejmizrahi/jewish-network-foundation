@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { MainNav } from "@/components/layout/MainNav";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ProfileForm } from "@/components/profile/ProfileForm";
 import { BottomNav } from "@/components/nav/BottomNav";
+import { Button } from "@/components/ui/button";
+import { Pencil } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +15,7 @@ import type { Profile } from "@/types/profile";
 
 export default function Profile() {
   const { user } = useAuth();
+  const [isEditing, setIsEditing] = useState(false);
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ['profile', user?.id],
@@ -41,6 +45,7 @@ export default function Profile() {
       .eq('id', user?.id);
 
     if (error) throw error;
+    setIsEditing(false); // Close the form after successful update
   };
 
   if (isLoading || !profile) {
@@ -55,13 +60,26 @@ export default function Profile() {
           <MainNav />
           <SidebarInset>
             <div className="container max-w-4xl mx-auto px-4 py-8">
-              <ProfileHeader profile={profile} />
-              <ProfileForm 
-                profile={profile}
-                updating={false}
-                onUpdateProfile={() => handleUpdateProfile(profile)}
-                onProfileChange={(updatedProfile) => handleUpdateProfile(updatedProfile)}
-              />
+              <div className="space-y-8">
+                <ProfileHeader profile={profile} />
+                {!isEditing ? (
+                  <Button
+                    onClick={() => setIsEditing(true)}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    <Pencil className="mr-2 h-4 w-4" />
+                    Edit Profile
+                  </Button>
+                ) : (
+                  <ProfileForm 
+                    profile={profile}
+                    updating={false}
+                    onUpdateProfile={() => handleUpdateProfile(profile)}
+                    onProfileChange={(updatedProfile) => handleUpdateProfile(updatedProfile)}
+                  />
+                )}
+              </div>
             </div>
           </SidebarInset>
           <BottomNav />
