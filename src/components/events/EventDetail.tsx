@@ -10,7 +10,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Event } from "./detail/types";
 import { EventBreadcrumb } from "./detail/EventBreadcrumb";
-import { EventRegistrationCard } from "./detail/registration/EventRegistrationCard";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { EventMetaTags } from "./detail/EventMetaTags";
 
@@ -138,18 +137,17 @@ export function EventDetail() {
         </div>
 
         <div className={isMobile ? "" : "sticky-container"}>
-          <div className="rounded-xl border bg-background/50 backdrop-blur supports-[backdrop-filter]:bg-background/50 shadow-sm transition-all duration-300 hover:shadow-md">
-            <EventRegistrationCard
-              eventId={event.id}
-              isRegistered={!!isRegistered}
-              status={event.status}
-              user={user}
-              currentAttendees={event.current_attendees}
-              maxCapacity={event.max_capacity}
-              waitlistEnabled={event.waitlist_enabled}
-              isPrivate={event.is_private}
-            />
-          </div>
+          {event.luma_id && (
+            <div className="w-full h-[600px] border rounded-lg overflow-hidden">
+              <iframe 
+                src={`https://lu.ma/embed-checkout/${event.luma_id}`}
+                width="100%"
+                height="100%"
+                frameBorder="0"
+                style={{ border: 0, background: 'transparent' }}
+              />
+            </div>
+          )}
         </div>
       </div>
 
