@@ -4,6 +4,7 @@ import { AppSidebar } from "@/components/layout/AppSidebar";
 import { EventsHeader } from "@/components/events/EventsHeader";
 import { EventsList } from "@/components/events/EventsList";
 import { CreateEventDialog } from "@/components/events/CreateEventDialog";
+import { BottomNav } from "@/components/nav/BottomNav";
 import { useState } from "react";
 
 export default function Events() {
@@ -25,6 +26,7 @@ export default function Events() {
               />
             </div>
           </SidebarInset>
+          <BottomNav />
         </div>
       </div>
     </SidebarProvider>
