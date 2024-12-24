@@ -56,7 +56,12 @@ export function EventContent({ event, isOrganizer, isRegistered, user }: EventCo
         )}
 
         {isOrganizer && (
-          <EventManagementTabs eventId={event.id} isOrganizer={isOrganizer} />
+          <EventManagementTabs 
+            eventId={event.id} 
+            isOrganizer={isOrganizer}
+            eventStartTime={new Date(event.start_time)}
+            eventEndTime={new Date(event.end_time)}
+          />
         )}
       </div>
 

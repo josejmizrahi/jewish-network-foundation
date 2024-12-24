@@ -6,9 +6,11 @@ import { CreateSubEventForm } from "./sub-events/CreateSubEventForm";
 interface EventManagementTabsProps {
   eventId: string;
   isOrganizer: boolean;
+  eventStartTime: Date;
+  eventEndTime: Date;
 }
 
-export function EventManagementTabs({ eventId, isOrganizer }: EventManagementTabsProps) {
+export function EventManagementTabs({ eventId, isOrganizer, eventStartTime, eventEndTime }: EventManagementTabsProps) {
   if (!isOrganizer) return null;
 
   return (
@@ -30,7 +32,11 @@ export function EventManagementTabs({ eventId, isOrganizer }: EventManagementTab
       <TabsContent value="sub-events">
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Add Sub-event</h3>
-          <CreateSubEventForm eventId={eventId} />
+          <CreateSubEventForm 
+            eventId={eventId} 
+            eventStartTime={eventStartTime}
+            eventEndTime={eventEndTime}
+          />
         </div>
       </TabsContent>
     </Tabs>

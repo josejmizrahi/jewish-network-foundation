@@ -9,9 +9,11 @@ import { SubEventIconSelect } from "./SubEventIconSelect";
 
 interface SubEventFormFieldsProps {
   form: UseFormReturn<SubEventFormValues>;
+  eventStartTime: Date;
+  eventEndTime: Date;
 }
 
-export function SubEventFormFields({ form }: SubEventFormFieldsProps) {
+export function SubEventFormFields({ form, eventStartTime, eventEndTime }: SubEventFormFieldsProps) {
   return (
     <>
       <FormField
@@ -70,6 +72,8 @@ export function SubEventFormFields({ form }: SubEventFormFieldsProps) {
                 <DateTimePicker
                   date={field.value}
                   setDate={field.onChange}
+                  minDate={eventStartTime}
+                  maxDate={eventEndTime}
                 />
               </FormControl>
               <FormMessage />
@@ -87,6 +91,8 @@ export function SubEventFormFields({ form }: SubEventFormFieldsProps) {
                 <DateTimePicker
                   date={field.value}
                   setDate={field.onChange}
+                  minDate={eventStartTime}
+                  maxDate={eventEndTime}
                 />
               </FormControl>
               <FormMessage />

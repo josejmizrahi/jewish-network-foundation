@@ -12,9 +12,11 @@ import { SubEventFormValues, subEventSchema } from "./types";
 
 interface CreateSubEventFormProps {
   eventId: string;
+  eventStartTime: Date;
+  eventEndTime: Date;
 }
 
-export function CreateSubEventForm({ eventId }: CreateSubEventFormProps) {
+export function CreateSubEventForm({ eventId, eventStartTime, eventEndTime }: CreateSubEventFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -24,12 +26,12 @@ export function CreateSubEventForm({ eventId }: CreateSubEventFormProps) {
     defaultValues: {
       title: "",
       description: "",
-      start_time: new Date(),
-      end_time: new Date(),
+      start_time: eventStartTime,
+      end_time: eventStartTime,
       is_online: false,
       location: "",
       meeting_url: "",
-      icon: "calendar",
+      icon: "Calendar",
     },
   });
 
@@ -38,6 +40,15 @@ export function CreateSubEventForm({ eventId }: CreateSubEventFormProps) {
       toast({
         title: "Invalid time range",
         description: "End time must be after start time",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (values.start_time < eventStartTime || values.end_time > eventEndTime) {
+      toast({
+        title: "Invalid time range",
+        description: "Sub-event must be within the event's time range",
         variant: "destructive",
       });
       return;
@@ -82,7 +93,11 @@ export function CreateSubEventForm({ eventId }: CreateSubEventFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <SubEventFormFields form={form} />
+        <SubEventFormFields 
+          form={form} 
+          eventStartTime={eventStartTime}
+          eventEndTime={eventEndTime}
+        />
         
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
