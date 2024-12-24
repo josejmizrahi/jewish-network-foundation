@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Route, Routes as RouterRoutes } from "react-router-dom";
 import { NonAuthRoute } from "@/components/auth/NonAuthRoute";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import Index from "@/pages/Index";
@@ -92,3 +92,13 @@ export const routes = [
     element: <Navigate to="/" replace />,
   },
 ];
+
+export function Routes() {
+  return (
+    <RouterRoutes>
+      {routes.map((route) => (
+        <Route key={route.path} {...route} />
+      ))}
+    </RouterRoutes>
+  );
+}

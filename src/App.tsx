@@ -1,9 +1,9 @@
 import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
-import { ThemeProvider } from "@/components/theme/ThemeToggle";
+import { ThemeProvider } from "@/hooks/use-theme";
 import { HelmetProvider } from "react-helmet-async";
-import { AppRoutes } from "./routes/routes";
+import { Routes } from "./routes/routes";
 
 const queryClient = new QueryClient();
 
@@ -12,8 +12,8 @@ function App() {
     <HelmetProvider>
       <BrowserRouter>
         <QueryClientProvider client={queryClient}>
-          <ThemeProvider>
-            <AppRoutes />
+          <ThemeProvider defaultTheme="system" storageKey="app-theme">
+            <Routes />
             <Toaster />
           </ThemeProvider>
         </QueryClientProvider>
