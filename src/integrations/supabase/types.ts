@@ -9,192 +9,12 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      event_attendees: {
-        Row: {
-          created_at: string | null
-          event_id: string
-          last_notification_sent_at: string | null
-          notification_status: string | null
-          registration_type: string | null
-          status: string | null
-          user_id: string
-          waitlist_position: number | null
-        }
-        Insert: {
-          created_at?: string | null
-          event_id: string
-          last_notification_sent_at?: string | null
-          notification_status?: string | null
-          registration_type?: string | null
-          status?: string | null
-          user_id: string
-          waitlist_position?: number | null
-        }
-        Update: {
-          created_at?: string | null
-          event_id?: string
-          last_notification_sent_at?: string | null
-          notification_status?: string | null
-          registration_type?: string | null
-          status?: string | null
-          user_id?: string
-          waitlist_position?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "event_attendees_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_attendees_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      event_invitation_batches: {
-        Row: {
-          created_at: string | null
-          created_by: string | null
-          email_template: string | null
-          event_id: string | null
-          failed_invitations: number | null
-          id: string
-          sent_invitations: number | null
-          status: string | null
-          total_invitations: number | null
-        }
-        Insert: {
-          created_at?: string | null
-          created_by?: string | null
-          email_template?: string | null
-          event_id?: string | null
-          failed_invitations?: number | null
-          id?: string
-          sent_invitations?: number | null
-          status?: string | null
-          total_invitations?: number | null
-        }
-        Update: {
-          created_at?: string | null
-          created_by?: string | null
-          email_template?: string | null
-          event_id?: string | null
-          failed_invitations?: number | null
-          id?: string
-          sent_invitations?: number | null
-          status?: string | null
-          total_invitations?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "event_invitation_batches_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_invitation_batches_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      event_invitations: {
-        Row: {
-          batch_id: string | null
-          created_at: string | null
-          email_sent: boolean | null
-          email_sent_at: string | null
-          event_id: string
-          expiration_date: string | null
-          id: string
-          invitee_id: string
-          inviter_id: string
-          last_viewed_at: string | null
-          reminder_sent_at: string | null
-          response_notes: string | null
-          status: string
-          updated_at: string | null
-        }
-        Insert: {
-          batch_id?: string | null
-          created_at?: string | null
-          email_sent?: boolean | null
-          email_sent_at?: string | null
-          event_id: string
-          expiration_date?: string | null
-          id?: string
-          invitee_id: string
-          inviter_id: string
-          last_viewed_at?: string | null
-          reminder_sent_at?: string | null
-          response_notes?: string | null
-          status?: string
-          updated_at?: string | null
-        }
-        Update: {
-          batch_id?: string | null
-          created_at?: string | null
-          email_sent?: boolean | null
-          email_sent_at?: string | null
-          event_id?: string
-          expiration_date?: string | null
-          id?: string
-          invitee_id?: string
-          inviter_id?: string
-          last_viewed_at?: string | null
-          reminder_sent_at?: string | null
-          response_notes?: string | null
-          status?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "event_invitations_batch_id_fkey"
-            columns: ["batch_id"]
-            isOneToOne: false
-            referencedRelation: "event_invitation_batches"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_invitations_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_invitations_invitee_id_fkey"
-            columns: ["invitee_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_invitations_inviter_id_fkey"
-            columns: ["inviter_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       events: {
         Row: {
           category: string | null
           category_color: string | null
           cover_image: string | null
           created_at: string | null
-          current_attendees: number | null
           description: string | null
           end_time: string
           id: string
@@ -203,9 +23,7 @@ export type Database = {
           is_shareable: boolean | null
           location: string | null
           luma_id: string | null
-          max_capacity: number | null
           meeting_url: string | null
-          notification_preferences: Json | null
           organizer_id: string
           start_time: string
           status: string | null
@@ -213,14 +31,12 @@ export type Database = {
           timezone: string
           title: string
           updated_at: string | null
-          waitlist_enabled: boolean | null
         }
         Insert: {
           category?: string | null
           category_color?: string | null
           cover_image?: string | null
           created_at?: string | null
-          current_attendees?: number | null
           description?: string | null
           end_time: string
           id?: string
@@ -229,9 +45,7 @@ export type Database = {
           is_shareable?: boolean | null
           location?: string | null
           luma_id?: string | null
-          max_capacity?: number | null
           meeting_url?: string | null
-          notification_preferences?: Json | null
           organizer_id: string
           start_time: string
           status?: string | null
@@ -239,14 +53,12 @@ export type Database = {
           timezone: string
           title: string
           updated_at?: string | null
-          waitlist_enabled?: boolean | null
         }
         Update: {
           category?: string | null
           category_color?: string | null
           cover_image?: string | null
           created_at?: string | null
-          current_attendees?: number | null
           description?: string | null
           end_time?: string
           id?: string
@@ -255,9 +67,7 @@ export type Database = {
           is_shareable?: boolean | null
           location?: string | null
           luma_id?: string | null
-          max_capacity?: number | null
           meeting_url?: string | null
-          notification_preferences?: Json | null
           organizer_id?: string
           start_time?: string
           status?: string | null
@@ -265,7 +75,6 @@ export type Database = {
           timezone?: string
           title?: string
           updated_at?: string | null
-          waitlist_enabled?: boolean | null
         }
         Relationships: [
           {
@@ -383,59 +192,6 @@ export type Database = {
           verification_status?: string | null
         }
         Relationships: []
-      }
-      sub_events: {
-        Row: {
-          created_at: string | null
-          description: string | null
-          end_time: string
-          event_id: string
-          icon: string | null
-          id: string
-          is_online: boolean | null
-          location: string | null
-          meeting_url: string | null
-          start_time: string
-          title: string
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          description?: string | null
-          end_time: string
-          event_id: string
-          icon?: string | null
-          id?: string
-          is_online?: boolean | null
-          location?: string | null
-          meeting_url?: string | null
-          start_time: string
-          title: string
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          description?: string | null
-          end_time?: string
-          event_id?: string
-          icon?: string | null
-          id?: string
-          is_online?: boolean | null
-          location?: string | null
-          meeting_url?: string | null
-          start_time?: string
-          title?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "sub_events_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       verification_criteria: {
         Row: {

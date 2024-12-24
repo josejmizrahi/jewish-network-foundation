@@ -38,22 +38,6 @@ export function EventDetail() {
     },
   });
 
-  const { data: isRegistered } = useQuery({
-    queryKey: ['event-registration', id],
-    queryFn: async () => {
-      if (!user) return false;
-      const { data, error } = await supabase
-        .from('event_attendees')
-        .select('*')
-        .eq('event_id', id)
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      if (error) throw error;
-      return !!data;
-    },
-  });
-
   const handleCancelEvent = async () => {
     if (!event) return;
     
@@ -131,7 +115,6 @@ export function EventDetail() {
           <EventContent
             event={event}
             isOrganizer={isOrganizer}
-            isRegistered={!!isRegistered}
             user={user}
           />
         </div>
