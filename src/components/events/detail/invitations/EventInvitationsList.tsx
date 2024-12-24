@@ -23,6 +23,10 @@ export function EventInvitationsList({ eventId, isOrganizer }: EventInvitationsL
           event_id,
           status,
           created_at,
+          email_sent,
+          email_sent_at,
+          last_viewed_at,
+          expiration_date,
           invitee:profiles!event_invitations_invitee_id_fkey(
             id, 
             full_name, 
