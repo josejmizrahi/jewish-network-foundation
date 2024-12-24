@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/popover";
 import { useToast } from "@/components/ui/use-toast";
 import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
-import { supabase } from '@/integrations/supabase/client';
+import { useGoogleMapsKey } from '@/hooks/useGoogleMapsKey';
 
 interface MapLocationProps {
   value: string;
@@ -32,35 +32,9 @@ export function MapLocation({ value, onChange }: MapLocationProps) {
   const [isMapOpen, setIsMapOpen] = useState(false);
   const [center, setCenter] = useState(defaultCenter);
   const [markerPosition, setMarkerPosition] = useState<google.maps.LatLngLiteral | null>(null);
-  const [apiKey, setApiKey] = useState<string>('');
+  const apiKey = useGoogleMapsKey();
   const { toast } = useToast();
   const geocoder = useRef<google.maps.Geocoder | null>(null);
-
-  // Fetch API key from Supabase config
-  useEffect(() => {
-    async function fetchApiKey() {
-      const { data: { GOOGLE_MAPS_API_KEY }, error } = await supabase
-        .from('config')
-        .select('GOOGLE_MAPS_API_KEY')
-        .single();
-      
-      if (error) {
-        console.error('Error fetching Google Maps API key:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load map configuration.",
-          variant: "destructive",
-        });
-        return;
-      }
-      
-      if (GOOGLE_MAPS_API_KEY) {
-        setApiKey(GOOGLE_MAPS_API_KEY);
-      }
-    }
-    
-    fetchApiKey();
-  }, [toast]);
 
   useEffect(() => {
     if (value && !searchQuery) {
