@@ -39,6 +39,16 @@ export function EditEventDialog({ open, onOpenChange, event }: EditEventDialogPr
   const handleSubmit = async (data: EventFormValues) => {
     if (!user) return;
     
+    // Validate end time is after start time
+    if (data.end_time <= data.start_time) {
+      toast({
+        title: "Invalid time range",
+        description: "End time must be after start time",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsSubmitting(true);
     try {
       // Convert times to UTC for storage
@@ -58,12 +68,18 @@ export function EditEventDialog({ open, onOpenChange, event }: EditEventDialogPr
           meeting_url: data.meeting_url,
           max_capacity: data.max_capacity,
           is_private: data.is_private,
+          cover_image: data.cover_image,
           category: data.category,
           tags: data.tags,
         })
         .eq('id', event.id);
 
       if (error) throw error;
+
+      toast({
+        title: "Event updated",
+        description: "Your event has been updated successfully.",
+      });
 
       // Invalidate queries to refresh the data
       await queryClient.invalidateQueries({ queryKey: ['events'] });
@@ -72,7 +88,11 @@ export function EditEventDialog({ open, onOpenChange, event }: EditEventDialogPr
       onOpenChange(false);
     } catch (error: any) {
       console.error('Error updating event:', error);
-      throw error;
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update event. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsSubmitting(false);
     }
