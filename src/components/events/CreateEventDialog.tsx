@@ -45,7 +45,6 @@ export function CreateEventDialog({ open, onOpenChange }: CreateEventDialogProps
   const onSubmit = async (data: EventFormValues) => {
     if (!user) return;
     
-    // Validate end time is after start time
     if (data.end_time <= data.start_time) {
       toast({
         title: "Invalid time range",
@@ -72,6 +71,7 @@ export function CreateEventDialog({ open, onOpenChange }: CreateEventDialogProps
         timezone: data.timezone || userTimezone,
       };
 
+      // Create event in Supabase
       const { data: newEvent, error } = await supabase
         .from('events')
         .insert(formattedData)
@@ -79,6 +79,30 @@ export function CreateEventDialog({ open, onOpenChange }: CreateEventDialogProps
         .single();
 
       if (error) throw error;
+
+      // Sync with Luma
+      try {
+        const { error: lumaError } = await supabase.functions.invoke('luma-api', {
+          body: { 
+            action: 'create',
+            eventData: {
+              ...formattedData,
+              cover_image: data.cover_image || undefined,
+            }
+          }
+        });
+
+        if (lumaError) {
+          console.error('Failed to sync with Luma:', lumaError);
+          toast({
+            title: "Warning",
+            description: "Event created but failed to sync with Luma. Please try syncing again later.",
+            variant: "destructive",
+          });
+        }
+      } catch (lumaError) {
+        console.error('Luma sync error:', lumaError);
+      }
 
       toast({
         title: "Event created",
@@ -91,7 +115,7 @@ export function CreateEventDialog({ open, onOpenChange }: CreateEventDialogProps
       // If it's a private event, navigate to the event details page
       if (data.is_private && newEvent) {
         navigate(`/events/${newEvent.id}`, { 
-          state: { showInviteDialog: true }  // Pass state to automatically open invite dialog
+          state: { showInviteDialog: true }
         });
       }
     } catch (error: any) {
