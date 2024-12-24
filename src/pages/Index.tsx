@@ -4,7 +4,6 @@ import { AppSidebar } from "@/components/layout/AppSidebar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "react-router-dom";
-import { DashboardStats } from "@/components/dashboard/DashboardStats";
 import { DashboardChart } from "@/components/dashboard/DashboardChart";
 import { DashboardEvents } from "@/components/dashboard/DashboardEvents";
 import { DashboardActivity } from "@/components/dashboard/DashboardActivity";
@@ -14,26 +13,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { HomeStats } from "@/components/home/HomeStats";
 import { FeaturedEvents } from "@/components/home/FeaturedEvents";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { DashboardMetrics } from "@/components/dashboard/DashboardMetrics";
 
 export default function Index() {
   const { user } = useAuth();
-
-  const { data: stats } = useQuery({
-    queryKey: ['homepage-stats'],
-    queryFn: async () => {
-      const [eventsResponse, usersResponse] = await Promise.all([
-        supabase.from('events').select('id', { count: 'exact', head: true }),
-        supabase.from('profiles').select('id', { count: 'exact', head: true })
-      ]);
-      
-      return {
-        events: eventsResponse.count || 0,
-        members: usersResponse.count || 0
-      };
-    }
-  });
 
   if (user) {
     return (
@@ -67,44 +50,7 @@ export default function Index() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
                 >
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <Card className="bg-background/50 backdrop-blur supports-[backdrop-filter]:bg-background/50">
-                      <CardContent className="p-6">
-                        <div className="space-y-2">
-                          <div className="text-4xl font-light">
-                            {stats?.members.toLocaleString() || '0'}
-                          </div>
-                          <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                            Total Members
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    <Card className="bg-background/50 backdrop-blur supports-[backdrop-filter]:bg-background/50">
-                      <CardContent className="p-6">
-                        <div className="space-y-2">
-                          <div className="text-4xl font-light">
-                            {stats?.events.toLocaleString() || '0'}
-                          </div>
-                          <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                            Total Events
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    <Card className="bg-background/50 backdrop-blur supports-[backdrop-filter]:bg-background/50">
-                      <CardContent className="p-6">
-                        <div className="space-y-2">
-                          <div className="text-4xl font-light">
-                            {/* Additional stat can go here */}
-                          </div>
-                          <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                            {/* Additional stat label can go here */}
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
+                  <DashboardMetrics />
                 </motion.div>
 
                 <motion.div
