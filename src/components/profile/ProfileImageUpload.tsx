@@ -14,14 +14,32 @@ interface ProfileImageUploadProps {
 
 export function ProfileImageUpload({ avatarUrl, fullName, userId, onUploadComplete }: ProfileImageUploadProps) {
   const [uploading, setUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const { toast } = useToast();
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files || event.target.files.length === 0) {
+      setSelectedFile(null);
+      return;
+    }
+    const file = event.target.files[0];
+    setSelectedFile(file);
+  };
 
   const uploadAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
       setUploading(true);
       
       if (!event.target.files || event.target.files.length === 0) {
-        return; // Just return silently if no file is selected
+        return;
       }
 
       const file = event.target.files[0];
@@ -64,8 +82,8 @@ export function ProfileImageUpload({ avatarUrl, fullName, userId, onUploadComple
         throw updateError;
       }
 
-      // Call the callback with the new URL to update UI state
       onUploadComplete(publicUrl);
+      setSelectedFile(null);
 
       toast({
         title: "Success",
@@ -88,7 +106,7 @@ export function ProfileImageUpload({ avatarUrl, fullName, userId, onUploadComple
         <AvatarImage src={avatarUrl || ""} alt={fullName || "Profile"} />
         <AvatarFallback>{fullName?.[0] || "?"}</AvatarFallback>
       </Avatar>
-      <div className="flex items-center gap-2">
+      <div className="flex flex-col items-center gap-2">
         <Button
           variant="outline"
           disabled={uploading}
@@ -105,11 +123,20 @@ export function ProfileImageUpload({ avatarUrl, fullName, userId, onUploadComple
             id="avatar-upload"
             type="file"
             accept="image/*"
-            onChange={uploadAvatar}
+            onChange={(e) => {
+              handleFileSelect(e);
+              uploadAvatar(e);
+            }}
             disabled={uploading}
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
           />
         </Button>
+        {selectedFile && (
+          <p className="text-sm text-muted-foreground">
+            Selected file: {selectedFile.name} ({formatFileSize(selectedFile.size)})
+          </p>
+        )}
+        <p className="text-xs text-muted-foreground">Maximum file size: 2MB</p>
       </div>
     </div>
   );
