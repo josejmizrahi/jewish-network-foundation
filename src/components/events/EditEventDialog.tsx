@@ -106,7 +106,7 @@ export function EditEventDialog({ open, onOpenChange, event }: EditEventDialogPr
         </DialogHeader>
         <ScrollArea className="flex-1 px-1">
           <EditEventForm
-            event={event}
+            initialData={event}
             onSubmit={handleSubmit}
             onCancel={() => onOpenChange(false)}
             isSubmitting={isSubmitting}
