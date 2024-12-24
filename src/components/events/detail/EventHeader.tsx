@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Edit2, Share2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { useToast } from "@/components/ui/use-toast";
 
 interface EventHeaderProps {
   title: string;
@@ -25,6 +26,43 @@ export function EventHeader({
   status,
   coverImage,
 }: EventHeaderProps) {
+  const { toast } = useToast();
+
+  const handleShare = async () => {
+    const shareData = {
+      title,
+      text: description || '',
+      url: window.location.href,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        toast({
+          title: "Link copied",
+          description: "Event link has been copied to clipboard",
+        });
+      }
+    } catch (error) {
+      // If share fails, fallback to clipboard
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        toast({
+          title: "Link copied",
+          description: "Event link has been copied to clipboard",
+        });
+      } catch (clipboardError) {
+        toast({
+          title: "Error",
+          description: "Failed to share or copy event link",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
   return (
     <div className="space-y-6">
       {coverImage ? (
@@ -64,15 +102,7 @@ export function EventHeader({
             variant="outline"
             size="sm"
             className="rounded-full"
-            onClick={() => {
-              navigator.share({
-                title,
-                text: description || '',
-                url: window.location.href,
-              }).catch(() => {
-                navigator.clipboard.writeText(window.location.href);
-              });
-            }}
+            onClick={handleShare}
           >
             <Share2 className="h-4 w-4 mr-2" />
             Share
