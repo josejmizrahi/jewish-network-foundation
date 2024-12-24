@@ -1,3 +1,5 @@
+import { EventCategory } from "../schemas/eventFormSchema";
+
 export interface Event {
   id: string;
   title: string;
@@ -13,7 +15,7 @@ export interface Event {
   cover_image: string | null;
   status: string;
   is_private: boolean;
-  category: string;
+  category: EventCategory;
   category_color: string;
   tags: string[];
   organizer_id: string;
