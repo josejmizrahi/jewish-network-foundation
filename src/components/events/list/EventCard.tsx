@@ -109,7 +109,7 @@ export function EventCard({ event, categoryColors }: EventCardProps) {
       <div className="group relative bg-card hover:bg-accent transition-colors rounded-xl p-4">
         <div className="flex flex-col sm:flex-row gap-4">
           {event.cover_image ? (
-            <div className="w-full sm:w-24 h-32 sm:h-24 flex-shrink-0">
+            <div className="w-full sm:w-48 h-32 sm:h-48 flex-shrink-0">
               <img
                 src={event.cover_image}
                 alt={event.title}
@@ -117,7 +117,7 @@ export function EventCard({ event, categoryColors }: EventCardProps) {
               />
             </div>
           ) : (
-            <div className="w-full sm:w-24 h-32 sm:h-24 bg-muted rounded-lg flex-shrink-0" />
+            <div className="w-full sm:w-48 h-32 sm:h-48 bg-muted rounded-lg flex-shrink-0" />
           )}
           <div className="flex-1 min-w-0 space-y-3">
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
