@@ -4,12 +4,14 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { InvitationItem } from "./InvitationItem";
-import { Loader2, UserPlus, Users } from "lucide-react";
+import { Loader2, UserPlus, Users, Mail } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BatchInviteDialog } from "../batch-invite/BatchInviteDialog";
 import { InviteMembers } from "../InviteMembers";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 
 interface EventInvitationsListProps {
   eventId: string;
@@ -93,6 +95,10 @@ export function EventInvitationsList({ eventId, isOrganizer }: EventInvitationsL
     );
   }
 
+  const pendingInvitations = invitations?.filter(inv => inv.status === 'pending') || [];
+  const acceptedInvitations = invitations?.filter(inv => inv.status === 'accepted') || [];
+  const rejectedInvitations = invitations?.filter(inv => inv.status === 'rejected') || [];
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -122,23 +128,86 @@ export function EventInvitationsList({ eventId, isOrganizer }: EventInvitationsL
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         </div>
       ) : (
-        <ScrollArea className="h-[400px] rounded-md border">
-          <div className="p-4 space-y-6">
-            {invitations?.map((invitation) => (
-              <InvitationItem
-                key={invitation.id}
-                invitation={invitation}
-                onRemove={handleCancelInvitation}
-              />
-            ))}
+        <Tabs defaultValue="pending" className="w-full">
+          <TabsList className="w-full grid grid-cols-3">
+            <TabsTrigger value="pending" className="flex items-center gap-2">
+              <Mail className="h-4 w-4" />
+              Pending
+              {pendingInvitations.length > 0 && (
+                <Badge variant="secondary">{pendingInvitations.length}</Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="accepted">
+              Accepted
+              {acceptedInvitations.length > 0 && (
+                <Badge variant="secondary" className="ml-2">{acceptedInvitations.length}</Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="rejected">
+              Rejected
+              {rejectedInvitations.length > 0 && (
+                <Badge variant="secondary" className="ml-2">{rejectedInvitations.length}</Badge>
+              )}
+            </TabsTrigger>
+          </TabsList>
 
-            {!invitations?.length && (
-              <p className="text-center text-muted-foreground py-8">
-                No invitations sent yet
-              </p>
-            )}
-          </div>
-        </ScrollArea>
+          <TabsContent value="pending">
+            <ScrollArea className="h-[400px] rounded-md border">
+              <div className="p-4 space-y-6">
+                {pendingInvitations.map((invitation) => (
+                  <InvitationItem
+                    key={invitation.id}
+                    invitation={invitation}
+                    onRemove={handleCancelInvitation}
+                  />
+                ))}
+                {pendingInvitations.length === 0 && (
+                  <p className="text-center text-muted-foreground py-8">
+                    No pending invitations
+                  </p>
+                )}
+              </div>
+            </ScrollArea>
+          </TabsContent>
+
+          <TabsContent value="accepted">
+            <ScrollArea className="h-[400px] rounded-md border">
+              <div className="p-4 space-y-6">
+                {acceptedInvitations.map((invitation) => (
+                  <InvitationItem
+                    key={invitation.id}
+                    invitation={invitation}
+                    onRemove={handleCancelInvitation}
+                  />
+                ))}
+                {acceptedInvitations.length === 0 && (
+                  <p className="text-center text-muted-foreground py-8">
+                    No accepted invitations
+                  </p>
+                )}
+              </div>
+            </ScrollArea>
+          </TabsContent>
+
+          <TabsContent value="rejected">
+            <ScrollArea className="h-[400px] rounded-md border">
+              <div className="p-4 space-y-6">
+                {rejectedInvitations.map((invitation) => (
+                  <InvitationItem
+                    key={invitation.id}
+                    invitation={invitation}
+                    onRemove={handleCancelInvitation}
+                  />
+                ))}
+                {rejectedInvitations.length === 0 && (
+                  <p className="text-center text-muted-foreground py-8">
+                    No rejected invitations
+                  </p>
+                )}
+              </div>
+            </ScrollArea>
+          </TabsContent>
+        </Tabs>
       )}
 
       <BatchInviteDialog
