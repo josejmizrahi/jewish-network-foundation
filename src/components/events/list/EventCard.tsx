@@ -21,8 +21,8 @@ export function EventCard({ event, categoryColors }: EventCardProps) {
     e.stopPropagation(); // Prevent event bubbling
 
     const shareData = {
-      title: event.title,
-      text: event.description || '',
+      title: `Join me at ${event.title}`,
+      text: `I'd like to invite you to this event: ${event.title}${event.description ? ` - ${event.description}` : ''}`,
       url: `${window.location.origin}/events/${event.id}`,
     };
 
