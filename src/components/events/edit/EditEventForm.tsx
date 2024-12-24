@@ -53,7 +53,7 @@ export function EditEventForm({ event, onSubmit, onCancel, isSubmitting }: EditE
 
   return (
     <Form {...form}>
-      <div className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <EventFormFields form={form} />
         
         <div className="flex justify-end space-x-4">
@@ -68,7 +68,6 @@ export function EditEventForm({ event, onSubmit, onCancel, isSubmitting }: EditE
           <Button 
             type="submit" 
             disabled={isSubmitting}
-            onClick={form.handleSubmit(onSubmit)}
           >
             {isSubmitting && (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -76,7 +75,7 @@ export function EditEventForm({ event, onSubmit, onCancel, isSubmitting }: EditE
             Save Changes
           </Button>
         </div>
-      </div>
+      </form>
     </Form>
   );
 }
