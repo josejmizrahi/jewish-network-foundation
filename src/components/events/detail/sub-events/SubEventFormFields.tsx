@@ -72,8 +72,8 @@ export function SubEventFormFields({ form, eventStartTime, eventEndTime }: SubEv
                 <DateTimePicker
                   date={field.value}
                   setDate={field.onChange}
-                  minDate={eventStartTime}
-                  maxDate={eventEndTime}
+                  min={eventStartTime}
+                  max={eventEndTime}
                 />
               </FormControl>
               <FormMessage />
@@ -91,8 +91,8 @@ export function SubEventFormFields({ form, eventStartTime, eventEndTime }: SubEv
                 <DateTimePicker
                   date={field.value}
                   setDate={field.onChange}
-                  minDate={eventStartTime}
-                  maxDate={eventEndTime}
+                  min={eventStartTime}
+                  max={eventEndTime}
                 />
               </FormControl>
               <FormMessage />

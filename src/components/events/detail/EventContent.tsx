@@ -7,6 +7,7 @@ import { EventTimeline } from "./EventTimeline";
 import { User } from "@supabase/supabase-js";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { SubEventIcon } from "./types";
 
 interface EventContentProps {
   event: Event;
@@ -26,7 +27,12 @@ export function EventContent({ event, isOrganizer, isRegistered, user }: EventCo
         .order('start_time', { ascending: true });
 
       if (error) throw error;
-      return data;
+      
+      // Convert database icon string to SubEventIcon type
+      return data.map(event => ({
+        ...event,
+        icon: (event.icon?.charAt(0).toUpperCase() + event.icon?.slice(1)) as SubEventIcon
+      }));
     },
   });
 
