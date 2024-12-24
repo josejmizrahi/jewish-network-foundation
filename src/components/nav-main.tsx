@@ -15,8 +15,9 @@ import {
   SidebarMenuSubButton,
 } from "@/components/ui/sidebar"
 import { Badge } from "@/components/ui/badge"
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import { type NavItem } from "@/types/nav"
+import { useQueryClient } from "@tanstack/react-query"
 
 interface NavMainProps {
   items: NavItem[];
@@ -24,6 +25,31 @@ interface NavMainProps {
 
 export function NavMain({ items }: NavMainProps) {
   const location = useLocation();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  
+  // Prefetch data when hovering over links
+  const handlePrefetch = (url: string) => {
+    // Prefetch events data
+    if (url.startsWith('/events')) {
+      queryClient.prefetchQuery({
+        queryKey: ['events'],
+        queryFn: async () => {
+          const { data } = await supabase
+            .from('events')
+            .select('*')
+            .order('start_time', { ascending: true });
+          return data;
+        },
+      });
+    }
+  };
+
+  // Enhanced navigation with transition
+  const handleNavigation = (url: string) => {
+    // Start loading state if needed
+    navigate(url);
+  };
   
   return (
     <SidebarGroup>
@@ -43,9 +69,14 @@ export function NavMain({ items }: NavMainProps) {
                       tooltip={item.title}
                       isActive={location.pathname === item.url || 
                               item.items?.some(subItem => location.pathname === subItem.url)}
-                      className="transition-colors duration-200 hover:bg-accent/80 w-full"
+                      className="transition-all duration-200 hover:bg-accent/80 w-full"
                     >
-                      <Link to={item.url} className="flex items-center gap-2 w-full group-data-[collapsible=icon]:justify-center">
+                      <Link 
+                        to={item.url} 
+                        className="flex items-center gap-2 w-full group-data-[collapsible=icon]:justify-center"
+                        onMouseEnter={() => handlePrefetch(item.url)}
+                        onClick={() => handleNavigation(item.url)}
+                      >
                         <item.icon className="h-4 w-4 transition-transform duration-200 group-data-[collapsible=icon]:mx-auto" />
                         <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
                         {item.badge && (
@@ -64,10 +95,12 @@ export function NavMain({ items }: NavMainProps) {
                           <Link 
                             to={subItem.url}
                             className="w-full"
+                            onMouseEnter={() => handlePrefetch(subItem.url)}
+                            onClick={() => handleNavigation(subItem.url)}
                           >
                             <SidebarMenuSubButton 
                               isActive={location.pathname === subItem.url}
-                              className="transition-colors duration-200 hover:bg-accent/80"
+                              className="transition-all duration-200 hover:bg-accent/80"
                             >
                               <span>{subItem.title}</span>
                               {subItem.badge && (
@@ -86,11 +119,13 @@ export function NavMain({ items }: NavMainProps) {
                 <SidebarMenuButton 
                   tooltip={item.title} 
                   isActive={location.pathname === item.url}
-                  className="transition-colors duration-200 hover:bg-accent/80 w-full"
+                  className="transition-all duration-200 hover:bg-accent/80 w-full"
                 >
                   <Link 
                     to={item.url}
                     className="flex items-center gap-2 w-full group-data-[collapsible=icon]:justify-center"
+                    onMouseEnter={() => handlePrefetch(item.url)}
+                    onClick={() => handleNavigation(item.url)}
                   >
                     <item.icon className="h-4 w-4 transition-transform duration-200 group-data-[collapsible=icon]:mx-auto" />
                     <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>

@@ -33,6 +33,7 @@ export function EventDetail() {
       if (!data) throw new Error('Event not found');
       return data as Event;
     },
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   });
 
   const { data: isRegistered } = useQuery({
@@ -49,6 +50,7 @@ export function EventDetail() {
       if (error) throw error;
       return !!data;
     },
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   });
 
   const handleCancelEvent = async () => {
@@ -77,7 +79,7 @@ export function EventDetail() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-6 animate-fade-in">
         <Skeleton className="h-4 w-32" />
         <Skeleton className="h-[200px] md:h-[400px] w-full rounded-lg" />
         <div className="space-y-2">
