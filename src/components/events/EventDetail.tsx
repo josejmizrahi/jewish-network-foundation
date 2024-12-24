@@ -80,7 +80,7 @@ export function EventDetail() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6 animate-fade-in">
+      <div className="space-y-6 animate-fade-in will-change-transform">
         <Skeleton className="h-4 w-32" />
         <Skeleton className="h-[200px] md:h-[400px] w-full rounded-lg" />
         <div className="space-y-2">
@@ -93,7 +93,7 @@ export function EventDetail() {
 
   if (!event) {
     return (
-      <div className="p-4 text-center text-muted-foreground animate-fade-in">
+      <div className="p-4 text-center text-muted-foreground animate-fade-in will-change-transform">
         Event not found
       </div>
     );

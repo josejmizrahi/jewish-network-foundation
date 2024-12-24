@@ -77,16 +77,22 @@
 
 @layer utilities {
   .animate-fade-in {
-    animation: fadeIn 0.3s ease-out forwards;
+    animation: fadeIn 0.2s ease-out forwards;
     opacity: 0;
-    will-change: opacity;
+    will-change: opacity, transform;
+    backface-visibility: hidden;
+    perspective: 1000;
+    transform: translate3d(0,0,0);
   }
 
   .animate-slide-in {
-    animation: slideIn 0.2s ease-out forwards;
+    animation: slideIn 0.15s ease-out forwards;
     transform: translateY(10px);
     opacity: 0;
     will-change: transform, opacity;
+    backface-visibility: hidden;
+    perspective: 1000;
+    transform: translate3d(0,0,0);
   }
 
   .sticky-container {
@@ -95,6 +101,8 @@
     height: fit-content;
     transform: translateZ(0);
     will-change: transform;
+    backface-visibility: hidden;
+    perspective: 1000;
   }
 
   @keyframes fadeIn {
