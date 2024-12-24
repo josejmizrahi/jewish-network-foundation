@@ -1,9 +1,12 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Edit2, Share2 } from "lucide-react";
+import { Edit2, Share2, Lock, Globe } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { useToast } from "@/components/ui/use-toast";
+import { Switch } from "@/components/ui/switch";
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface EventHeaderProps {
   title: string;
@@ -14,6 +17,8 @@ interface EventHeaderProps {
   onCancel: () => void;
   status: string;
   coverImage?: string | null;
+  eventId: string;
+  isShareable: boolean;
 }
 
 export function EventHeader({
@@ -25,21 +30,25 @@ export function EventHeader({
   onCancel,
   status,
   coverImage,
+  eventId,
+  isShareable,
 }: EventHeaderProps) {
   const { toast } = useToast();
+  const [isSharingEnabled, setIsSharingEnabled] = useState(isShareable);
 
   const handleShare = async () => {
+    const shareUrl = `${window.location.origin}/events/${eventId}`;
     const shareData = {
       title,
       text: description || '',
-      url: window.location.href,
+      url: shareUrl,
     };
 
     try {
       if (navigator.share) {
         await navigator.share(shareData);
       } else {
-        await navigator.clipboard.writeText(window.location.href);
+        await navigator.clipboard.writeText(shareUrl);
         toast({
           title: "Link copied",
           description: "Event link has been copied to clipboard",
@@ -48,7 +57,7 @@ export function EventHeader({
     } catch (error) {
       // If share fails, fallback to clipboard
       try {
-        await navigator.clipboard.writeText(window.location.href);
+        await navigator.clipboard.writeText(shareUrl);
         toast({
           title: "Link copied",
           description: "Event link has been copied to clipboard",
@@ -60,6 +69,31 @@ export function EventHeader({
           variant: "destructive",
         });
       }
+    }
+  };
+
+  const toggleShareable = async () => {
+    try {
+      const { error } = await supabase
+        .from('events')
+        .update({ is_shareable: !isSharingEnabled })
+        .eq('id', eventId);
+
+      if (error) throw error;
+
+      setIsSharingEnabled(!isSharingEnabled);
+      toast({
+        title: isSharingEnabled ? "Sharing disabled" : "Sharing enabled",
+        description: isSharingEnabled 
+          ? "This event is no longer publicly shareable" 
+          : "Anyone with the link can now view this event",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update sharing settings",
+        variant: "destructive",
+      });
     }
   };
 
@@ -92,7 +126,16 @@ export function EventHeader({
               <Badge variant="destructive" className="rounded-full">Cancelled</Badge>
             )}
             {isPrivate && (
-              <Badge variant="secondary" className="rounded-full">Private</Badge>
+              <Badge variant="secondary" className="rounded-full">
+                <Lock className="w-3 h-3 mr-1" />
+                Private
+              </Badge>
+            )}
+            {isSharingEnabled && (
+              <Badge variant="secondary" className="rounded-full">
+                <Globe className="w-3 h-3 mr-1" />
+                Shareable
+              </Badge>
             )}
           </div>
           <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
@@ -109,6 +152,13 @@ export function EventHeader({
           </Button>
           {isOrganizer && status !== 'cancelled' && (
             <>
+              <div className="flex items-center gap-2 px-3 py-1 rounded-full border">
+                <span className="text-sm">Public link</span>
+                <Switch
+                  checked={isSharingEnabled}
+                  onCheckedChange={toggleShareable}
+                />
+              </div>
               <Button
                 variant="outline"
                 size="sm"

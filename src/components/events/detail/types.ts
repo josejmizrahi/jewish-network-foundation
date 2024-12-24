@@ -35,6 +35,7 @@ export interface Event {
   current_attendees: number;
   status: string;
   is_private: boolean;
+  is_shareable: boolean;
   cover_image: string | null;
   organizer_id: string;
   category: EventCategory;
@@ -44,16 +45,4 @@ export interface Event {
     full_name: string;
     avatar_url: string | null;
   } | null;
-}
-
-export interface SubEvent {
-  id: string;
-  title: string;
-  description: string | null;
-  start_time: string;
-  end_time: string;
-  location: string | null;
-  is_online: boolean;
-  meeting_url: string | null;
-  icon?: SubEventIcon;
 }

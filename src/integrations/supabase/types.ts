@@ -200,6 +200,7 @@ export type Database = {
           id: string
           is_online: boolean | null
           is_private: boolean | null
+          is_shareable: boolean | null
           location: string | null
           max_capacity: number | null
           meeting_url: string | null
@@ -224,6 +225,7 @@ export type Database = {
           id?: string
           is_online?: boolean | null
           is_private?: boolean | null
+          is_shareable?: boolean | null
           location?: string | null
           max_capacity?: number | null
           meeting_url?: string | null
@@ -248,6 +250,7 @@ export type Database = {
           id?: string
           is_online?: boolean | null
           is_private?: boolean | null
+          is_shareable?: boolean | null
           location?: string | null
           max_capacity?: number | null
           meeting_url?: string | null
