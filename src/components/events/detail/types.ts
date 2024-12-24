@@ -41,6 +41,7 @@ export interface Event {
   category: EventCategory;
   tags: string[];
   waitlist_enabled: boolean;
+  luma_id: string | null;
   organizer: {
     full_name: string;
     avatar_url: string | null;

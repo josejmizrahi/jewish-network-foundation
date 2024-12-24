@@ -1,7 +1,6 @@
 import { Event } from "./types";
 import { EventInfo } from "./EventInfo";
 import { EventOrganizer } from "./EventOrganizer";
-import { EventRegistrationCard } from "./registration/EventRegistrationCard";
 import { EventManagementTabs } from "./EventManagementTabs";
 import { EventTimeline } from "./EventTimeline";
 import { User } from "@supabase/supabase-js";
@@ -58,22 +57,6 @@ export function EventContent({ event, isOrganizer, isRegistered, user }: EventCo
           isRegistered={isRegistered}
           showMap={false}
         />
-      </div>
-
-      {/* Registration Card */}
-      <div className={isMobile ? "" : "sticky top-6 z-10"}>
-        <div className="rounded-xl border bg-background/50 backdrop-blur supports-[backdrop-filter]:bg-background/50 shadow-sm">
-          <EventRegistrationCard
-            eventId={event.id}
-            isRegistered={isRegistered}
-            status={event.status}
-            user={user}
-            currentAttendees={event.current_attendees}
-            maxCapacity={event.max_capacity}
-            waitlistEnabled={event.waitlist_enabled}
-            isPrivate={event.is_private}
-          />
-        </div>
       </div>
 
       {/* Timeline */}
