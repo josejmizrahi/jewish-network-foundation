@@ -1,19 +1,26 @@
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { MenuIcon } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { NavItems } from "@/components/nav/nav-items";
 import { UserMenu } from "@/components/nav/user-menu";
 import { SearchBar } from "@/components/nav/search-bar";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { NotificationsMenu } from "@/components/nav/notifications-menu";
 import { useAuth } from "@/hooks/useAuth";
+import { PageBreadcrumb } from "@/components/nav/Breadcrumb";
+import { motion } from "framer-motion";
 
 export function MainNav({ children }: { children?: React.ReactNode }) {
   const { user } = useAuth();
+  const location = useLocation();
 
   return (
-    <header className="sticky top-0 z-50 w-full h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <motion.header 
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      className="sticky top-0 z-50 w-full h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+    >
       <div className="h-full flex items-center px-6">
         <div className="flex items-center gap-6 md:gap-8">
           {children}
@@ -57,6 +64,9 @@ export function MainNav({ children }: { children?: React.ReactNode }) {
           </div>
         </div>
       </div>
-    </header>
+      <div className="px-6 py-2 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <PageBreadcrumb />
+      </div>
+    </motion.header>
   );
 }
