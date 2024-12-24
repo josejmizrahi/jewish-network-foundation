@@ -101,9 +101,9 @@ export default function Settings() {
                 onUpdateSettings={handleUpdateSettings}
                 onUpdateNotifications={handleUpdateNotifications}
                 onUpdatePassword={handleUpdatePassword}
-                isLoading={isLoading}
-                error={null}
-                user={user}
+                isUpdating={isLoading}
+                isUpdatingNotifications={isLoading}
+                isUpdatingPassword={isLoading}
               />
             </div>
           </SidebarInset>

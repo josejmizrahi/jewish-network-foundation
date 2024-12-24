@@ -3,6 +3,7 @@ import { SettingsGeneral } from "./tabs/SettingsGeneral";
 import { SettingsNotifications } from "./tabs/SettingsNotifications";
 import { SettingsSecurity } from "./tabs/SettingsSecurity";
 import type { Profile } from "@/types/profile";
+import type { User } from "@supabase/supabase-js";
 
 interface SettingsTabsProps {
   profileData: Profile;
@@ -12,6 +13,8 @@ interface SettingsTabsProps {
   isUpdating: boolean;
   isUpdatingNotifications: boolean;
   isUpdatingPassword: boolean;
+  error?: any;
+  user?: User;
 }
 
 export function SettingsTabs({
