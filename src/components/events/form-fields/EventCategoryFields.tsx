@@ -28,7 +28,7 @@ const CATEGORIES = [
 
 export function EventCategoryFields({ form }: EventCategoryFieldsProps) {
   const [newTag, setNewTag] = useState("");
-  const tags = form.watch("tags") || []; // Add default empty array
+  const tags = form.watch("tags") || [];
 
   const handleAddTag = (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,15 +71,15 @@ export function EventCategoryFields({ form }: EventCategoryFieldsProps) {
 
       <div className="space-y-2">
         <Label>Tags</Label>
-        <form onSubmit={handleAddTag} className="flex gap-2">
+        <div className="flex gap-2">
           <Input
             value={newTag}
             onChange={(e) => setNewTag(e.target.value)}
             placeholder="Add a tag..."
             className="flex-1"
           />
-          <Button type="submit" variant="secondary">Add</Button>
-        </form>
+          <Button type="button" variant="secondary" onClick={handleAddTag}>Add</Button>
+        </div>
         <div className="flex flex-wrap gap-2 mt-2">
           {tags.map((tag) => (
             <Badge key={tag} variant="secondary" className="px-2 py-1">
