@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Event } from "@/components/events/list/types";
+import type { EventCategory } from "@/components/events/detail/types";
 
 export function useEvents() {
   return useQuery({
@@ -27,7 +28,11 @@ export function useEvents() {
           throw error;
         }
 
-        return data || [];
+        // Ensure category is of type EventCategory
+        return (data || []).map(event => ({
+          ...event,
+          category: (event.category || 'other') as EventCategory
+        })) as Event[];
       } catch (error) {
         console.error("Error in useEvents:", error);
         throw error;
@@ -87,9 +92,10 @@ export function useEventInvitations() {
           throw error;
         }
 
-        // Transform the data to match the Event type with invitation details
+        // Transform the data and ensure proper category type
         return (data || []).map(invitation => ({
           ...invitation.event,
+          category: (invitation.event.category || 'other') as EventCategory,
           invitation_id: invitation.id,
           invitation_status: invitation.status,
           last_viewed_at: invitation.last_viewed_at,
