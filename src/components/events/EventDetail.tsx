@@ -13,6 +13,7 @@ import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { InviteMembers } from "./detail/InviteMembers";
+import { InvitationsList } from "./detail/InvitationsList";
 
 interface Event {
   id: string;
@@ -158,6 +159,7 @@ export function EventDetail() {
           {isOrganizer && (
             <>
               <InviteMembers eventId={event.id} isOrganizer={isOrganizer} />
+              <InvitationsList eventId={event.id} isOrganizer={isOrganizer} />
               <EventAttendees eventId={event.id} isOrganizer={isOrganizer} />
             </>
           )}
