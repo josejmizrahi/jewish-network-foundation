@@ -26,6 +26,7 @@ export interface Event {
   } | null;
   invitation_id?: string;
   invitation_status?: string;
+  invitation_created_at?: string;
 }
 
 export const categoryColors: Record<string, string> = {

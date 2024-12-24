@@ -82,12 +82,14 @@ export function InvitationCard({ event, invitationId, invitationStatus }: Invita
                 </span>
               </div>
             )}
-            <div className="flex items-center gap-1.5">
-              <Clock className="h-4 w-4" />
-              <span>
-                Invited {format(new Date(event.invitation_created_at || ''), "PP")}
-              </span>
-            </div>
+            {event.invitation_created_at && (
+              <div className="flex items-center gap-1.5">
+                <Clock className="h-4 w-4" />
+                <span>
+                  Invited {format(new Date(event.invitation_created_at), "PP")}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>
