@@ -4,6 +4,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { InvitationItem } from "./InvitationItem";
 import { Loader2 } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 interface EventInvitationsListProps {
   eventId: string;
@@ -13,7 +15,12 @@ interface EventInvitationsListProps {
 export function EventInvitationsList({ eventId, isOrganizer }: EventInvitationsListProps) {
   const { toast } = useToast();
   
-  const { data: invitations, isLoading, refetch } = useQuery({
+  const { 
+    data: invitations, 
+    isLoading, 
+    error,
+    refetch 
+  } = useQuery({
     queryKey: ['event-invitations', eventId],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -69,11 +76,14 @@ export function EventInvitationsList({ eventId, isOrganizer }: EventInvitationsL
 
   if (!isOrganizer) return null;
 
-  if (isLoading) {
+  if (error) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-      </div>
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          Failed to load invitations. Please try again later.
+        </AlertDescription>
+      </Alert>
     );
   }
 
@@ -85,23 +95,30 @@ export function EventInvitationsList({ eventId, isOrganizer }: EventInvitationsL
           {invitations?.length || 0} invitation{invitations?.length !== 1 ? 's' : ''}
         </span>
       </div>
-      <ScrollArea className="h-[400px] rounded-md border">
-        <div className="p-4 space-y-6">
-          {invitations?.map((invitation) => (
-            <InvitationItem
-              key={invitation.id}
-              invitation={invitation}
-              onRemove={handleCancelInvitation}
-            />
-          ))}
 
-          {!invitations?.length && (
-            <p className="text-center text-muted-foreground py-8">
-              No invitations sent yet
-            </p>
-          )}
+      {isLoading ? (
+        <div className="flex items-center justify-center p-8">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         </div>
-      </ScrollArea>
+      ) : (
+        <ScrollArea className="h-[400px] rounded-md border">
+          <div className="p-4 space-y-6">
+            {invitations?.map((invitation) => (
+              <InvitationItem
+                key={invitation.id}
+                invitation={invitation}
+                onRemove={handleCancelInvitation}
+              />
+            ))}
+
+            {!invitations?.length && (
+              <p className="text-center text-muted-foreground py-8">
+                No invitations sent yet
+              </p>
+            )}
+          </div>
+        </ScrollArea>
+      )}
     </div>
   );
 }
