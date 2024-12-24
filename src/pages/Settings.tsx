@@ -8,6 +8,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { isVerificationStatus } from "@/types/verification";
+import type { Profile } from "@/types/profile";
 
 export default function Settings() {
   const { user } = useAuth();
@@ -23,7 +25,13 @@ export default function Settings() {
         .single();
 
       if (error) throw error;
-      return data;
+
+      // Ensure verification_status is valid
+      if (data && !isVerificationStatus(data.verification_status)) {
+        data.verification_status = 'pending'; // Default to pending if invalid
+      }
+
+      return data as Profile;
     },
     enabled: !!user,
   });

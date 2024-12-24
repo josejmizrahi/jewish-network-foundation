@@ -7,6 +7,8 @@ import { BottomNav } from "@/components/nav/BottomNav";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { isVerificationStatus } from "@/types/verification";
+import type { Profile } from "@/types/profile";
 
 export default function Profile() {
   const { user } = useAuth();
@@ -21,12 +23,18 @@ export default function Profile() {
         .single();
 
       if (error) throw error;
-      return data;
+
+      // Ensure verification_status is valid
+      if (data && !isVerificationStatus(data.verification_status)) {
+        data.verification_status = 'pending'; // Default to pending if invalid
+      }
+
+      return data as Profile;
     },
     enabled: !!user,
   });
 
-  const handleUpdateProfile = async (updatedProfile: any) => {
+  const handleUpdateProfile = async (updatedProfile: Profile) => {
     const { error } = await supabase
       .from('profiles')
       .update(updatedProfile)
@@ -51,8 +59,8 @@ export default function Profile() {
               <ProfileForm 
                 profile={profile}
                 updating={false}
-                onUpdateProfile={handleUpdateProfile}
-                onProfileChange={() => {}}
+                onUpdateProfile={() => handleUpdateProfile(profile)}
+                onProfileChange={(updatedProfile) => handleUpdateProfile(updatedProfile)}
               />
             </div>
           </SidebarInset>
