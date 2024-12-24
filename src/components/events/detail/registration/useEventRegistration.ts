@@ -25,10 +25,10 @@ export function useEventRegistration({
 
   const syncWithLuma = async (userId: string, status: string) => {
     try {
-      // Get user email for Luma sync
+      // Get user profile for email
       const { data: userData, error: userError } = await supabase
         .from('profiles')
-        .select('email')
+        .select('id, email_notifications')
         .eq('id', userId)
         .single();
 
@@ -43,13 +43,13 @@ export function useEventRegistration({
 
       if (eventError) throw eventError;
 
-      if (eventData?.luma_id) {
+      if (eventData?.luma_id && userData?.email_notifications) {
         await supabase.functions.invoke('luma-api', {
           body: {
             action: 'sync-rsvp',
             eventData: {
               luma_id: eventData.luma_id,
-              user_email: userData.email,
+              user_id: userId,
               status: status
             }
           }

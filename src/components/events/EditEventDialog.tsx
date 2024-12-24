@@ -27,6 +27,7 @@ interface EditEventDialogProps {
     cover_image: string | null;
     category: EventCategory;
     tags: string[];
+    luma_id?: string | null;
   };
 }
 
