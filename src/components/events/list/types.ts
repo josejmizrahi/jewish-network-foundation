@@ -20,6 +20,7 @@ export interface Event {
   tags: string[];
   organizer_id: string;
   waitlist_enabled: boolean;
+  attendees?: { user_id: string }[];
   organizer: {
     full_name: string;
     avatar_url: string | null;

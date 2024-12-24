@@ -16,6 +16,8 @@ interface EventContentProps {
   onTimeFilterChange: (value: "upcoming" | "past" | "all") => void;
   showFilters?: boolean;
   activeTab: "all" | "invitations";
+  showMyEvents: boolean;
+  onMyEventsChange: (value: boolean) => void;
 }
 
 export function EventContent({
@@ -28,6 +30,8 @@ export function EventContent({
   onTimeFilterChange,
   showFilters = true,
   activeTab,
+  showMyEvents,
+  onMyEventsChange,
 }: EventContentProps) {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [availableTags, setAvailableTags] = useState<string[]>([]);
@@ -80,6 +84,8 @@ export function EventContent({
           selectedTags={selectedTags}
           onTagSelect={handleTagSelect}
           availableTags={availableTags}
+          showMyEvents={showMyEvents}
+          onMyEventsChange={onMyEventsChange}
         />
       )}
 
