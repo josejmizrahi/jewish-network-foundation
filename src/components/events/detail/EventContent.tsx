@@ -3,7 +3,10 @@ import { EventInfo } from "./EventInfo";
 import { EventOrganizer } from "./EventOrganizer";
 import { EventRegistrationCard } from "./registration/EventRegistrationCard";
 import { EventManagementTabs } from "./EventManagementTabs";
+import { EventTimeline } from "./EventTimeline";
 import { User } from "@supabase/supabase-js";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 interface EventContentProps {
   event: Event;
@@ -13,6 +16,20 @@ interface EventContentProps {
 }
 
 export function EventContent({ event, isOrganizer, isRegistered, user }: EventContentProps) {
+  const { data: subEvents = [] } = useQuery({
+    queryKey: ['sub-events', event.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('sub_events')
+        .select('*')
+        .eq('event_id', event.id)
+        .order('start_time', { ascending: true });
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
   return (
     <div className="grid gap-4 md:gap-8 md:grid-cols-3">
       <div className="md:col-span-2 space-y-4 md:space-y-8">
@@ -26,6 +43,10 @@ export function EventContent({ event, isOrganizer, isRegistered, user }: EventCo
           currentAttendees={event.current_attendees}
           isRegistered={isRegistered}
         />
+
+        {subEvents.length > 0 && (
+          <EventTimeline subEvents={subEvents} />
+        )}
 
         {event.organizer && (
           <EventOrganizer 

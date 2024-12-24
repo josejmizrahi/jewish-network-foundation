@@ -378,6 +378,56 @@ export type Database = {
         }
         Relationships: []
       }
+      sub_events: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          end_time: string
+          event_id: string
+          id: string
+          is_online: boolean | null
+          location: string | null
+          meeting_url: string | null
+          start_time: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          end_time: string
+          event_id: string
+          id?: string
+          is_online?: boolean | null
+          location?: string | null
+          meeting_url?: string | null
+          start_time: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          end_time?: string
+          event_id?: string
+          id?: string
+          is_online?: boolean | null
+          location?: string | null
+          meeting_url?: string | null
+          start_time?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sub_events_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       verification_criteria: {
         Row: {
           created_at: string | null
