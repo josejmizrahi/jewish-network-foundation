@@ -7,9 +7,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { format } from "date-fns";
-import { MoreHorizontal, UserX, Mail, Clock } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { format, isValid, parseISO } from "date-fns";
+import { Clock, Mail, MoreHorizontal, UserX } from "lucide-react";
 
 interface InvitationItemProps {
   invitation: {
@@ -38,6 +38,19 @@ export function InvitationItem({ invitation, onRemove }: InvitationItemProps) {
     }
   };
 
+  const formatDate = (dateString: string) => {
+    try {
+      const date = parseISO(dateString);
+      if (!isValid(date)) {
+        return 'Invalid date';
+      }
+      return format(date, 'MMM d, yyyy');
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Invalid date';
+    }
+  };
+
   return (
     <div className="flex items-center justify-between group hover:bg-accent/50 p-2 rounded-lg transition-colors">
       <div className="flex items-center gap-3">
@@ -52,7 +65,7 @@ export function InvitationItem({ invitation, onRemove }: InvitationItemProps) {
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Clock className="h-3 w-3" />
             <span>
-              Sent {format(new Date(invitation.created_at), 'MMM d, yyyy')}
+              Sent {formatDate(invitation.created_at)}
             </span>
             {invitation.invitee.email_notifications && (
               <Tooltip>
