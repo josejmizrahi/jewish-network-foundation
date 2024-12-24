@@ -34,14 +34,21 @@ export function EventsList() {
     category_color: event.category_color || 'gray'
   })) as Event[];
 
-  const invitations = invitationsData.map(invitation => ({
-    ...invitation.event,
-    category: (invitation.event?.category || 'other') as EventCategory,
-    category_color: invitation.event?.category_color || 'gray',
-    invitation_id: invitation.id,
-    invitation_status: invitation.status,
-    organizer: invitation.event?.organizer || null // Ensure organizer is included
-  })) as Event[];
+  const invitations = invitationsData.map(invitation => {
+    const eventData = invitation.event || {};
+    return {
+      ...eventData,
+      category: (eventData.category || 'other') as EventCategory,
+      category_color: eventData.category_color || 'gray',
+      invitation_id: invitation.id,
+      invitation_status: invitation.status,
+      organizer_id: eventData.organizer_id,
+      organizer: {
+        full_name: eventData.organizer?.full_name || '',
+        avatar_url: eventData.organizer?.avatar_url || null
+      }
+    };
+  }) as Event[];
 
   if (eventsLoading || invitationsLoading) {
     return <LoadingSkeleton />;
