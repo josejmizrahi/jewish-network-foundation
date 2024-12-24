@@ -4,6 +4,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/auth-helpers-react";
 import { Card } from "@/components/ui/card";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { useState } from "react";
 
 interface EventRegistrationProps {
   eventId: string;
@@ -26,6 +28,7 @@ export function EventRegistration({
 }: EventRegistrationProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   const isFull = maxCapacity !== null && currentAttendees >= maxCapacity;
   const canJoinWaitlist = isFull && waitlistEnabled && !isRegistered;
@@ -43,13 +46,26 @@ export function EventRegistration({
     try {
       const registrationType = isFull && waitlistEnabled ? 'waitlist' : 'registered';
       
+      // Get current waitlist position if joining waitlist
+      let waitlistPosition = null;
+      if (registrationType === 'waitlist') {
+        const { data: waitlistCount } = await supabase
+          .from('event_attendees')
+          .select('count')
+          .eq('event_id', eventId)
+          .eq('registration_type', 'waitlist')
+          .single();
+        
+        waitlistPosition = (waitlistCount?.count || 0) + 1;
+      }
+
       const { error } = await supabase
         .from('event_attendees')
         .insert({
           event_id: eventId,
           user_id: user.id,
           registration_type: registrationType,
-          waitlist_position: registrationType === 'waitlist' ? currentAttendees - maxCapacity! + 1 : null
+          waitlist_position: waitlistPosition
         });
 
       if (error) throw error;
@@ -72,9 +88,37 @@ export function EventRegistration({
     }
   };
 
+  const handleCancelRegistration = async () => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('event_attendees')
+        .delete()
+        .eq('event_id', eventId)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Registration cancelled",
+        description: "Your registration has been cancelled successfully.",
+      });
+      
+      queryClient.invalidateQueries({ queryKey: ['event-registration', eventId] });
+      queryClient.invalidateQueries({ queryKey: ['event-attendees', eventId] });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to cancel registration.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const getButtonText = () => {
     if (status === 'cancelled') return "Event Cancelled";
-    if (isRegistered) return "Already Registered";
+    if (isRegistered) return "Cancel Registration";
     if (canJoinWaitlist) return "Join Waitlist";
     if (isFull && !waitlistEnabled) return "Event Full";
     return "Register Now";
@@ -113,12 +157,30 @@ export function EventRegistration({
         <Button
           className="w-full rounded-full"
           size="lg"
-          onClick={handleRegister}
-          disabled={isRegistered || !user || status === 'cancelled' || (isFull && !waitlistEnabled)}
+          onClick={isRegistered ? () => setIsConfirmOpen(true) : handleRegister}
+          disabled={!user || status === 'cancelled' || (isFull && !waitlistEnabled && !isRegistered)}
+          variant={isRegistered ? "destructive" : "default"}
         >
           {getButtonText()}
         </Button>
       </div>
+
+      <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Cancel Registration</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to cancel your registration? If there's a waitlist, your spot will be given to the next person in line.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep Registration</AlertDialogCancel>
+            <AlertDialogAction onClick={handleCancelRegistration}>
+              Cancel Registration
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 }

@@ -5,12 +5,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { EventFormFields } from "./EventFormFields";
 import { eventFormSchema, type EventFormValues } from "./schemas/eventFormSchema";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { format } from "date-fns";
+import { utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
 
 interface CreateEventDialogProps {
   open: boolean;
@@ -21,6 +23,7 @@ export function CreateEventDialog({ open, onOpenChange }: CreateEventDialogProps
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
+  const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventFormSchema),
@@ -29,25 +32,41 @@ export function CreateEventDialog({ open, onOpenChange }: CreateEventDialogProps
       description: "",
       start_time: new Date(),
       end_time: new Date(),
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      timezone: userTimezone,
       is_online: false,
       is_private: false,
+      waitlist_enabled: false,
+      max_capacity: null,
     },
   });
 
   const onSubmit = async (data: EventFormValues) => {
     if (!user) return;
     
+    // Validate end time is after start time
+    if (data.end_time <= data.start_time) {
+      toast({
+        title: "Invalid time range",
+        description: "End time must be after start time",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsSubmitting(true);
     try {
+      // Convert times to UTC for storage
+      const utcStartTime = zonedTimeToUtc(data.start_time, data.timezone);
+      const utcEndTime = zonedTimeToUtc(data.end_time, data.timezone);
+
       const formattedData = {
         ...data,
-        start_time: data.start_time.toISOString(),
-        end_time: data.end_time.toISOString(),
+        start_time: utcStartTime.toISOString(),
+        end_time: utcEndTime.toISOString(),
         organizer_id: user.id,
         status: 'published',
-        timezone: data.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
-        title: data.title,
+        current_attendees: 0, // Initialize with 0
+        timezone: data.timezone || userTimezone,
       };
 
       const { error } = await supabase
