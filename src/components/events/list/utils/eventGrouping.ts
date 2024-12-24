@@ -5,7 +5,8 @@ export const filterEvents = (
   events: Event[],
   search: string,
   category: string,
-  timeFilter: "upcoming" | "past" | "all"
+  timeFilter: "upcoming" | "past" | "all",
+  selectedTags: string[] = []
 ): Event[] => {
   if (!Array.isArray(events)) return [];
   
@@ -24,7 +25,10 @@ export const filterEvents = (
       (timeFilter === "upcoming" && isAfter(eventDate, now)) ||
       (timeFilter === "past" && isBefore(eventDate, now));
 
-    return matchesSearch && matchesCategory && matchesTimeFilter;
+    const matchesTags = selectedTags.length === 0 || 
+      selectedTags.every(tag => event.tags?.includes(tag));
+
+    return matchesSearch && matchesCategory && matchesTimeFilter && matchesTags;
   });
 };
 

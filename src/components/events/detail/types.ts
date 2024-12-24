@@ -15,6 +15,8 @@ export interface Event {
   organizer_id: string;
   cover_image: string | null;
   waitlist_enabled: boolean;
+  category: "conference" | "workshop" | "meetup" | "social" | "sports" | "entertainment" | "education" | "business" | "charity" | "other";
+  tags: string[];
   organizer: {
     full_name: string;
     avatar_url: string;

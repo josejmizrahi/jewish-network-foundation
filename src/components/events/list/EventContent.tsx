@@ -4,6 +4,7 @@ import { EmptyState } from "./EmptyState";
 import { filterEvents, groupEventsByDate } from "./utils/eventGrouping";
 import { categoryColors } from "./types";
 import { EventFilters } from "../filters/EventFilters";
+import { useState, useEffect } from "react";
 
 interface EventContentProps {
   events: Event[];
@@ -26,9 +27,29 @@ export function EventContent({
   onTimeFilterChange,
   showFilters = true,
 }: EventContentProps) {
-  const filteredEvents = filterEvents(events, search, category, timeFilter);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [availableTags, setAvailableTags] = useState<string[]>([]);
+
+  useEffect(() => {
+    // Extract unique tags from all events
+    const tags = new Set<string>();
+    events.forEach(event => {
+      event.tags?.forEach(tag => tags.add(tag));
+    });
+    setAvailableTags(Array.from(tags));
+  }, [events]);
+
+  const handleTagSelect = (tag: string) => {
+    setSelectedTags(prev => 
+      prev.includes(tag) 
+        ? prev.filter(t => t !== tag)
+        : [...prev, tag]
+    );
+  };
+
+  const filteredEvents = filterEvents(events, search, category, timeFilter, selectedTags);
   const groupedEvents = groupEventsByDate(filteredEvents);
-  const hasFilters = search !== "" || category !== "all" || timeFilter !== "all";
+  const hasFilters = search !== "" || category !== "all" || timeFilter !== "all" || selectedTags.length > 0;
 
   return (
     <div className="mt-6">
@@ -40,6 +61,9 @@ export function EventContent({
           onCategoryChange={onCategoryChange}
           timeFilter={timeFilter}
           onTimeFilterChange={onTimeFilterChange}
+          selectedTags={selectedTags}
+          onTagSelect={handleTagSelect}
+          availableTags={availableTags}
         />
       )}
       {Object.keys(groupedEvents).length === 0 ? (
