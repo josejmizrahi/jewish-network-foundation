@@ -55,7 +55,7 @@ export function EventsList() {
           onCategoryChange={setCategory}
           timeFilter={timeFilter}
           onTimeFilterChange={setTimeFilter}
-          showFilters={true}
+          showFilters={activeTab === "all"}
           activeTab={activeTab}
         />
       </EventTabs>

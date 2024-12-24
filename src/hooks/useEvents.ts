@@ -38,6 +38,7 @@ export function useEventInvitations() {
             description,
             start_time,
             end_time,
+            timezone,
             location,
             is_online,
             meeting_url,
@@ -49,6 +50,8 @@ export function useEventInvitations() {
             category,
             category_color,
             tags,
+            organizer_id,
+            waitlist_enabled,
             organizer:profiles!events_organizer_id_fkey(
               full_name,
               avatar_url
