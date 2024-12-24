@@ -1,10 +1,12 @@
-import { Calendar, MapPin, Users, Video, Tag, BadgeCheck, BadgeAlert } from "lucide-react";
+import { Calendar, MapPin, Users, Video, Tag, BadgeCheck, BadgeAlert, Share2 } from "lucide-react";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Event } from "./types";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 
 interface EventCardProps {
   event: Event;
@@ -12,6 +14,46 @@ interface EventCardProps {
 }
 
 export function EventCard({ event, categoryColors }: EventCardProps) {
+  const { toast } = useToast();
+
+  const handleShare = async (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent navigation
+    e.stopPropagation(); // Prevent event bubbling
+
+    const shareData = {
+      title: event.title,
+      text: event.description || '',
+      url: `${window.location.origin}/events/${event.id}`,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(shareData.url);
+        toast({
+          title: "Link copied",
+          description: "Event link has been copied to clipboard",
+        });
+      }
+    } catch (error) {
+      // If share fails, fallback to clipboard
+      try {
+        await navigator.clipboard.writeText(shareData.url);
+        toast({
+          title: "Link copied",
+          description: "Event link has been copied to clipboard",
+        });
+      } catch (clipboardError) {
+        toast({
+          title: "Error",
+          description: "Failed to share or copy event link",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
   const getStatusBadge = () => {
     switch (event.status) {
       case 'published':
@@ -99,6 +141,14 @@ export function EventCard({ event, categoryColors }: EventCardProps) {
                   <Tag className="w-3 h-3 mr-1" />
                   {event.category}
                 </Badge>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 rounded-full"
+                  onClick={handleShare}
+                >
+                  <Share2 className="h-4 w-4" />
+                </Button>
               </div>
             </div>
             <div className="flex flex-wrap gap-4 mt-3 text-sm text-muted-foreground">
