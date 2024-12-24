@@ -1,7 +1,7 @@
 import { format } from "date-fns";
-import { MapPin, Video } from "lucide-react";
+import { MapPin, Video, Calendar } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import * as Icons from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import { SubEventIcon } from "./sub-events/SubEventIconSelect";
 
 interface SubEvent {
@@ -23,6 +23,16 @@ interface EventTimelineProps {
 export function EventTimeline({ subEvents }: EventTimelineProps) {
   if (!subEvents.length) return null;
 
+  const getIconComponent = (iconName: string = 'calendar') => {
+    // Convert kebab-case to PascalCase for Lucide icon names
+    const pascalCaseName = iconName
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join('');
+    
+    return (LucideIcons as Record<string, typeof Calendar>)[pascalCaseName] || Calendar;
+  };
+
   return (
     <Card className="p-6">
       <h2 className="text-lg font-semibold mb-6">Event Timeline</h2>
@@ -33,11 +43,7 @@ export function EventTimeline({ subEvents }: EventTimelineProps) {
         {/* Timeline events */}
         <div className="space-y-8">
           {subEvents.map((subEvent) => {
-            // Dynamically get the icon component
-            const IconComponent = subEvent.icon ? 
-              (Icons as Record<string, Icons.LucideIcon>)[subEvent.icon.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('')] || 
-              Icons.Calendar : 
-              Icons.Calendar;
+            const IconComponent = getIconComponent(subEvent.icon);
 
             return (
               <div key={subEvent.id} className="relative flex gap-4">

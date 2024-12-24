@@ -384,6 +384,7 @@ export type Database = {
           description: string | null
           end_time: string
           event_id: string
+          icon: string | null
           id: string
           is_online: boolean | null
           location: string | null
@@ -397,6 +398,7 @@ export type Database = {
           description?: string | null
           end_time: string
           event_id: string
+          icon?: string | null
           id?: string
           is_online?: boolean | null
           location?: string | null
@@ -410,6 +412,7 @@ export type Database = {
           description?: string | null
           end_time?: string
           event_id?: string
+          icon?: string | null
           id?: string
           is_online?: boolean | null
           location?: string | null
