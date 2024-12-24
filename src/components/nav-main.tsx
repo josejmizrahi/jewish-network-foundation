@@ -14,6 +14,7 @@ import {
   SidebarMenuSubItem,
   SidebarMenuSubButton,
 } from "@/components/ui/sidebar"
+import { Badge } from "@/components/ui/badge"
 import { Link, useLocation } from "react-router-dom"
 
 interface NavMainProps {

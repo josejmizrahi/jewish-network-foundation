@@ -34,9 +34,12 @@ export function useEventInvitations() {
         .select(`
           id,
           status,
-          event:events(
+          event:events!inner(
             *,
-            organizer:profiles!events_organizer_id_fkey(full_name, avatar_url)
+            organizer:profiles!events_organizer_id_fkey(
+              full_name,
+              avatar_url
+            )
           )
         `)
         .eq('invitee_id', user.id)
@@ -49,14 +52,12 @@ export function useEventInvitations() {
 
       console.log("Raw invitation data:", invitationData);
 
-      // Filter out any null events and map to the expected Event type
-      const processedInvitations = (invitationData || [])
-        .filter(inv => inv.event)
-        .map(inv => ({
-          ...inv.event,
-          invitation_id: inv.id,
-          invitation_status: inv.status
-        }));
+      // Map the nested event data to match the Event type
+      const processedInvitations = (invitationData || []).map(inv => ({
+        ...inv.event,
+        invitation_id: inv.id,
+        invitation_status: inv.status
+      }));
 
       console.log("Processed invitations:", processedInvitations);
       return processedInvitations as Event[];
