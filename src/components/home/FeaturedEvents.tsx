@@ -5,7 +5,6 @@ import { Calendar, MapPin, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
-import { motion } from "framer-motion";
 
 export function FeaturedEvents() {
   const { data: upcomingEvents } = useQuery({
@@ -20,8 +19,6 @@ export function FeaturedEvents() {
           location,
           is_online,
           category,
-          current_attendees,
-          max_capacity,
           organizer:profiles!events_organizer_id_fkey (
             full_name
           )

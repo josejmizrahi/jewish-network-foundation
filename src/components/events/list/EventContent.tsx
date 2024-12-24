@@ -1,10 +1,7 @@
-import { Event } from "./types";
+import { Event } from "../detail/types";
 import { EventFilters } from "../filters/EventFilters";
 import { FilteredEventsList } from "./filtered/FilteredEventsList";
-import { InvitationsList } from "./invitations/InvitationsList";
-import { EventNotificationHandler } from "./notifications/EventNotificationHandler";
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 
 interface EventContentProps {
   events: Event[];
@@ -15,7 +12,7 @@ interface EventContentProps {
   timeFilter: "upcoming" | "past" | "all";
   onTimeFilterChange: (value: "upcoming" | "past" | "all") => void;
   showFilters?: boolean;
-  activeTab: "all" | "invitations";
+  activeTab: "all";
   showMyEvents: boolean;
   onMyEventsChange: (value: boolean) => void;
 }
@@ -29,7 +26,6 @@ export function EventContent({
   timeFilter,
   onTimeFilterChange,
   showFilters = true,
-  activeTab,
   showMyEvents,
   onMyEventsChange,
 }: EventContentProps) {
@@ -53,22 +49,11 @@ export function EventContent({
     );
   };
 
-  const handleViewInvitation = async (invitationId: string) => {
-    await supabase
-      .from('event_invitations')
-      .update({ last_viewed_at: new Date().toISOString() })
-      .eq('id', invitationId);
-
-    window.location.href = '/events?tab=invitations';
-  };
-
   const hasFilters = search !== "" || category !== "all" || timeFilter !== "all" || selectedTags.length > 0;
 
   return (
     <div className="mt-6">
-      <EventNotificationHandler handleViewInvitation={handleViewInvitation} />
-
-      {showFilters && activeTab === "all" && (
+      {showFilters && (
         <EventFilters
           search={search}
           onSearchChange={onSearchChange}
@@ -84,18 +69,14 @@ export function EventContent({
         />
       )}
 
-      {activeTab === "invitations" ? (
-        <InvitationsList events={events} />
-      ) : (
-        <FilteredEventsList
-          events={events}
-          search={search}
-          category={category}
-          timeFilter={timeFilter}
-          selectedTags={selectedTags}
-          hasFilters={hasFilters}
-        />
-      )}
+      <FilteredEventsList
+        events={events}
+        search={search}
+        category={category}
+        timeFilter={timeFilter}
+        selectedTags={selectedTags}
+        hasFilters={hasFilters}
+      />
     </div>
   );
 }
