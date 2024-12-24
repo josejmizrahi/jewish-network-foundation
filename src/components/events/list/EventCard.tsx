@@ -1,4 +1,4 @@
-import { Calendar, MapPin, Users, Video, Tag } from "lucide-react";
+import { Calendar, MapPin, Users, Video, Tag, BadgeCheck, BadgeAlert } from "lucide-react";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +10,27 @@ interface EventCardProps {
 }
 
 export function EventCard({ event, categoryColors }: EventCardProps) {
+  const getStatusBadge = () => {
+    switch (event.status) {
+      case 'published':
+        return (
+          <Badge variant="default" className="bg-green-500/20 text-green-500 hover:bg-green-500/30">
+            <BadgeCheck className="w-3 h-3 mr-1" />
+            Live
+          </Badge>
+        );
+      case 'cancelled':
+        return (
+          <Badge variant="destructive" className="rounded-full">
+            <BadgeAlert className="w-3 h-3 mr-1" />
+            Cancelled
+          </Badge>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <Link to={`/events/${event.id}`}>
       <div className="group relative bg-card hover:bg-accent transition-colors rounded-xl p-4">
@@ -38,11 +59,7 @@ export function EventCard({ event, categoryColors }: EventCardProps) {
                 )}
               </div>
               <div className="flex flex-col items-end gap-2">
-                {event.status === 'published' && (
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/20 text-primary">
-                    Live
-                  </span>
-                )}
+                {getStatusBadge()}
                 <Badge 
                   variant="secondary"
                   className={`${categoryColors[event.category] || categoryColors.other}`}
