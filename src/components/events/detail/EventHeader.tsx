@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface EventHeaderProps {
   title: string;
@@ -35,6 +36,7 @@ export function EventHeader({
 }: EventHeaderProps) {
   const { toast } = useToast();
   const [isSharingEnabled, setIsSharingEnabled] = useState(isShareable);
+  const isMobile = useIsMobile();
 
   const handleShare = async () => {
     const shareUrl = `${window.location.origin}/events/${eventId}`;
@@ -119,9 +121,9 @@ export function EventHeader({
         </div>
       )}
       
-      <div className="flex items-start justify-between">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
+      <div className={`flex ${isMobile ? 'flex-col gap-4' : 'items-start justify-between gap-6'}`}>
+        <div className="space-y-1 flex-1 min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
             {status === 'cancelled' && (
               <Badge variant="destructive" className="rounded-full">Cancelled</Badge>
             )}
@@ -138,22 +140,24 @@ export function EventHeader({
               </Badge>
             )}
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight break-words">{title}</h1>
         </div>
-        <div className="flex items-center gap-2">
+
+        <div className={`flex ${isMobile ? 'flex-col w-full' : 'items-center'} gap-2`}>
           <Button
             variant="outline"
             size="sm"
-            className="rounded-full"
+            className="rounded-full w-full md:w-auto"
             onClick={handleShare}
           >
             <Share2 className="h-4 w-4 mr-2" />
             Share
           </Button>
+
           {isOrganizer && status !== 'cancelled' && (
             <>
-              <div className="flex items-center gap-2 px-3 py-1 rounded-full border">
-                <span className="text-sm">Public link</span>
+              <div className={`flex items-center gap-2 px-3 py-1 rounded-full border ${isMobile ? 'w-full justify-between' : ''}`}>
+                <span className="text-sm whitespace-nowrap">Public link</span>
                 <Switch
                   checked={isSharingEnabled}
                   onCheckedChange={toggleShareable}
@@ -162,7 +166,7 @@ export function EventHeader({
               <Button
                 variant="outline"
                 size="sm"
-                className="rounded-full"
+                className="rounded-full w-full md:w-auto"
                 onClick={onEdit}
               >
                 <Edit2 className="h-4 w-4 mr-2" />
@@ -171,7 +175,7 @@ export function EventHeader({
               <Button
                 variant="destructive"
                 size="sm"
-                className="rounded-full"
+                className="rounded-full w-full md:w-auto"
                 onClick={onCancel}
               >
                 Cancel Event
@@ -180,10 +184,11 @@ export function EventHeader({
           )}
         </div>
       </div>
+
       {description && (
         <>
           <Separator />
-          <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{description}</p>
+          <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap text-sm md:text-base">{description}</p>
         </>
       )}
     </div>
