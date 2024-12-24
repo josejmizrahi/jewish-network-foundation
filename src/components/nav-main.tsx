@@ -59,7 +59,7 @@ export function NavMain({ items }: NavMainProps) {
                         <item.icon className="h-4 w-4 transition-transform duration-200 group-data-[collapsible=icon]:mx-auto" />
                         <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
                         {item.badge && (
-                          <Badge variant="secondary" className="ml-auto mr-2">
+                          <Badge variant="secondary" className="ml-auto mr-2 group-data-[collapsible=icon]:hidden">
                             {item.badge}
                           </Badge>
                         )}
@@ -105,7 +105,7 @@ export function NavMain({ items }: NavMainProps) {
                     <item.icon className="h-4 w-4 transition-transform duration-200 group-data-[collapsible=icon]:mx-auto" />
                     <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
                     {item.badge && (
-                      <Badge variant="secondary" className="ml-auto">
+                      <Badge variant="secondary" className="ml-auto group-data-[collapsible=icon]:hidden">
                         {item.badge}
                       </Badge>
                     )}

@@ -64,13 +64,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       className="border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm" 
       {...props}
     >
-      <SidebarHeader className="h-16 border-b px-6 flex items-center">
+      <SidebarHeader className="h-16 border-b px-6 flex items-center group-data-[collapsible=icon]:px-2">
         <TeamSwitcher teams={teams} />
       </SidebarHeader>
-      <SidebarContent className="flex flex-col flex-grow px-6 py-4 space-y-6">
+      <SidebarContent className="flex flex-col flex-grow px-6 py-4 space-y-6 group-data-[collapsible=icon]:px-2">
         <NavMain items={navItems} />
       </SidebarContent>
-      <SidebarFooter className="border-t px-6 py-4">
+      <SidebarFooter className="border-t px-6 py-4 group-data-[collapsible=icon]:px-2">
         <NavUser user={userData} />
       </SidebarFooter>
       <SidebarRail className="hover:bg-muted/50 transition-colors duration-200" />
