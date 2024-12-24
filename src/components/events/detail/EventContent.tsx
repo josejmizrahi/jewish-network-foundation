@@ -71,6 +71,7 @@ export function EventContent({ event, isOrganizer, isRegistered, user }: EventCo
             currentAttendees={event.current_attendees}
             maxCapacity={event.max_capacity}
             waitlistEnabled={event.waitlist_enabled}
+            isPrivate={event.is_private}
           />
         </div>
       </div>
