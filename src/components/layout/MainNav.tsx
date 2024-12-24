@@ -6,8 +6,12 @@ import { NavItems } from "@/components/nav/nav-items";
 import { UserMenu } from "@/components/nav/user-menu";
 import { SearchBar } from "@/components/nav/search-bar";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { NotificationsMenu } from "@/components/nav/notifications-menu";
+import { useAuth } from "@/hooks/useAuth";
 
 export function MainNav({ children }: { children?: React.ReactNode }) {
+  const { user } = useAuth();
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container h-14 flex items-center">
@@ -27,6 +31,8 @@ export function MainNav({ children }: { children?: React.ReactNode }) {
           </div>
 
           <ThemeToggle />
+
+          {user && <NotificationsMenu />}
 
           <Sheet>
             <SheetTrigger asChild className="md:hidden">
