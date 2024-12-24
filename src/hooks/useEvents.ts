@@ -38,6 +38,8 @@ export function useEvents() {
         throw error;
       }
     },
+    retry: 1,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }
 
@@ -92,7 +94,7 @@ export function useEventInvitations() {
           throw error;
         }
 
-        // Transform the data and ensure proper category type
+        // Transform and ensure proper typing
         return (data || []).map(invitation => ({
           ...invitation.event,
           category: (invitation.event.category || 'other') as EventCategory,
@@ -106,5 +108,7 @@ export function useEventInvitations() {
         throw error;
       }
     },
+    retry: 1,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }
